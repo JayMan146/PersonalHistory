@@ -1,2 +1,4 @@
 # Ignore cached python file
 __pycache__
+# This code is temporary, so we don't need to track it.
+automation_station.py
