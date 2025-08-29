@@ -91,8 +91,8 @@ def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
         additional_zero: str = "0" if photo_number < 10 else ""
         photo_number_string: str = f"{additional_zero}{photo_number}"
         file_path: list = glob.glob(f"{entry_photo_path}{photo_number_string}.*")
-        if not file_path:
-            break
+        if not file_path: #ignore path if doesn't exist. previously did 'break' here, but swapped to continue to allow have the 00 photo and such come later
+            continue
         path_to_photo: str = file_path[0].replace(f"{SETTINGS["folder_paths"]["journal_root"]}/{photo_date.year}", ".").replace(" ", "%20")
         photo_paths.append(f"![]({path_to_photo})")
     
