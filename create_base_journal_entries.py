@@ -165,7 +165,7 @@ def move_photos_from_photo_locations() -> None:
             if not found_photos_in_this_directory:
                 found_photos_in_this_directory = True
                 print(f"Moving photos from {directory}:") # output, not debugging
-            print(f"> {file}") # output, not debugging
+            print(f"⮡ {file}") # output, not debugging
             photo_name_pieces = get_photo_name_pieces(file)
             if photo_name_pieces is None: # probably will never be executed because of the validity check, but type safety and just in case yatta yatta
                 continue
