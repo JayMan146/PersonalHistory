@@ -87,16 +87,11 @@ def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
     """Returns the path to all photos with the date `photo_date`. As opposed to `get_photo_by_date`, these are real and valid photos."""
     entry_photo_path: str = get_photo_by_date(photo_date)
     photo_paths: list[str] = []
-    printed_move_after_0_warning: bool = False
     for photo_number in range(0, 100):
         additional_zero: str = "0" if photo_number < 10 else ""
         photo_number_string: str = f"{additional_zero}{photo_number}"
         file_path: list = glob.glob(f"{entry_photo_path}{photo_number_string}.*")
-        if not file_path: #ignore path if doesn't exist. previously did 'break' here, but swapped to continue to allow have the 00 photo and such come later
-            if not printed_move_after_0_warning:
-                long_photo_date: str = convert_to_long_date(photo_date)
-                print(f"WARNING: Moved photos for date {long_photo_date} with no photo number of 00.\n")
-                printed_move_after_0_warning = True
+        if not file_path:
             continue
         path_to_photo: str = file_path[0].replace(f"{SETTINGS["folder_paths"]["journal_root"]}/{photo_date.year}", ".").replace(" ", "%20")
         photo_paths.append(f"![]({path_to_photo})")
@@ -139,7 +134,7 @@ def get_entry_string(entry_date: datetime.date, matching_entries: list[str], pho
 
 def get_photo_name_pieces(photo_name: str) -> tuple[int, str, int, int, int] | None:
     """Returns the pieces of `photo_name` in the order of month number, month, day, year, and photo number. Returns `None` if invalid."""
-    segments: list[str] = photo_name.split(".")[0].split()
+    segments: list[str] = photo_name.split(".")[0].split() #TODO: check file type and covert/disallow
     correct_length: bool = len(segments) == 5
     if not correct_length:
         return
@@ -152,28 +147,35 @@ def get_photo_name_pieces(photo_name: str) -> tuple[int, str, int, int, int] | N
 
     return (month_number, month, day, year, photo_number)
 
-def move_photos_from_downloads() -> None:
+def move_photos_from_photo_locations() -> None:
     """Finds photos with valid names in the downloads folder and moves them to the corresponding location."""
-    downloads: list[str] = os.listdir(SETTINGS["folder_paths"]["downloads"])
-    found_any_photos_in_downloads: bool = False
-    for download in downloads:
-        if os.path.isdir(download) or not valid_photo_name_format(download):
-            continue
+    photo_directory_files: dict[str, list[str]] = {}
+    for photo_directory in SETTINGS["folder_paths"]["photo_locations"]:
+        photo_directory_files[photo_directory] = os.listdir(photo_directory)
 
-        if not found_any_photos_in_downloads:    
-            print("Moving files from Downloads:") # output, not debugging
-            found_any_photos_in_downloads = True
-        print(f"> {download}") # output, not debugging
-        photo_name_pieces = get_photo_name_pieces(download)
-        if photo_name_pieces is None: # probably will never be executed because of the validity check, but type safety and just in case yatta yatta
-            continue
-        month_number, month, _, year, _ = photo_name_pieces
-        month_number_with_zero = f"0{month_number}" if month_number < 10 else str(month_number)
-        new_photo_folder_path: str = f"{SETTINGS["folder_paths"]["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
-        if not os.path.exists(new_photo_folder_path):
-            os.mkdir(new_photo_folder_path) 
-        shutil.move(f"{SETTINGS["folder_paths"]["downloads"]}/{download}", new_photo_folder_path)
-    if found_any_photos_in_downloads:
+    found_any_photos: bool = False
+    for directory, files in photo_directory_files.items():
+        found_photos_in_this_directory: bool = False
+        for file in files:
+            if os.path.isdir(file) or not valid_photo_name_format(file):
+                continue
+
+            if not found_any_photos:    
+                found_any_photos = True
+            if not found_photos_in_this_directory:
+                found_photos_in_this_directory = True
+                print(f"Moving photos from {directory}:") # output, not debugging
+            print(f"> {file}") # output, not debugging
+            photo_name_pieces = get_photo_name_pieces(file)
+            if photo_name_pieces is None: # probably will never be executed because of the validity check, but type safety and just in case yatta yatta
+                continue
+            month_number, month, _, year, _ = photo_name_pieces
+            month_number_with_zero = f"0{month_number}" if month_number < 10 else str(month_number)
+            new_photo_folder_path: str = f"{SETTINGS["folder_paths"]["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
+            if not os.path.exists(new_photo_folder_path):
+                os.mkdir(new_photo_folder_path) 
+            shutil.move(f"{directory}/{file}", new_photo_folder_path)
+    if found_any_photos:
         print("")
 
 def valid_photo_name_format(photo_name: str) -> bool:
@@ -273,7 +275,7 @@ def create_all_recent_missing_entries() -> None:
     recent_missing_entries: list[datetime.date] = find_all_recent_missing_entries()
     
     if SETTINGS["other"]["transfer_photos_from_downloads"]:
-        move_photos_from_downloads()
+        move_photos_from_photo_locations()
     for entry_date in recent_missing_entries[::-1]:
         entry = generate_entry(entry_date)
         if entry is None:
