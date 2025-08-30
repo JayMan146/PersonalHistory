@@ -276,6 +276,7 @@ def create_all_recent_missing_entries() -> None:
     
     if SETTINGS["other"]["transfer_photos_from_downloads"]:
         move_photos_from_photo_locations()
+    print("Journal Text Written to File(s):\n") #output, not debugging
     for entry_date in recent_missing_entries[::-1]:
         entry = generate_entry(entry_date)
         if entry is None:
