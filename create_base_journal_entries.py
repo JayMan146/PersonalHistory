@@ -154,22 +154,28 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
 
     if not found_any_photos:    
         found_any_photos = True
+
     if not found_any_photos_in_this_directory:
         found_any_photos_in_this_directory = True
         print(f"Moving photos from {directory}:") # output, not debugging
+
     print(f"⮡ {file}") # output, not debugging
+
     photo_name_pieces = get_photo_name_pieces(file)
     if photo_name_pieces is None: # probably will never be executed because of the validity check, but type safety and just in case yatta yatta
         return
+    
     month_number, month, _, year, _ = photo_name_pieces
     month_number_with_zero = f"0{month_number}" if month_number < 10 else str(month_number)
     new_photo_folder_path: str = f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
+
     if not os.path.exists(new_photo_folder_path):
         if USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
             print("  ⮡ Warning: unable to move this photo, as directory creation is disabled.")
             return
         os.mkdir(new_photo_folder_path) 
     shutil.move(f"{directory}/{file}", new_photo_folder_path)
+    
     return (found_any_photos, found_any_photos_in_this_directory)
 
 def move_photos_from_photo_locations() -> None:
