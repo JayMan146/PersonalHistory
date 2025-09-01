@@ -148,6 +148,7 @@ def get_photo_name_pieces(photo_name: str) -> tuple[int, str, int, int, int] | N
     return (month_number, month, day, year, photo_number)
 
 def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, found_any_photos_in_this_directory: bool=False) -> None | tuple[bool, bool]:
+    """Goes through the process of checking and moving one photo from the directories"""
     if os.path.isdir(file) or not valid_photo_name_format(file):
         return
 
@@ -173,6 +174,10 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
 
 def move_photos_from_photo_locations() -> None:
     """Finds photos with valid names in the downloads folder and moves them to the corresponding location."""
+
+    if not USER_SETTINGS["other"]["enable_photo_transfer"]:
+        return
+    
     photo_directory_files: dict[str, list[str]] = {}
     for photo_directory in USER_SETTINGS["folder_paths"]["photo_locations"]:
         photo_directory_files[photo_directory] = os.listdir(photo_directory)
@@ -298,9 +303,6 @@ def create_all_recent_missing_entries() -> None:
     """Gets all recent missing entries and then writes them."""
 
     recent_missing_entries: list[datetime.date] = find_all_recent_missing_entries()
-    
-    if USER_SETTINGS["other"]["enable_photo_transfer"]:
-        move_photos_from_photo_locations()
 
     print("Journal Text Written to File(s):\n") #output, not debugging
 
@@ -323,8 +325,9 @@ def load_settings() -> None:
         del USER_SETTINGS["Confused?"]
 
 if __name__ == "__main__":
-    load_settings()
     try:
+        load_settings()
+        move_photos_from_photo_locations()
         create_all_recent_missing_entries()
     except FileNotFoundError as error:
         print(f"A file is missing. Double check the paths in settings and settings_to_use.txt file and make sure settings_to_use.txt exists. The full error is:\n{error}")
