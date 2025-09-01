@@ -313,7 +313,7 @@ if __name__ == "__main__":
     try:
         create_all_recent_missing_entries()
     except FileNotFoundError as error:
-        print(f"A file is missing. Double check the paths in settings.json. The full error is:\n{error}")
+        print(f"A file is missing. Double check the paths in settings and settings_to_use.txt file and make sure settings_to_use.txt exists. The full error is:\n{error}")
         traceback.print_tb(error.__traceback__)
     except Exception as error:
         print(f"There's been a miscellaneous error:\n{error}")
