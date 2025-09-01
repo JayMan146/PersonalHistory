@@ -202,10 +202,6 @@ def valid_photo_name_format(photo_name: str) -> bool:
 
 def generate_entry(entry_date: datetime.date) -> str | None:
     """Generates the entry for `entry_date`."""
-    year_folder, _ = convert_date_to_journal_path(entry_date)
-    if not os.path.isdir(year_folder) and USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
-        os.mkdir(year_folder)
-        print(f"Making new directory: {year_folder}") # output, not debugging
 
     matching_entries: list[str]
     if USER_SETTINGS["journal_format"]["requires_programming"]["matching_entries"]:
@@ -233,10 +229,21 @@ def determine_preliminary_new_lines(file_lines: list[str]) -> int:
             preliminary_new_lines = 2
     return preliminary_new_lines
 
-def write_entry(entry: str, entry_date: datetime.date, print_entry: bool=True) -> None:
+def write_entry(entry: str, entry_date: datetime.date) -> None:
     """Takes `entry` and writes it to the file corresponding to `entry_date`."""
-    _, markdown_file_path = convert_date_to_journal_path(entry_date)
-    if not os.path.exists(markdown_file_path) and USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+    year_folder, markdown_file_path = convert_date_to_journal_path(entry_date)
+    
+    if not os.path.isdir(year_folder):
+        if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+            print("Warning: unable to write entry, as directory creation is disabled.")
+            return
+        os.mkdir(year_folder)
+        print(f"Making new directory: {year_folder}") # output, not debugging
+
+    if not os.path.exists(markdown_file_path):
+        if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+            print("Warning: unable to write entry, as file creation is disabled.")
+            return
         with open(markdown_file_path, "x", encoding="UTF-8"):
             print(f"Creating new journal file: {markdown_file_path}") # output, not debugging
         
@@ -252,10 +259,8 @@ def write_entry(entry: str, entry_date: datetime.date, print_entry: bool=True) -
             journal_file_to_append.write(preliminary_new_lines)
             journal_file_to_append.write(entry)
         else:
-            pass
             print("Attempted to write to file, but that behavior is disabled.")
-    if print_entry:
-        print(entry, end="")
+    print(entry, end="")
 
 def find_all_recent_missing_entries() -> list[datetime.date]:
     """Finds missing entries in the last 100 days, working backwards from today and stopping once it has found a valid entry."""
