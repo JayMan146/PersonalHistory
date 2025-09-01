@@ -147,30 +147,6 @@ def get_photo_name_pieces(photo_name: str) -> tuple[int, str, int, int, int] | N
 
     return (month_number, month, day, year, photo_number)
 
-def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, found_any_photos_in_this_directory: bool=False) -> None | tuple[bool, bool]:
-    if os.path.isdir(file) or not valid_photo_name_format(file):
-        return
-
-    if not found_any_photos:    
-        found_any_photos = True
-    if not found_any_photos_in_this_directory:
-        found_any_photos_in_this_directory = True
-        print(f"Moving photos from {directory}:") # output, not debugging
-    print(f"⮡ {file}") # output, not debugging
-    photo_name_pieces = get_photo_name_pieces(file)
-    if photo_name_pieces is None: # probably will never be executed because of the validity check, but type safety and just in case yatta yatta
-        return
-    month_number, month, _, year, _ = photo_name_pieces
-    month_number_with_zero = f"0{month_number}" if month_number < 10 else str(month_number)
-    new_photo_folder_path: str = f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
-    if not os.path.exists(new_photo_folder_path):
-        if USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
-            print("  ⮡ Warning: unable to move this photo, as directory creation is disabled.")
-            return
-        os.mkdir(new_photo_folder_path) 
-    shutil.move(f"{directory}/{file}", new_photo_folder_path)
-    return (found_any_photos, found_any_photos_in_this_directory)
-
 def move_photos_from_photo_locations() -> None:
     """Finds photos with valid names in the downloads folder and moves them to the corresponding location."""
     photo_directory_files: dict[str, list[str]] = {}
@@ -181,9 +157,24 @@ def move_photos_from_photo_locations() -> None:
     for directory, files in photo_directory_files.items():
         found_photos_in_this_directory: bool = False
         for file in files:
-            photo_found_status = handle_photo_in_location(directory, file, found_any_photos, found_photos_in_this_directory)
-            if isinstance(photo_found_status, tuple):
-                found_any_photos, found_photos_in_this_directory = photo_found_status
+            if os.path.isdir(file) or not valid_photo_name_format(file):
+                continue
+
+            if not found_any_photos:    
+                found_any_photos = True
+            if not found_photos_in_this_directory:
+                found_photos_in_this_directory = True
+                print(f"Moving photos from {directory}:") # output, not debugging
+            print(f"⮡ {file}") # output, not debugging
+            photo_name_pieces = get_photo_name_pieces(file)
+            if photo_name_pieces is None: # probably will never be executed because of the validity check, but type safety and just in case yatta yatta
+                continue
+            month_number, month, _, year, _ = photo_name_pieces
+            month_number_with_zero = f"0{month_number}" if month_number < 10 else str(month_number)
+            new_photo_folder_path: str = f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
+            if not os.path.exists(new_photo_folder_path):
+                os.mkdir(new_photo_folder_path) 
+            shutil.move(f"{directory}/{file}", new_photo_folder_path)
     if found_any_photos:
         print("")
 
@@ -203,7 +194,7 @@ def valid_photo_name_format(photo_name: str) -> bool:
 def generate_entry(entry_date: datetime.date) -> str | None:
     """Generates the entry for `entry_date`."""
     year_folder, _ = convert_date_to_journal_path(entry_date)
-    if not os.path.isdir(year_folder) and USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+    if not os.path.isdir(year_folder):
         os.mkdir(year_folder)
         print(f"Making new directory: {year_folder}") # output, not debugging
 
@@ -236,7 +227,7 @@ def determine_preliminary_new_lines(file_lines: list[str]) -> int:
 def write_entry(entry: str, entry_date: datetime.date, print_entry: bool=True) -> None:
     """Takes `entry` and writes it to the file corresponding to `entry_date`."""
     _, markdown_file_path = convert_date_to_journal_path(entry_date)
-    if not os.path.exists(markdown_file_path) and USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+    if not os.path.exists(markdown_file_path):
         with open(markdown_file_path, "x", encoding="UTF-8"):
             print(f"Creating new journal file: {markdown_file_path}") # output, not debugging
         
