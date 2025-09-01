@@ -7,7 +7,7 @@ import json
 import typing
 import traceback
 
-SETTINGS: dict
+USER_SETTINGS: dict
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
@@ -31,7 +31,7 @@ def convert_to_long_date(short_date: datetime.date) -> str:
 def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]:
     """Converts `journal_date` into the file path for the appropriate journal, returning a tuple with the year folder and the markdown file path."""
     numbered_month: str = convert_to_month(journal_date)[1]
-    year_folder: str = f"{SETTINGS["folder_paths"]["journal_root"]}/{journal_date.year}"
+    year_folder: str = f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{journal_date.year}"
     markdown_file_path: str = f"{year_folder}/{numbered_month} {journal_date.year}.md"
     return (year_folder, markdown_file_path)
 
@@ -63,7 +63,7 @@ def get_entry(entry_date: datetime.date) -> str | None:
             continue
         header: str = convert_to_header_link(line)
         path_with_header: str = f"{journal_path}{header}"
-        fixed_path = path_with_header.replace(SETTINGS["folder_paths"]["journal_root"], "..").replace(" ", "%20") # make it a local path and with %20 instead of spaces
+        fixed_path = path_with_header.replace(USER_SETTINGS["folder_paths"]["journal_root"], "..").replace(" ", "%20") # make it a local path and with %20 instead of spaces
         return fixed_path
     return None
 
@@ -80,7 +80,7 @@ def get_photo_by_date(photo_date: datetime.date) -> str:
     """Returns the path to photos for `photo date`, omitting the photo number. This file may or may not exist, once the photo number is added. It only returns a format, rather than checking for an actual photo with that date. `get_photo_paths_by_date` returns a real path, and utilizes this function to do that."""
     _, numbered_month = convert_to_month(photo_date)
     day_additional_zero: str = "0" if photo_date.day < 10 else ""
-    photo_path: str = f"{SETTINGS["folder_paths"]["journal_root"]}/{photo_date.year}/photos/{numbered_month} {photo_date.year}/{numbered_month} {day_additional_zero}{photo_date.day} {photo_date.year} "
+    photo_path: str = f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{photo_date.year}/photos/{numbered_month} {photo_date.year}/{numbered_month} {day_additional_zero}{photo_date.day} {photo_date.year} "
     return photo_path
 
 def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
@@ -93,19 +93,19 @@ def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
         file_path: list = glob.glob(f"{entry_photo_path}{photo_number_string}.*")
         if not file_path:
             continue
-        path_to_photo: str = file_path[0].replace(f"{SETTINGS["folder_paths"]["journal_root"]}/{photo_date.year}", ".").replace(" ", "%20")
+        path_to_photo: str = file_path[0].replace(f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{photo_date.year}", ".").replace(" ", "%20")
         photo_paths.append(f"![]({path_to_photo})")
     
     return photo_paths
 
 def generate_custom_journal_formatting() -> str:
     """Generates a list of the custom journal formatting settings to be added to an entry."""
-    custom_journal_formatting_settings_path = SETTINGS["journal_format"]["custom"]
+    custom_journal_formatting_settings_path = USER_SETTINGS["journal_format"]["custom"]
     return f"{custom_journal_formatting_settings_path["preliminary_text"]}{custom_journal_formatting_settings_path["separator"].join(custom_journal_formatting_settings_path["items"])}{custom_journal_formatting_settings_path["ending_text"]}"
 
 def generate_requires_programming_journal_formatting(key: str, item_list: list[str]) -> str | None:
     """Generates a line of the requires_programming section of the settings based on `key` and `item_list` (items to be joined together, e.g. `photo_paths`)"""
-    requires_programming_settings_path: dict[str, typing.Any] = SETTINGS["journal_format"]["requires_programming"][key]
+    requires_programming_settings_path: dict[str, typing.Any] = USER_SETTINGS["journal_format"]["requires_programming"][key]
     if not (requires_programming_settings_path["enabled"] and item_list):
         return
     entry_line: str = f"{requires_programming_settings_path["preliminary_text"]}{requires_programming_settings_path["separator"].join(item_list)}{requires_programming_settings_path["ending_text"]}"
@@ -115,7 +115,7 @@ def get_entry_string(entry_date: datetime.date, matching_entries: list[str], pho
     """Creates a string of a journal entry with the given parameters."""
 
     entry_string: str = f"# {convert_to_long_date(entry_date)}: "
-    if SETTINGS["journal_format"]["custom_placement"].lower() == "before":
+    if USER_SETTINGS["journal_format"]["custom_placement"].lower() == "before":
         entry_string += generate_custom_journal_formatting()
 
     matching_entries_line: str | None = generate_requires_programming_journal_formatting("matching_entries", matching_entries)
@@ -125,10 +125,10 @@ def get_entry_string(entry_date: datetime.date, matching_entries: list[str], pho
     if photos_line is not None:
         entry_string += photos_line
     
-    if SETTINGS["journal_format"]["custom_placement"].lower() != "before":
+    if USER_SETTINGS["journal_format"]["custom_placement"].lower() != "before":
         entry_string += generate_custom_journal_formatting()
 
-    entry_string += "\n" * SETTINGS["journal_format"]["writing_lines"]
+    entry_string += "\n" * USER_SETTINGS["journal_format"]["writing_lines"]
 
     return entry_string
 
@@ -150,7 +150,7 @@ def get_photo_name_pieces(photo_name: str) -> tuple[int, str, int, int, int] | N
 def move_photos_from_photo_locations() -> None:
     """Finds photos with valid names in the downloads folder and moves them to the corresponding location."""
     photo_directory_files: dict[str, list[str]] = {}
-    for photo_directory in SETTINGS["folder_paths"]["photo_locations"]:
+    for photo_directory in USER_SETTINGS["folder_paths"]["photo_locations"]:
         photo_directory_files[photo_directory] = os.listdir(photo_directory)
 
     found_any_photos: bool = False
@@ -171,7 +171,7 @@ def move_photos_from_photo_locations() -> None:
                 continue
             month_number, month, _, year, _ = photo_name_pieces
             month_number_with_zero = f"0{month_number}" if month_number < 10 else str(month_number)
-            new_photo_folder_path: str = f"{SETTINGS["folder_paths"]["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
+            new_photo_folder_path: str = f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
             if not os.path.exists(new_photo_folder_path):
                 os.mkdir(new_photo_folder_path) 
             shutil.move(f"{directory}/{file}", new_photo_folder_path)
@@ -199,13 +199,13 @@ def generate_entry(entry_date: datetime.date) -> str | None:
         print(f"Making new directory: {year_folder}") # output, not debugging
 
     matching_entries: list[str]
-    if SETTINGS["journal_format"]["requires_programming"]["matching_entries"]:
+    if USER_SETTINGS["journal_format"]["requires_programming"]["matching_entries"]:
         matching_entries = get_entries_matching_year(entry_date)
     else:
         matching_entries = []
 
     photo_paths: list[str]
-    if SETTINGS["journal_format"]["requires_programming"]["photos"]:
+    if USER_SETTINGS["journal_format"]["requires_programming"]["photos"]:
         photo_paths = get_photo_paths_by_date(entry_date)
     else:
         photo_paths = []
@@ -239,7 +239,7 @@ def write_entry(entry: str, entry_date: datetime.date, print_entry: bool=True) -
             
     preliminary_new_lines: str = "\n" * number_of_preliminary_new_lines
     with open(markdown_file_path, "a", encoding="UTF-8") as journal_file_to_append:
-        if not SETTINGS["other"]["disable_writing_to_file"]:
+        if USER_SETTINGS["other"]["enable_writing_to_file"]:
             journal_file_to_append.write(preliminary_new_lines)
             journal_file_to_append.write(entry)
         else:
@@ -251,12 +251,23 @@ def write_entry(entry: str, entry_date: datetime.date, print_entry: bool=True) -
 def find_all_recent_missing_entries() -> list[datetime.date]:
     """Finds missing entries in the last 100 days, working backwards from today and stopping once it has found a valid entry."""
     starting_date: datetime.date = datetime.date.today()
-    current_hour: int = datetime.datetime.today().hour
+    current_time: datetime.datetime = datetime.datetime.today()
 
-    if current_hour < SETTINGS["other"]["day_crossover_hour"]: # move back one day if still considered the previous day. for me, this is when i sleep, so before 5 am works.
-        starting_date -= datetime.timedelta(days=1)
+    crossover_time_json_object: dict[str, int] = USER_SETTINGS["day_crossover"]["time"]
+    crossover_time: datetime.datetime = datetime.datetime(
+        current_time.year, current_time.month, current_time.day,
+        crossover_time_json_object["hour"],
+        crossover_time_json_object["minute"],
+        crossover_time_json_object["second"]
+    )
+    day_crossover_move_direction: str = USER_SETTINGS["day_crossover"]["move_direction"]
+    if day_crossover_move_direction != "disable":
+        if day_crossover_move_direction == "backward" and current_time < crossover_time:
+            starting_date -= datetime.timedelta(days=1)
+        elif day_crossover_move_direction == "forward" and current_time > crossover_time:
+            starting_date += datetime.timedelta(days=1)
 
-    earliest_journal: dict[str, int] = SETTINGS["other"]["earliest_journal"]
+    earliest_journal: dict[str, int] = USER_SETTINGS["other"]["earliest_journal"]
     earliest_journal_date: datetime.date = datetime.date(earliest_journal["year"], earliest_journal["month"], earliest_journal["day"])
     current_date: datetime.date = starting_date
     recent_missing_entries: list[datetime.date] = []
@@ -274,21 +285,28 @@ def create_all_recent_missing_entries() -> None:
 
     recent_missing_entries: list[datetime.date] = find_all_recent_missing_entries()
     
-    if SETTINGS["other"]["transfer_photos_from_downloads"]:
+    if USER_SETTINGS["other"]["enable_photo_transfer"]:
         move_photos_from_photo_locations()
+
     print("Journal Text Written to File(s):\n") #output, not debugging
-    for entry_date in recent_missing_entries[::-1]:
+
+    #iterate backwards since we want the first found missing one to be written first, then the most recent missing one to be written last
+    for entry_date in recent_missing_entries[::-1]: 
         entry = generate_entry(entry_date)
         if entry is None:
             continue
         write_entry(entry, entry_date)
 
 def load_settings() -> None:
-    global SETTINGS
-    with open("./Other/AutomationCode/settings.json", "r", encoding="UTF-8") as settings_file:
-        SETTINGS = json.load(settings_file)
-    if SETTINGS["Confused?"]:
-        del SETTINGS["Confused?"]
+    global USER_SETTINGS
+    with open("./Other/AutomationCode/settings_to_use.txt", "r", encoding="UTF-8") as settings_to_use_file:
+        settings_file_name: str = settings_to_use_file.readline().strip()
+    if not settings_file_name.endswith(".json"):
+        settings_file_name = f"{settings_file_name}.json"
+    with open(f"./Other/AutomationCode/{settings_file_name}", "r", encoding="UTF-8") as settings_file:
+        USER_SETTINGS = json.load(settings_file)
+    if USER_SETTINGS["Confused?"]:
+        del USER_SETTINGS["Confused?"]
 
 if __name__ == "__main__":
     load_settings()

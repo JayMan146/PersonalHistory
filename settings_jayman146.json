@@ -34,14 +34,21 @@
         "custom_placement": "before",
         "writing_lines": 3
     },
+    "day_crossover": {
+        "time": {
+            "hour": 5,
+            "minute": 0,
+            "second": 0
+        },
+        "move_direction": "backward"
+    },
     "other": {
-        "transfer_photos_from_downloads": true,
-        "day_crossover_hour": 5,
         "earliest_journal": {
             "day": 18,
             "month": 3,
             "year": 2021
         },
-        "disable_writing_to_file": false
+        "enable_photo_transfer": true,
+        "enable_writing_to_file": true
     }
 }
