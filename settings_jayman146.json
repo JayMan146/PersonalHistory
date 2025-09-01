@@ -49,6 +49,7 @@
             "year": 2021
         },
         "enable_photo_transfer": true,
-        "enable_writing_to_file": true
+        "enable_writing_to_file": true,
+        "enable_new_directory_and_file_creation": true
     }
 }
