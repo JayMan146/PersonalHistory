@@ -319,7 +319,7 @@ def load_settings() -> None:
         settings_file_name = f"{settings_file_name}.json"
     with open(f"./Other/AutomationCode/{settings_file_name}", "r", encoding="UTF-8") as settings_file:
         USER_SETTINGS = json.load(settings_file)
-    if USER_SETTINGS["Confused?"]:
+    if USER_SETTINGS.get("Confused?"):
         del USER_SETTINGS["Confused?"]
 
 if __name__ == "__main__":
