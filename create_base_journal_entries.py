@@ -249,14 +249,14 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
             print("Warning: unable to write entry, as directory creation is disabled.") # output, not debugging
             return
         os.mkdir(year_folder)
-        print(f"Making new directory: {year_folder}") # output, not debugging
+        print(f"Making new directory: {year_folder}\n") # output, not debugging
 
     if not os.path.exists(markdown_file_path):
         if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
             print("Warning: unable to write entry, as file creation is disabled.") # output, not debugging
             return
         with open(markdown_file_path, "x", encoding="UTF-8"):
-            print(f"Creating new journal file: {markdown_file_path}") # output, not debugging
+            print(f"Creating new journal file: {markdown_file_path}\n") # output, not debugging
         
     number_of_preliminary_new_lines: int = 0
     with open(markdown_file_path, "r+", encoding="UTF-8") as journal_file_to_read:
