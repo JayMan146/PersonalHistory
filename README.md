@@ -34,9 +34,9 @@ This is anything that didn't fit anywhere else.
 
 `enable_photo_transfer` enables or disables the functionality of transfering photos, specifically from the `photo_locations` folder path. See [Folder Paths](#folder-paths) for more.
 
-`enable_writing_to_file` enables or disables the functionality of the program writting to the file. It will act as if it did write to any files, but won't actually do it. It will warn you, though. It's mostly helpful as a debug tool. New files and directories will still be created, as that is handled in the below setting.
+`enable_writing_to_file` enables or disables the functionality of the program writting to the file. It will warn you if it is unable to complete the task. It's mostly helpful as a debug tool. New files and directories will still be created, as that is handled in the below setting.
 
-`enable_new_directory_and_file_creation` enables or disables the creation of new directories or files. It will mostly act as if it did create them, but will sometimes fail to write to a file that doesn't exist or move a photo to a directory that doesn't exist, and therefore will report that.
+`enable_new_directory_and_file_creation` enables or disables the creation of new directories or files. Most of the time this doesn't do much, but will sometimes fail to write to a file that doesn't exist or move a photo to a directory that doesn't exist, and therefore will report that.
 
 ### Settings to Use
 
