@@ -171,7 +171,7 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
 
     if not os.path.exists(new_photo_folder_path):
         if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
-            print("  ⮡ Warning: unable to move this photo, as directory creation is disabled.")
+            print("  ⮡ Warning: unable to move this photo, as directory creation is disabled.") # output, not debugging
             return
         os.mkdir(new_photo_folder_path) 
     shutil.move(f"{directory}/{file}", new_photo_folder_path)
@@ -196,7 +196,7 @@ def move_photos_from_photo_locations() -> None:
             if isinstance(photo_found_status, tuple):
                 found_any_photos, found_photos_in_this_directory = photo_found_status
     if found_any_photos:
-        print("")
+        print("") # output, not debugging
 
 def valid_photo_name_format(photo_name: str) -> bool:
     """Checks if `photo_name` is a valid photo name."""
@@ -246,14 +246,14 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
     
     if not os.path.isdir(year_folder):
         if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
-            print("Warning: unable to write entry, as directory creation is disabled.")
+            print("Warning: unable to write entry, as directory creation is disabled.") # output, not debugging
             return
         os.mkdir(year_folder)
         print(f"Making new directory: {year_folder}") # output, not debugging
 
     if not os.path.exists(markdown_file_path):
         if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
-            print("Warning: unable to write entry, as file creation is disabled.")
+            print("Warning: unable to write entry, as file creation is disabled.") # output, not debugging
             return
         with open(markdown_file_path, "x", encoding="UTF-8"):
             print(f"Creating new journal file: {markdown_file_path}") # output, not debugging
@@ -270,7 +270,7 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
             journal_file_to_append.write(preliminary_new_lines)
             journal_file_to_append.write(entry)
         else:
-            print("Attempted to write to file, but that behavior is disabled.")
+            print("Attempted to write to file, but that behavior is disabled.") # output, not debugging
     print(entry, end="")
 
 def find_all_recent_missing_entries() -> list[datetime.date]:
@@ -336,8 +336,8 @@ if __name__ == "__main__":
         move_photos_from_photo_locations()
         create_all_recent_missing_entries()
     except FileNotFoundError as error:
-        print(f"A file is missing. Double check the paths in settings and settings_to_use.txt file and make sure settings_to_use.txt exists. The full error is:\n{error}")
+        print(f"A file is missing. Double check the paths in settings and settings_to_use.txt file and make sure settings_to_use.txt exists. The full error is:\n{error}") # output, not debugging
         traceback.print_tb(error.__traceback__)
     except Exception as error:
-        print(f"There's been a miscellaneous error:\n{error}")
+        print(f"There's been a miscellaneous error:\n{error}") # output, not debugging
         traceback.print_tb(error.__traceback__)
