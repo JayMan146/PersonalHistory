@@ -170,7 +170,7 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
     new_photo_folder_path: str = f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
 
     if not os.path.exists(new_photo_folder_path):
-        if USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+        if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
             print("  ⮡ Warning: unable to move this photo, as directory creation is disabled.")
             return
         os.mkdir(new_photo_folder_path) 
