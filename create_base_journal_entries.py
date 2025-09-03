@@ -19,14 +19,11 @@ def convert_to_month(month_date: datetime.date) -> tuple[str, str]:
     return (month_name, numbered_month)
 
 def convert_to_long_date(short_date: datetime.date) -> str:
-    """Converts `short_date` into a long date format like Monday, February 3rd, 2025."""
+    """Converts `short_date` into a long date format like Monday 03 February 2025"""
     weekday: str = DAYS_OF_THE_WEEK[short_date.weekday()].title()
     month: str = MONTHS[short_date.month - 1].title()
-    day_string: str = str(short_date.day)
-    ending: str = "th"
-    if not (day_string.startswith("1") and len(day_string) > 1):
-        ending = get_ordinal_number_ending(day_string)
-    return f"{weekday}, {month} {short_date.day}{ending}, {short_date.year}"
+
+    return f"{weekday} {short_date.day} {month} {short_date.year}"
 
 def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]:
     """Converts `journal_date` into the file path for the appropriate journal, returning a tuple with the year folder and the markdown file path."""
@@ -35,18 +32,21 @@ def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]
     markdown_file_path: str = f"{year_folder}/{numbered_month} {journal_date.year}.md"
     return (year_folder, markdown_file_path)
 
-def get_ordinal_number_ending(number: str) -> str:
-    ending: str
-    match number[-1]:
-        case "1":
-            ending = "st"
-        case "2":
-            ending = "nd"
-        case "3":
-            ending = "rd"
-        case _:
-            ending = "th"
-    return ending
+# This function is unused, but I'd like to keep it around, so I'm leaving it commented out (to "save" resources (likely no noticeable difference, though)).
+# def get_ordinal_number_ending(number: str | int) -> str:
+#     number = str(number)
+#
+#     if len(number) > 1 and number.startswith("1"):
+#         return "th"
+#     match number[-1]:
+#         case "1":
+#             return "st"
+#         case "2":
+#             return "nd"
+#         case "3":
+#             return "rd"
+#         case _:
+#             return "th"
 
 def get_entry(entry_date: datetime.date) -> str | None:
     """Searches for and returns the journal entry of `entry_date`."""
