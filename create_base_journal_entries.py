@@ -21,9 +21,10 @@ def convert_to_month(month_date: datetime.date) -> tuple[str, str]:
 def convert_to_long_date(short_date: datetime.date) -> str:
     """Converts `short_date` into a long date format like Monday 03 February 2025"""
     weekday: str = DAYS_OF_THE_WEEK[short_date.weekday()].title()
+    day_with_leading_zero: str = f"0{short_date.day}" if short_date.day < 10 else str(short_date.day)
     month: str = MONTHS[short_date.month - 1].title()
 
-    return f"{weekday} {short_date.day} {month} {short_date.year}"
+    return f"{weekday} {day_with_leading_zero} {month} {short_date.year}"
 
 def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]:
     """Converts `journal_date` into the file path for the appropriate journal, returning a tuple with the year folder and the markdown file path."""
