@@ -6,14 +6,19 @@ import shutil
 import json
 import typing
 import traceback
+from PIL import Image
+from heic2png import HEIC2PNG
 
 USER_SETTINGS: dict
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
+def add_leading_zero(num: int) -> str:
+    return f"0{num}" if num < 10 else str(num)
+
 def convert_to_month(month_date: datetime.date) -> tuple[str, str]:
     """Converts `month_date` into a tuple with the month name and it's number (1 - 12)"""
-    month_number: str = str(month_date.month) if month_date.month >= 10 else f"0{month_date.month}"
+    month_number: str = add_leading_zero(month_date.month)
     month_name: str = MONTHS[month_date.month - 1]
     numbered_month: str = f"{month_number} {month_name}"
     return (month_name, numbered_month)
@@ -21,7 +26,7 @@ def convert_to_month(month_date: datetime.date) -> tuple[str, str]:
 def convert_to_long_date(short_date: datetime.date) -> str:
     """Converts `short_date` into a long date format like Monday 03 February 2025"""
     weekday: str = DAYS_OF_THE_WEEK[short_date.weekday()].title()
-    day_with_leading_zero: str = f"0{short_date.day}" if short_date.day < 10 else str(short_date.day)
+    day_with_leading_zero: str = add_leading_zero(short_date.day)
     month: str = MONTHS[short_date.month - 1].title()
 
     return f"{weekday} {day_with_leading_zero} {month} {short_date.year}"
@@ -29,7 +34,7 @@ def convert_to_long_date(short_date: datetime.date) -> str:
 def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]:
     """Converts `journal_date` into the file path for the appropriate journal, returning a tuple with the year folder and the markdown file path."""
     numbered_month: str = convert_to_month(journal_date)[1]
-    year_folder: str = f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{journal_date.year}"
+    year_folder: str = f"{USER_SETTINGS["journal_root"]}/{journal_date.year}"
     markdown_file_path: str = f"{year_folder}/{numbered_month} {journal_date.year}.md"
     return (year_folder, markdown_file_path)
 
@@ -64,7 +69,7 @@ def get_entry(entry_date: datetime.date) -> str | None:
             continue
         header: str = convert_to_header_link(line)
         path_with_header: str = f"{journal_path}{header}"
-        fixed_path = path_with_header.replace(USER_SETTINGS["folder_paths"]["journal_root"], "..").replace(" ", "%20") # make it a local path and with %20 instead of spaces
+        fixed_path = path_with_header.replace(USER_SETTINGS["journal_root"], "..").replace(" ", "%20") # make it a local path and with %20 instead of spaces
         return fixed_path
     return None
 
@@ -81,7 +86,7 @@ def get_photo_by_date(photo_date: datetime.date) -> str:
     """Returns the path to photos for `photo date`, omitting the photo number. This file may or may not exist, once the photo number is added. It only returns a format, rather than checking for an actual photo with that date. `get_photo_paths_by_date` returns a real path, and utilizes this function to do that."""
     _, numbered_month = convert_to_month(photo_date)
     day_additional_zero: str = "0" if photo_date.day < 10 else ""
-    photo_path: str = f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{photo_date.year}/photos/{numbered_month} {photo_date.year}/{numbered_month} {day_additional_zero}{photo_date.day} {photo_date.year} "
+    photo_path: str = f"{USER_SETTINGS["journal_root"]}/{photo_date.year}/photos/{numbered_month} {photo_date.year}/{numbered_month} {day_additional_zero}{photo_date.day} {photo_date.year} "
     return photo_path
 
 def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
@@ -94,7 +99,7 @@ def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
         file_path: list = glob.glob(f"{entry_photo_path}{photo_number_string}.*")
         if not file_path:
             continue
-        path_to_photo: str = file_path[0].replace(f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{photo_date.year}", ".").replace(" ", "%20")
+        path_to_photo: str = file_path[0].replace(f"{USER_SETTINGS["journal_root"]}/{photo_date.year}", ".").replace(" ", "%20")
         photo_paths.append(f"![]({path_to_photo})")
     
     return photo_paths
@@ -148,8 +153,41 @@ def get_photo_name_pieces(photo_name: str) -> tuple[int, str, int, int, int] | N
 
     return (month_number, month, day, year, photo_number)
 
+def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> None:
+    """Converts `file_path` (with extension included) to the file type of what is specified in the settings file. `_output_type` is an internal argument."""
+    if not USER_SETTINGS["photos"]["type_conversion"]["enabled"]: return
+
+    file_path_split_by_periods: list[str] = file_path.split(".")
+    file_path_without_extension = ".".join(file_path_split_by_periods[:-1])
+    extension: str = file_path_split_by_periods[-1]
+
+    if _output_type is not None:
+        output_type: str = _output_type
+    else:
+        output_type: str = USER_SETTINGS["photos"]["type_conversion"]["conversions"].get(extension)
+        if output_type is None: return
+
+    if extension == "heic":
+        heic_image = HEIC2PNG(file_path)
+        heic_image.save()
+        if output_type != "png":
+            #yeah, i know this is kinda stupid, but whatever.
+            convert_photo_file_type(f"{file_path_without_extension}.png", output_type)
+    else:
+        image = Image.open(file_path)
+        image.save(f"{file_path_without_extension}.{output_type}", format=output_type)
+
+    print(f"  ⮡ Converted to file type {output_type}.") # output, not debugging
+
+    if USER_SETTINGS["photos"]["type_conversion"]["enable_deletion_of_pre_converted_files"]:
+        os.remove(file_path)
+        print(f"    ⮡ Deleted unconverted photo of file type {extension}.")# output, not debugging
+    else:
+        print(f"    ⮡ Warning: unable to delete unconverted photo, as that behavior is disabled.")# output, not debugging
+
 def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, found_any_photos_in_this_directory: bool=False) -> None | tuple[bool, bool]:
     """Goes through the process of checking and moving one photo from the directories"""
+    full_photo_path: str = f"{directory}/{file}"
     if os.path.isdir(file) or not valid_photo_name_format(file):
         return
 
@@ -167,26 +205,28 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
         return
     
     month_number, month, _, year, _ = photo_name_pieces
-    month_number_with_zero = f"0{month_number}" if month_number < 10 else str(month_number)
-    new_photo_folder_path: str = f"{USER_SETTINGS["folder_paths"]["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
+    month_number_with_zero = add_leading_zero(month_number)
+    new_photo_folder_path: str = f"{USER_SETTINGS["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
 
     if not os.path.exists(new_photo_folder_path):
         if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
             print("  ⮡ Warning: unable to move this photo, as directory creation is disabled.") # output, not debugging
             return
         os.mkdir(new_photo_folder_path) 
-    shutil.move(f"{directory}/{file}", new_photo_folder_path)
+
+    shutil.move(full_photo_path, new_photo_folder_path)
+    convert_photo_file_type(f"{new_photo_folder_path}{file}")
     
     return (found_any_photos, found_any_photos_in_this_directory)
 
 def move_photos_from_photo_locations() -> None:
     """Finds photos with valid names in the downloads folder and moves them to the corresponding location."""
 
-    if not USER_SETTINGS["other"]["enable_photo_transfer"]:
+    if not USER_SETTINGS["photos"]["enable_photo_transfer"]:
         return
     
     photo_directory_files: dict[str, list[str]] = {}
-    for photo_directory in USER_SETTINGS["folder_paths"]["photo_locations"]:
+    for photo_directory in USER_SETTINGS["photos"]["photo_locations"]:
         photo_directory_files[photo_directory] = os.listdir(photo_directory)
 
     found_any_photos: bool = False
@@ -321,7 +361,7 @@ def create_all_recent_missing_entries() -> None:
         write_entry(entry, entry_date)
 
 def load_settings() -> None:
-    global USER_SETTINGS
+    global USER_SETTINGS, debug
     with open("./Other/AutomationCode/settings_to_use.txt", "r", encoding="UTF-8") as settings_to_use_file:
         settings_file_name: str = settings_to_use_file.readline().strip()
     if not settings_file_name.endswith(".json"):
@@ -338,6 +378,9 @@ if __name__ == "__main__":
         create_all_recent_missing_entries()
     except FileNotFoundError as error:
         print(f"A file is missing. Double check the paths in settings and settings_to_use.txt file and make sure settings_to_use.txt exists. The full error is:\n{error}") # output, not debugging
+        traceback.print_tb(error.__traceback__)
+    except KeyError as error:
+        print("Something was missing in a dictionary. Double check the README to make sure you have every setting in your settings file set. The full error is:\n{error}") # output, not debugging
         traceback.print_tb(error.__traceback__)
     except Exception as error:
         print(f"There's been a miscellaneous error:\n{error}") # output, not debugging

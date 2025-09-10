@@ -1,10 +1,5 @@
 {
-    "folder_paths": {
-        "photo_locations": [
-            "/home/jayman146/Downloads"
-        ],
-        "journal_root": "/home/jayman146/Jeremy/Journals"
-    },
+    "journal_root": "/home/jayman146/Jeremy/Journals",
     "journal_format": {
         "requires_programming": {
             "matching_entries": {
@@ -40,13 +35,26 @@
         },
         "move_direction": "backward"
     },
+    "photos": {
+        "enable_photo_transfer": true,
+        "photo_locations": [
+            "/home/jayman146/Downloads"
+        ],
+        "type_conversion": {
+            "enabled": true,
+            "enable_deletion_of_pre_converted_files": true,
+            "conversions": {
+                "heic": "png",
+                "jpg": "png"
+            }
+        }
+    },
     "other": {
         "earliest_journal": {
             "day": 18,
             "month": 3,
             "year": 2021
         },
-        "enable_photo_transfer": true,
         "enable_writing_to_file": true,
         "enable_new_directory_and_file_creation": true
     }
