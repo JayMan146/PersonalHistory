@@ -17,7 +17,7 @@ def add_leading_zero(num: int) -> str:
     return f"0{num}" if num < 10 else str(num)
 
 def convert_to_month(month_date: datetime.date) -> tuple[str, str]:
-    """Converts `month_date` into a tuple with the month name and it's number (1 - 12)"""
+    """Converts `month_date` into a tuple with the month name and the numbered month (the month with it's number, 1-12). eg. ("july", "07 july")"""
     month_number: str = add_leading_zero(month_date.month)
     month_name: str = MONTHS[month_date.month - 1]
     numbered_month: str = f"{month_number} {month_name}"
@@ -84,9 +84,9 @@ def get_entries_matching_year(match_date: datetime.date) -> list[str]:
 
 def get_photo_by_date(photo_date: datetime.date) -> str:
     """Returns the path to photos for `photo date`, omitting the photo number. This file may or may not exist, once the photo number is added. It only returns a format, rather than checking for an actual photo with that date. `get_photo_paths_by_date` returns a real path, and utilizes this function to do that."""
-    _, numbered_month = convert_to_month(photo_date)
-    day_additional_zero: str = "0" if photo_date.day < 10 else ""
-    photo_path: str = f"{USER_SETTINGS["journal_root"]}/{photo_date.year}/photos/{numbered_month} {photo_date.year}/{numbered_month} {day_additional_zero}{photo_date.day} {photo_date.year} "
+    month, numbered_month = convert_to_month(photo_date)
+    photo_day_string: str = add_leading_zero(photo_date.day)
+    photo_path: str = f"./photos/{numbered_month} {photo_date.year}/{photo_day_string} <photo_number> {month} {photo_date.year}"
     return photo_path
 
 def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
@@ -94,13 +94,16 @@ def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
     entry_photo_path: str = get_photo_by_date(photo_date)
     photo_paths: list[str] = []
     for photo_number in range(0, 100):
-        additional_zero: str = "0" if photo_number < 10 else ""
-        photo_number_string: str = f"{additional_zero}{photo_number}"
-        file_path: list = glob.glob(f"{entry_photo_path}{photo_number_string}.*")
+        photo_number_string: str = add_leading_zero(photo_number)
+        photo_path_with_photo_number: str = entry_photo_path.replace("<photo_number>", photo_number_string)
+        full_path: str = photo_path_with_photo_number.replace("./", f"{USER_SETTINGS["journal_root"]}/{photo_date.year}/")
+        file_path: list = glob.glob(f"{full_path}.*")
         if not file_path:
             continue
-        path_to_photo: str = file_path[0].replace(f"{USER_SETTINGS["journal_root"]}/{photo_date.year}", ".").replace(" ", "%20")
-        photo_paths.append(f"![]({path_to_photo})")
+        file_extension: str = file_path[0].split(".")[-1] # dissects the glob output and gives the file extension of the first (and hopefully only) result
+        markdown_version_path_to_photo: str = f"{photo_path_with_photo_number}.{file_extension}" \
+            .replace(" ", "%20") # gotta replace that for md to like it, idk why
+        photo_paths.append(f"![]({markdown_version_path_to_photo})")
     
     return photo_paths
 
@@ -138,20 +141,22 @@ def get_entry_string(entry_date: datetime.date, matching_entries: list[str], pho
 
     return entry_string
 
-def get_photo_name_pieces(photo_name: str) -> tuple[int, str, int, int, int] | None:
-    """Returns the pieces of `photo_name` in the order of month number, month, day, year, and photo number. Returns `None` if invalid."""
-    segments: list[str] = photo_name.split(".")[0].split() #TODO: check file type and covert/disallow
-    correct_length: bool = len(segments) == 5
-    if not correct_length:
-        return
+def get_photo_name_pieces(photo_name: str) -> tuple[int, int, str, int] | None:
+    """Returns the pieces of `photo_name` in the order of day, photo number, month, year. Returns `None` if invalid."""
+    segments: list[str] = photo_name.split(".")[0].split()
+    is_correct_length: bool = len(segments) == 4
+    if not is_correct_length:
+        return None
     
-    month_number: int = int(segments[0])
-    month: str = segments[1]
-    day: int = int(segments[2])
-    year: int = int(segments[3])
-    photo_number: int = int(segments[4])
+    try:
+        day: int = int(segments[0])
+        photo_number: int = int(segments[1])
+        month: str = segments[2]
+        year: int = int(segments[3])
+    except ValueError:
+        return None # invalid if can't convert to the type
 
-    return (month_number, month, day, year, photo_number)
+    return (day, photo_number, month, year)
 
 def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> None:
     """Converts `file_path` (with extension included) to the file type of what is specified in the settings file. `_output_type` is an internal argument."""
@@ -204,8 +209,8 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
     if photo_name_pieces is None: # probably will never be executed because of the validity check, but type safety and just in case yatta yatta
         return
     
-    month_number, month, _, year, _ = photo_name_pieces
-    month_number_with_zero = add_leading_zero(month_number)
+    _, _, month, year = photo_name_pieces
+    month_number_with_zero = add_leading_zero(MONTHS.index(month) + 1)
     new_photo_folder_path: str = f"{USER_SETTINGS["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
 
     if not os.path.exists(new_photo_folder_path):
@@ -244,13 +249,12 @@ def valid_photo_name_format(photo_name: str) -> bool:
     photo_name_pieces = get_photo_name_pieces(photo_name)
     if photo_name_pieces is None:
         return False
-    month_number, month, day, year, photo_number = photo_name_pieces
-    valid_month_number: bool = 1 <= month_number <= 12
-    valid_month: bool = month in MONTHS
+    day, photo_number, month, year = photo_name_pieces
     valid_day: bool = 1 <= day <= 31
-    valid_year: bool = 2020 <= year <= 2120
     valid_photo_number: bool = 0 <= photo_number <= 99
-    return valid_month_number and valid_month and valid_day and valid_year and valid_photo_number    
+    valid_month: bool = month in MONTHS
+    valid_year: bool = 2020 <= year <= 2200
+    return valid_day and valid_photo_number and valid_month and valid_year
 
 def generate_entry(entry_date: datetime.date) -> str | None:
     """Generates the entry for `entry_date`."""
