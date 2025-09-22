@@ -1,6 +1,6 @@
 {
     "Confused?": "Read the README file. In fact, you should read that before touching any of this.",
-    "journal_root": "",
+    "journal_root": "path/to/a/directory",
     "journal_format": {
         "requires_programming": {
             "matching_entries": {
@@ -38,7 +38,7 @@
     "photos": {
         "enable_photo_transfer": false,
         "photo_locations": [
-            ""
+            "path/to/a/directory"
         ],
         "type_conversion": {
             "enabled": false,
