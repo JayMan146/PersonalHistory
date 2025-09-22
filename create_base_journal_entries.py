@@ -2,6 +2,7 @@ import datetime
 from convert_to_header_link import convert_to_header_link
 import glob
 import os
+import zipfile
 import shutil
 import json
 import typing
@@ -158,6 +159,25 @@ def get_photo_name_pieces(photo_name: str) -> tuple[int, int, str, int] | None:
 
     return (day, photo_number, month, year)
 
+def extract_google_zip(file_path: str) -> None:
+    *directories, file = file_path.split("/")
+    directory: str = "/".join(directories)
+    
+    output_directory: str = directory + "/temp"
+    with zipfile.ZipFile(file_path + ".zip", "r") as google_photos_zip:
+        google_photos_zip.extractall(output_directory)
+    
+    heic_files: list[str] = glob.glob(output_directory + "/*.heic")
+    if heic_files:
+        heic_file: str = heic_files[0]
+    else:
+        return
+
+    shutil.move(heic_file, file_path + ".heic")
+    shutil.rmtree(output_directory)
+
+    print(f"    ⮡ Extracted .heic photo from .zip file.") # output, not debugging
+
 def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> None:
     """Converts `file_path` (with extension included) to the file type of what is specified in the settings file. `_output_type` is an internal argument."""
     if not USER_SETTINGS["photos"]["type_conversion"]["enabled"]: return
@@ -166,17 +186,24 @@ def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> No
     file_path_without_extension = ".".join(file_path_split_by_periods[:-1])
     extension: str = file_path_split_by_periods[-1]
 
+    if extension == "zip":
+        if USER_SETTINGS["photos"]["google_photos_extraction_enabled"]:
+            extract_google_zip(file_path_without_extension)
+            convert_photo_file_type(file_path_without_extension + ".heic")
+        else:
+            return
+
     if _output_type is not None:
         output_type: str = _output_type
     else:
         output_type: str = USER_SETTINGS["photos"]["type_conversion"]["conversions"].get(extension)
         if output_type is None: return
-
+    
     if extension == "heic":
         heic_image = HEIC2PNG(file_path)
         heic_image.save()
         if output_type != "png":
-            #yeah, i know this is kinda stupid, but whatever.
+            #yeah, i know this is kinda stupid, but whatever. Also, I don't even know if this works.
             convert_photo_file_type(f"{file_path_without_extension}.png", output_type)
     else:
         image = Image.open(file_path)

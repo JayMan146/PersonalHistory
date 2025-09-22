@@ -47,7 +47,8 @@
                 "heic": "png",
                 "jpg": "png"
             }
-        }
+        },
+        "google_photos_extraction_enabled": true
     },
     "other": {
         "earliest_journal": {
