@@ -176,7 +176,7 @@ def extract_google_zip(file_path: str) -> None:
     shutil.move(heic_file, file_path + ".heic")
     shutil.rmtree(output_directory)
 
-    print(f"    ⮡ Extracted .heic photo from .zip file.") # output, not debugging
+    print(f"  ⮡ Extracted .heic photo from .zip file.") # output, not debugging
 
 def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> None:
     """Converts `file_path` (with extension included) to the file type of what is specified in the settings file. `_output_type` is an internal argument."""
