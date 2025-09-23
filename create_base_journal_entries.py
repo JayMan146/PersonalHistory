@@ -176,7 +176,24 @@ def extract_google_zip(file_path: str) -> None:
     shutil.move(heic_file, file_path + ".heic")
     shutil.rmtree(output_directory)
 
-    print(f"  ⮡ Extracted .heic photo from .zip file.") # output, not debugging
+    print(f"  ⮡ Extracted heic photo from zip archive.") # output, not debugging
+
+def delete_unconverted_photo(file_path: str, original_extension: str) -> None:
+    """Removes an unconverted photo at `file_path` with the extension of `original_extension`, following rules in USER_SETTINGS."""
+    if USER_SETTINGS["photos"]["type_conversion"]["enable_deletion_of_pre_converted_files"]:
+        os.remove(file_path)
+        print(f"    ⮡ Deleted unconverted photo of file type {original_extension}.")# output, not debugging
+    else:
+        print(f"    ⮡ Warning: unable to delete unconverted photo, as that behavior is disabled.")# output, not debugging
+
+def handle_zip_photo(file_path: str, file_path_without_extension: str):
+    """Handles the case of a photo being converted from a zip file"""
+    if not USER_SETTINGS["photos"]["google_photos_extraction_enabled"]: return
+
+    extract_google_zip(file_path_without_extension)
+    convert_photo_file_type(file_path_without_extension + ".heic")
+    delete_unconverted_photo(file_path, "zip")
+
 
 def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> None:
     """Converts `file_path` (with extension included) to the file type of what is specified in the settings file. `_output_type` is an internal argument."""
@@ -187,11 +204,8 @@ def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> No
     extension: str = file_path_split_by_periods[-1]
 
     if extension == "zip":
-        if USER_SETTINGS["photos"]["google_photos_extraction_enabled"]:
-            extract_google_zip(file_path_without_extension)
-            convert_photo_file_type(file_path_without_extension + ".heic")
-        else:
-            return
+        handle_zip_photo(file_path, file_path_without_extension)
+        return
 
     if _output_type is not None:
         output_type: str = _output_type
@@ -211,11 +225,7 @@ def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> No
 
     print(f"  ⮡ Converted to file type {output_type}.") # output, not debugging
 
-    if USER_SETTINGS["photos"]["type_conversion"]["enable_deletion_of_pre_converted_files"]:
-        os.remove(file_path)
-        print(f"    ⮡ Deleted unconverted photo of file type {extension}.")# output, not debugging
-    else:
-        print(f"    ⮡ Warning: unable to delete unconverted photo, as that behavior is disabled.")# output, not debugging
+    delete_unconverted_photo(file_path, extension)
 
 def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, found_any_photos_in_this_directory: bool=False) -> None | tuple[bool, bool]:
     """Goes through the process of checking and moving one photo from the directories"""
