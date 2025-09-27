@@ -15,6 +15,7 @@ MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "ju
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
 def add_leading_zero(num: int) -> str:
+    """Adds a leading zero to `num`. For example: 7 -> 07, 3 -> 03, 18 -> 18"""
     return f"0{num}" if num < 10 else str(num)
 
 def convert_to_month(month_date: datetime.date) -> tuple[str, str]:
@@ -28,7 +29,7 @@ def convert_to_long_date(short_date: datetime.date) -> str:
     """Converts `short_date` into a long date format like Monday 03 February 2025"""
     weekday: str = DAYS_OF_THE_WEEK[short_date.weekday()].title()
     day_with_leading_zero: str = add_leading_zero(short_date.day)
-    month: str = MONTHS[short_date.month - 1].title()
+    month: str = MONTHS[short_date.month - 1].title() # subtract one since month number and indexes are separate
 
     return f"{weekday} {day_with_leading_zero} {month} {short_date.year}"
 
@@ -43,7 +44,7 @@ def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]
 # def get_ordinal_number_ending(number: str | int) -> str:
 #     number = str(number)
 #
-#     if len(number) > 1 and number.startswith("1"):
+#     if len(number) > 1 and number.startswith("1"): # checks if it is a number 10-19, as those all end with th, no matter what the end with
 #         return "th"
 #     match number[-1]:
 #         case "1":
@@ -57,94 +58,113 @@ def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]
 
 def get_entry(entry_date: datetime.date) -> str | None:
     """Searches for and returns the journal entry of `entry_date`."""
-    journal_path: str = convert_date_to_journal_path(entry_date)[1]
-    if not os.path.exists(journal_path):
+    journal_markdown_file_path: str = convert_date_to_journal_path(entry_date)[1]
+    if not os.path.exists(journal_markdown_file_path):
         return None
-    long_date: str = convert_to_long_date(entry_date) if entry_date.year > 2022 else f"{entry_date.month}/{entry_date.day}/{entry_date.year}"
     
-    with open(journal_path, "r", encoding="UTF-8") as journal_file:
+    long_date: str = convert_to_long_date(entry_date)
+    with open(journal_markdown_file_path, "r", encoding="UTF-8") as journal_file:
         journal_lines: list[str] = journal_file.readlines()
 
     for line in journal_lines: 
-        if not line.startswith(f"# {long_date}"):
+        if not line.startswith(f"# {long_date}"): # check if it is the specific entry in the file
             continue
         header: str = convert_to_header_link(line)
-        path_with_header: str = f"{journal_path}{header}"
+        path_with_header: str = f"{journal_markdown_file_path}{header}" # adds the header to the file path (as it is in .md format)
         fixed_path = path_with_header.replace(USER_SETTINGS["journal_root"], "..").replace(" ", "%20") # make it a local path and with %20 instead of spaces
         return fixed_path
-    return None
+    return None # technically, it will do this since it won't return anything if it doesn't find it, but i prefer explicit None returns.
 
 def get_entries_matching_year(match_date: datetime.date) -> list[str]:
-    """Returns journal entries matching the year of `match_date`."""
+    """Returns all journal entries matching the year of `match_date`, besides the original."""
     matching_entries: list[str] = []
-    for previous_year in range(match_date.year - 1, 2020, -1):
+    for previous_year in range(match_date.year - 1, USER_SETTINGS["other"]["earliest_journal"]["year"] - 1, -1): # loop over previous years until earliest journal, backwards
         previous_entry_header_path: str | None = get_entry(match_date.replace(year=previous_year))
         if previous_entry_header_path is not None:
             matching_entries.append(f"[{previous_year}]({previous_entry_header_path})")
     return matching_entries
 
-def get_photo_by_date(photo_date: datetime.date) -> str:
-    """Returns the path to photos for `photo date`, omitting the photo number. This file may or may not exist, once the photo number is added. It only returns a format, rather than checking for an actual photo with that date. `get_photo_paths_by_date` returns a real path, and utilizes this function to do that."""
+def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
+    """Returns the path to all photos with the date `photo_date`."""
+
     month, numbered_month = convert_to_month(photo_date)
     photo_day_string: str = add_leading_zero(photo_date.day)
-    photo_path: str = f"./photos/{numbered_month} {photo_date.year}/{photo_day_string} <photo_number> {month} {photo_date.year}"
-    return photo_path
+    entry_photo_path: str = f"./photos/{numbered_month} {photo_date.year}/{photo_day_string} <photo_number> {month} {photo_date.year}" # photos with date, but not with photo number. Once added, the photo may not exist
 
-def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
-    """Returns the path to all photos with the date `photo_date`. As opposed to `get_photo_by_date`, these are real and valid photos."""
-    entry_photo_path: str = get_photo_by_date(photo_date)
     photo_paths: list[str] = []
     for photo_number in range(0, 100):
         photo_number_string: str = add_leading_zero(photo_number)
         photo_path_with_photo_number: str = entry_photo_path.replace("<photo_number>", photo_number_string)
         full_path: str = photo_path_with_photo_number.replace("./", f"{USER_SETTINGS["journal_root"]}/{photo_date.year}/")
         file_path: list = glob.glob(f"{full_path}.*")
-        if not file_path:
+        if not file_path: # doesn't exist
             continue
         file_extension: str = file_path[0].split(".")[-1] # dissects the glob output and gives the file extension of the first (and hopefully only) result
-        markdown_version_path_to_photo: str = f"{photo_path_with_photo_number}.{file_extension}" \
-            .replace(" ", "%20") # gotta replace that for md to like it, idk why
-        photo_paths.append(f"![]({markdown_version_path_to_photo})")
+        markdown_version_path_to_photo: str = f"{photo_path_with_photo_number}.{file_extension}".replace(" ", "%20") # gotta replace that for md to like it, idk why
+        photo_paths.append(f"![]({markdown_version_path_to_photo})") # the ![](<photo path>) is the markdown format for photos
     
     return photo_paths
 
 def generate_custom_journal_formatting() -> str:
     """Generates a list of the custom journal formatting settings to be added to an entry."""
     custom_journal_formatting_settings_path = USER_SETTINGS["journal_format"]["custom"]
-    return f"{custom_journal_formatting_settings_path["preliminary_text"]}{custom_journal_formatting_settings_path["separator"].join(custom_journal_formatting_settings_path["items"])}{custom_journal_formatting_settings_path["ending_text"]}"
+
+    preliminary_text: str = custom_journal_formatting_settings_path["preliminary_text"]
+    ending_text: str = custom_journal_formatting_settings_path["ending_text"]
+
+    item_separator: str = custom_journal_formatting_settings_path["separator"]
+    items: list[str] = custom_journal_formatting_settings_path["items"]
+    joined_items = item_separator.join(items)
+
+    return preliminary_text + joined_items + ending_text
 
 def generate_requires_programming_journal_formatting(key: str, item_list: list[str]) -> str | None:
     """Generates a line of the requires_programming section of the settings based on `key` and `item_list` (items to be joined together, e.g. `photo_paths`)"""
     requires_programming_settings_path: dict[str, typing.Any] = USER_SETTINGS["journal_format"]["requires_programming"][key]
-    if not (requires_programming_settings_path["enabled"] and item_list):
-        return
-    entry_line: str = f"{requires_programming_settings_path["preliminary_text"]}{requires_programming_settings_path["separator"].join(item_list)}{requires_programming_settings_path["ending_text"]}"
-    return entry_line
 
-def get_entry_string(entry_date: datetime.date, matching_entries: list[str], photo_paths: list[str]) -> str:
+    is_disabled: bool = not requires_programming_settings_path["enabled"]
+    is_empty: bool = not bool(item_list)
+    if is_disabled or is_empty:
+        return
+    
+    preliminary_text: str = requires_programming_settings_path["preliminary_text"]
+    ending_text: str = requires_programming_settings_path["ending_text"]
+
+    item_separator: str = requires_programming_settings_path["separator"]
+    joined_items = item_separator.join(item_list)
+
+    return preliminary_text + joined_items + ending_text
+
+def get_entry_string(entry_date: datetime.date, matching_entries: list[str], photo_paths: list[str]) -> str: # not really sure why this is separate from generate_entry but i'm not gonna look into it yet. TODO
     """Creates a string of a journal entry with the given parameters."""
 
-    entry_string: str = f"# {convert_to_long_date(entry_date)}: "
-    if USER_SETTINGS["journal_format"]["custom_placement"].lower() == "before":
-        entry_string += generate_custom_journal_formatting()
+    entry_string: str = f"# {convert_to_long_date(entry_date)}: " # header
 
+    if USER_SETTINGS["journal_format"]["custom_placement"].lower() == "before": # place custom stuff first if that's in settinsg
+        entry_string += generate_custom_journal_formatting() # repeated code, shut up.
+
+    # add the generated matching entries lines if valid    
     matching_entries_line: str | None = generate_requires_programming_journal_formatting("matching_entries", matching_entries)
     if matching_entries_line is not None:
         entry_string += matching_entries_line
+    
+    # add the generated photos lines if valid
     photos_line: str | None = generate_requires_programming_journal_formatting("photos", photo_paths)
     if photos_line is not None:
         entry_string += photos_line
     
-    if USER_SETTINGS["journal_format"]["custom_placement"].lower() != "before":
-        entry_string += generate_custom_journal_formatting()
+    if USER_SETTINGS["journal_format"]["custom_placement"].lower() != "before": # place custom stuff after if that's in settinsg
+        entry_string += generate_custom_journal_formatting() # repeated code, shut up.
 
-    entry_string += "\n" * USER_SETTINGS["journal_format"]["writing_lines"]
+    entry_string += "\n" * USER_SETTINGS["journal_format"]["writing_lines"] # add new lines for writing based on settings | ahh, python string multiplication
 
     return entry_string
 
 def get_photo_name_pieces(photo_name: str) -> tuple[int, int, str, int] | None:
     """Returns the pieces of `photo_name` in the order of day, photo number, month, year. Returns `None` if invalid."""
-    segments: list[str] = photo_name.split(".")[0].split()
+
+    segments: list[str] = photo_name.split(".")[0].split() # get name, without extension, then split by space
+    
     is_correct_length: bool = len(segments) == 4
     if not is_correct_length:
         return None
@@ -157,34 +177,35 @@ def get_photo_name_pieces(photo_name: str) -> tuple[int, int, str, int] | None:
     except ValueError:
         return None # invalid if can't convert to the type
 
-    return (day, photo_number, month, year)
+    return (day, photo_number, month, year) # ordered by appearance
 
 def extract_google_zip(file_path: str) -> None:
-    *directories, file = file_path.split("/")
-    directory: str = "/".join(directories)
+    *directories, _ = file_path.split("/")
+    directory: str = "/".join(directories) # full directory to photo
     
-    output_directory: str = directory + "/temp"
+    output_directory: str = directory + "/temp" # temporary place to extract .zip file to
     with zipfile.ZipFile(file_path + ".zip", "r") as google_photos_zip:
-        google_photos_zip.extractall(output_directory)
+        google_photos_zip.extractall(output_directory) # extract photos
     
-    heic_files: list[str] = glob.glob(output_directory + "/*.heic")
+    heic_files: list[str] = glob.glob(output_directory + "/*.heic") # get all heic files in directory | TODO: make this customizable
     if heic_files:
         heic_file: str = heic_files[0]
     else:
         return
 
     shutil.move(heic_file, file_path + ".heic")
-    shutil.rmtree(output_directory)
+    shutil.rmtree(output_directory) # remove temporary directory and all remaining files
 
     print(f"  ⮡ Extracted heic photo from zip archive.") # output, not debugging
 
 def delete_unconverted_photo(file_path: str, original_extension: str) -> None:
     """Removes an unconverted photo at `file_path` with the extension of `original_extension`, following rules in USER_SETTINGS."""
+
     if USER_SETTINGS["photos"]["type_conversion"]["enable_deletion_of_pre_converted_files"]:
         os.remove(file_path)
-        print(f"    ⮡ Deleted unconverted photo of file type {original_extension}.")# output, not debugging
+        print(f"    ⮡ Deleted unconverted photo of file type {original_extension}.") # output, not debugging
     else:
-        print(f"    ⮡ Warning: unable to delete unconverted photo, as that behavior is disabled.")# output, not debugging
+        print(f"    ⮡ Warning: unable to delete unconverted photo, as that behavior is disabled.") # output, not debugging
 
 def handle_zip_photo(file_path: str, file_path_without_extension: str):
     """Handles the case of a photo being converted from a zip file"""
@@ -193,7 +214,6 @@ def handle_zip_photo(file_path: str, file_path_without_extension: str):
     extract_google_zip(file_path_without_extension)
     convert_photo_file_type(file_path_without_extension + ".heic")
     delete_unconverted_photo(file_path, "zip")
-
 
 def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> None:
     """Converts `file_path` (with extension included) to the file type of what is specified in the settings file. `_output_type` is an internal argument."""
@@ -207,18 +227,18 @@ def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> No
         handle_zip_photo(file_path, file_path_without_extension)
         return
 
-    if _output_type is not None:
+    if _output_type is not None: # interal forced output_type for .heic conversion, see other comment
         output_type: str = _output_type
     else:
-        output_type: str = USER_SETTINGS["photos"]["type_conversion"]["conversions"].get(extension)
-        if output_type is None: return
+        output_type: str = USER_SETTINGS["photos"]["type_conversion"]["conversions"].get(extension) # other wise, use settings mapping
+        if output_type is None: return # don't convert without mapping
     
+    # open and save as new type
     if extension == "heic":
-        heic_image = HEIC2PNG(file_path)
+        heic_image = HEIC2PNG(file_path) # this function takes FOREVER... i really need to switch to pillowheif or something
         heic_image.save()
         if output_type != "png":
-            #yeah, i know this is kinda stupid, but whatever. Also, I don't even know if this works.
-            convert_photo_file_type(f"{file_path_without_extension}.png", output_type)
+            convert_photo_file_type(f"{file_path_without_extension}.png", output_type) # yeah, i know this is kinda stupid, but whatever. Also, I don't even know if this works. Haven't tested.
     else:
         image = Image.open(file_path)
         image.save(f"{file_path_without_extension}.{output_type}", format=output_type)
@@ -227,96 +247,111 @@ def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> No
 
     delete_unconverted_photo(file_path, extension)
 
-def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, found_any_photos_in_this_directory: bool=False) -> None | tuple[bool, bool]:
-    """Goes through the process of checking and moving one photo from the directories"""
-    full_photo_path: str = f"{directory}/{file}"
-    if os.path.isdir(file) or not valid_photo_name_format(file):
-        return
-
-    if not found_any_photos:    
-        found_any_photos = True
-
-    if not found_any_photos_in_this_directory:
-        found_any_photos_in_this_directory = True
-        print(f"Moving photos from {directory}:") # output, not debugging
-
-    print(f"⮡ {file}") # output, not debugging
-
-    photo_name_pieces = get_photo_name_pieces(file)
+def get_photo_folder(photo_name: str) -> str | None:
+    photo_name_pieces = get_photo_name_pieces(photo_name)
     if photo_name_pieces is None: # probably will never be executed because of the validity check, but type safety and just in case yatta yatta
         return
     
     _, _, month, year = photo_name_pieces
     month_number_with_zero = add_leading_zero(MONTHS.index(month) + 1)
-    new_photo_folder_path: str = f"{USER_SETTINGS["journal_root"]}/{year}/photos/{month_number_with_zero} {month} {year}/"
+    photo_folder_name: str = f"{month_number_with_zero} {month} {year}"
+    new_photo_folder_path: str = f"{USER_SETTINGS["journal_root"]}/{year}/photos/{photo_folder_name}/"
 
-    if not os.path.exists(new_photo_folder_path):
+    if not os.path.exists(new_photo_folder_path): # create the photo folder if it doesn't exist
         if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
             print("  ⮡ Warning: unable to move this photo, as directory creation is disabled.") # output, not debugging
-            return
+            return None
         os.mkdir(new_photo_folder_path) 
 
+    return new_photo_folder_path
+
+def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, found_any_photos_in_this_directory: bool=False) -> None | tuple[bool, bool]:
+    """Goes through the process of checking and moving one photo from the directories"""
+    full_photo_path: str = f"{directory}/{file}"
+
+    not_a_file: bool = os.path.isdir(file)
+    invalid_photo_name_format: bool = not valid_photo_name_format(file)
+    if not_a_file or invalid_photo_name_format:
+        return
+
+    found_any_photos = True
+
+    if not found_any_photos_in_this_directory:
+        print(f"Moving photos from {directory}:") # output, not debugging
+    found_any_photos_in_this_directory = True
+
+    print(f"⮡ {file}") # output, not debugging
+ 
+    new_photo_folder_path: str | None = get_photo_folder(file)
+    if new_photo_folder_path is None:
+        return None
+    
     shutil.move(full_photo_path, new_photo_folder_path)
     convert_photo_file_type(f"{new_photo_folder_path}{file}")
     
-    return (found_any_photos, found_any_photos_in_this_directory)
+    return (found_any_photos, found_any_photos_in_this_directory) # keep this through iterations
 
 def move_photos_from_photo_locations() -> None:
     """Finds photos with valid names in the downloads folder and moves them to the corresponding location."""
 
-    if not USER_SETTINGS["photos"]["enable_photo_transfer"]:
+    photo_moving_disabled: bool = not USER_SETTINGS["photos"]["enable_photo_transfer"]
+    if photo_moving_disabled:
         return
     
+    # get all directories and their associated files within
     photo_directory_files: dict[str, list[str]] = {}
     for photo_directory in USER_SETTINGS["photos"]["photo_locations"]:
         photo_directory_files[photo_directory] = os.listdir(photo_directory)
 
+    # handle each photo in each directory
     found_any_photos: bool = False
     for directory, files in photo_directory_files.items():
         found_photos_in_this_directory: bool = False
         for file in files:
             photo_found_status = handle_photo_in_location(directory, file, found_any_photos, found_photos_in_this_directory)
-            if isinstance(photo_found_status, tuple):
+            if isinstance(photo_found_status, tuple): # if bools were returned, updated them
                 found_any_photos, found_photos_in_this_directory = photo_found_status
     if found_any_photos:
-        print("") # output, not debugging
+        print("") # new line to separate output elements | yes, you must pass an empty string to print a newline
 
 def valid_photo_name_format(photo_name: str) -> bool:
     """Checks if `photo_name` is a valid photo name."""
     photo_name_pieces = get_photo_name_pieces(photo_name)
     if photo_name_pieces is None:
         return False
+    
     day, photo_number, month, year = photo_name_pieces
     valid_day: bool = 1 <= day <= 31
     valid_photo_number: bool = 0 <= photo_number <= 99
     valid_month: bool = month in MONTHS
     valid_year: bool = 2020 <= year <= 2200
-    return valid_day and valid_photo_number and valid_month and valid_year
 
-def generate_entry(entry_date: datetime.date) -> str | None:
+    return (valid_day and valid_photo_number and valid_month and valid_year)
+
+def generate_entry(entry_date: datetime.date) -> str | None: # not really sure why this is separate from get_entry_string but i'm not gonna look into it yet. TODO
     """Generates the entry for `entry_date`."""
 
-    matching_entries: list[str]
+    matching_entries: list[str] = []
     if USER_SETTINGS["journal_format"]["requires_programming"]["matching_entries"]:
         matching_entries = get_entries_matching_year(entry_date)
-    else:
-        matching_entries = []
 
-    photo_paths: list[str]
+    photo_paths: list[str] = []
     if USER_SETTINGS["journal_format"]["requires_programming"]["photos"]:
         photo_paths = get_photo_paths_by_date(entry_date)
-    else:
-        photo_paths = []
 
     new_entry: str = get_entry_string(entry_date, matching_entries, photo_paths)
     return new_entry
 
 def determine_preliminary_new_lines(file_lines: list[str]) -> int:
     """Determines how many preliminary new lines are needed for a new entry based on `file_lines`."""
+
     final_line: str = file_lines[-1]
+    final_line_is_newline: bool = final_line == "\n"
+    final_character_is_newline: bool = final_line[-1] == "\n"
+
     preliminary_new_lines: int = 0
-    if final_line != "\n":
-        if final_line[-1] == "\n":
+    if not final_line_is_newline:
+        if final_character_is_newline:
             preliminary_new_lines = 1
         else:
             preliminary_new_lines = 2
@@ -343,7 +378,8 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
     number_of_preliminary_new_lines: int = 0
     with open(markdown_file_path, "r+", encoding="UTF-8") as journal_file_to_read:
         journal_lines = journal_file_to_read.readlines()
-    if len(journal_lines) >= 2:
+
+    if len(journal_lines) >= 2: # if is a new file, we won't need to check for newlines. this isn't checked by the above if statement, as the file could be empty without being generated by the code.
         number_of_preliminary_new_lines = determine_preliminary_new_lines(journal_lines)
             
     preliminary_new_lines: str = "\n" * number_of_preliminary_new_lines
@@ -353,13 +389,10 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
             journal_file_to_append.write(entry)
         else:
             print("Attempted to write to file, but that behavior is disabled.") # output, not debugging
-    print(entry, end="")
+    print(entry, end="") # show what was written to file | output, not debugging
 
-def find_all_recent_missing_entries() -> list[datetime.date]:
-    """Finds missing entries in the last 100 days, working backwards from today and stopping once it has found a valid entry."""
-    starting_date: datetime.date = datetime.date.today()
+def modify_date_by_crossover(date: datetime.date) -> datetime.timedelta:
     current_time: datetime.datetime = datetime.datetime.today()
-
     crossover_time_json_object: dict[str, int] = USER_SETTINGS["day_crossover"]["time"]
     crossover_time: datetime.datetime = datetime.datetime(
         current_time.year, current_time.month, current_time.day,
@@ -370,17 +403,26 @@ def find_all_recent_missing_entries() -> list[datetime.date]:
     day_crossover_move_direction: str = USER_SETTINGS["day_crossover"]["move_direction"]
     if day_crossover_move_direction != "disable":
         if day_crossover_move_direction == "backward" and current_time < crossover_time:
-            starting_date -= datetime.timedelta(days=1)
+            return datetime.timedelta(days=-1)
         elif day_crossover_move_direction == "forward" and current_time > crossover_time:
-            starting_date += datetime.timedelta(days=1)
+            return datetime.timedelta(days=1)
+        
+    return datetime.timedelta()
 
-    earliest_journal: dict[str, int] = USER_SETTINGS["other"]["earliest_journal"]
-    earliest_journal_date: datetime.date = datetime.date(earliest_journal["year"], earliest_journal["month"], earliest_journal["day"])
+def find_all_recent_missing_entries() -> list[datetime.date]:
+    """Finds missing entries in the last 100 days, working backwards from today and stopping once it has found a valid entry."""
+    starting_date: datetime.date = datetime.date.today()
+    starting_date += modify_date_by_crossover(starting_date)
+
+    earliest_journal_json_object: dict[str, int] = USER_SETTINGS["other"]["earliest_journal"]
+    earliest_journal_date: datetime.date = datetime.date(earliest_journal_json_object["year"], earliest_journal_json_object["month"], earliest_journal_json_object["day"])
+
     current_date: datetime.date = starting_date
     recent_missing_entries: list[datetime.date] = []
-    for _ in range(100): # could be formatted as a while loop, though this allows a 100 day limit. also could be formatted to go between a date range, but that sounds annoying to do and this... works.
+    search_length: int = 100
+    for _ in range(search_length): # could be formatted as a while loop, though this allows a limit. also could be formatted to go between a date range, but that sounds annoying to do and this... works.
         current_entry: str | None = get_entry(current_date)
-        if current_entry or current_date < earliest_journal_date: # checking if the current entry exists only allows missing entries to be in a row, so it won't go like e.g. jan 24, jan 17, jan 25.
+        if current_entry or current_date < earliest_journal_date: # checking if the current entry exists only allows missing entries to be in a row, so it won't go like e.g. jan 24, jan 17, jan 25. though, i guess this doesn't allow for like "missing" a day... TODO
             break
         recent_missing_entries.append(current_date)
         current_date -= datetime.timedelta(days=1)
@@ -402,21 +444,23 @@ def create_all_recent_missing_entries() -> None:
         write_entry(entry, entry_date)
 
 def load_settings() -> None:
-    global USER_SETTINGS, debug
+    global USER_SETTINGS
     with open("./Other/AutomationCode/settings_to_use.txt", "r", encoding="UTF-8") as settings_to_use_file:
         settings_file_name: str = settings_to_use_file.readline().strip()
-    if not settings_file_name.endswith(".json"):
-        settings_file_name = f"{settings_file_name}.json"
+    if not settings_file_name.endswith(".json"): # add missing file extension
+        settings_file_name += ".json"
+
     with open(f"./Other/AutomationCode/{settings_file_name}", "r", encoding="UTF-8") as settings_file:
         USER_SETTINGS = json.load(settings_file)
-    if USER_SETTINGS.get("Confused?"):
+
+    if USER_SETTINGS.get("Confused?"): # don't want this floating around, as it isn't useful.
         del USER_SETTINGS["Confused?"]
 
-if __name__ == "__main__":
+def main() -> None:
     try:
-        load_settings()
-        move_photos_from_photo_locations()
-        create_all_recent_missing_entries()
+        load_settings() # this must happen first
+        move_photos_from_photo_locations() # then get the photos moved before making the entries
+        create_all_recent_missing_entries() # actually make 'em
     except FileNotFoundError as error:
         print(f"A file is missing. Double check the paths in settings and settings_to_use.txt file and make sure settings_to_use.txt exists. The full error is:\n{error}") # output, not debugging
         traceback.print_tb(error.__traceback__)
@@ -426,3 +470,6 @@ if __name__ == "__main__":
     except Exception as error:
         print(f"There's been a miscellaneous error:\n{error}") # output, not debugging
         traceback.print_tb(error.__traceback__)
+
+if __name__ == "__main__":
+    main()
