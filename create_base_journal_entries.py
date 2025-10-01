@@ -13,6 +13,7 @@ from heic2png import HEIC2PNG
 USER_SETTINGS: dict
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+SETTINGS_DIRECTORY_FROM_ROOT: str = "./Other/AutomationCode/" # if you want the settings to be in a different folder (still within the journal root directory, change this)
 
 def add_leading_zero(num: int) -> str:
     """Adds a leading zero to `num`. For example: 7 -> 07, 3 -> 03, 18 -> 18"""
@@ -445,12 +446,13 @@ def create_all_recent_missing_entries() -> None:
 
 def load_settings() -> None:
     global USER_SETTINGS
-    with open("./Other/AutomationCode/settings_to_use.txt", "r", encoding="UTF-8") as settings_to_use_file:
+
+    with open(SETTINGS_DIRECTORY_FROM_ROOT + "settings_to_use.txt", "r", encoding="UTF-8") as settings_to_use_file:
         settings_file_name: str = settings_to_use_file.readline().strip()
     if not settings_file_name.endswith(".json"): # add missing file extension
         settings_file_name += ".json"
 
-    with open(f"./Other/AutomationCode/{settings_file_name}", "r", encoding="UTF-8") as settings_file:
+    with open(SETTINGS_DIRECTORY_FROM_ROOT + settings_file_name, "r", encoding="UTF-8") as settings_file:
         USER_SETTINGS = json.load(settings_file)
 
     if USER_SETTINGS.get("Confused?"): # don't want this floating around, as it isn't useful.
