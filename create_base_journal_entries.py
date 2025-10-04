@@ -42,22 +42,6 @@ def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]
     markdown_file_path: str = f"{year_folder}/{numbered_month} {journal_date.year}.md"
     return (year_folder, markdown_file_path)
 
-# This function is unused, but I'd like to keep it around, so I'm leaving it commented out (to "save" resources (likely no noticeable difference, though)).
-# def get_ordinal_number_ending(number: str | int) -> str:
-#     number = str(number)
-#
-#     if len(number) > 1 and number.startswith("1"): # checks if it is a number 10-19, as those all end with th, no matter what the end with
-#         return "th"
-#     match number[-1]:
-#         case "1":
-#             return "st"
-#         case "2":
-#             return "nd"
-#         case "3":
-#             return "rd"
-#         case _:
-#             return "th"
-
 def get_entry(entry_date: datetime.date) -> str | None:
     """Searches for and returns the journal entry of `entry_date`."""
     journal_markdown_file_path: str = convert_date_to_journal_path(entry_date)[1]
