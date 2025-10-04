@@ -13,7 +13,7 @@ from pillow_heif import register_heif_opener
 USER_SETTINGS: dict
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-SETTINGS_DIRECTORY_FROM_ROOT: str = "./Other/AutomationCode/" # if you want the settings to be in a different folder (still within the journal root directory), change this
+SETTINGS_DIRECTORY_FROM_ROOT: str = "./AutomationCode/" # if you want the settings to be in a different folder (still within the journal root directory), change this
 heif_registered: bool = False
 
 def add_leading_zero(num: int) -> str:
@@ -59,7 +59,7 @@ def get_entry(entry_date: datetime.date) -> str | None:
         path_with_header: str = f"{journal_markdown_file_path}{header}" # adds the header to the file path (as it is in .md format)
         fixed_path = path_with_header.replace(USER_SETTINGS["journal_root"], "..").replace(" ", "%20") # make it a local path and with %20 instead of spaces
         return fixed_path
-    return None # technically, it will do this since it won't return anything if it doesn't find it, but i prefer explicit None returns.
+    return None # technically, it will do this since it won't return anything if it doesn't find it, but i prefer explicit None returns (sometimes).
 
 def get_entries_matching_year(match_date: datetime.date) -> list[str]:
     """Returns all journal entries matching the year of `match_date`, besides the original."""
