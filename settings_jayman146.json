@@ -45,6 +45,7 @@
             "enable_deletion_of_pre_converted_files": true,
             "conversions": {
                 "heic": "png",
+                "heif": "png",
                 "jpg": "png"
             }
         },

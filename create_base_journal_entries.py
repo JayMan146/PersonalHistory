@@ -8,12 +8,13 @@ import json
 import typing
 import traceback
 from PIL import Image
-from heic2png import HEIC2PNG
+from pillow_heif import register_heif_opener
 
 USER_SETTINGS: dict
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-SETTINGS_DIRECTORY_FROM_ROOT: str = "./Other/AutomationCode/" # if you want the settings to be in a different folder (still within the journal root directory, change this)
+SETTINGS_DIRECTORY_FROM_ROOT: str = "./Other/AutomationCode/" # if you want the settings to be in a different folder (still within the journal root directory), change this
+heif_registered: bool = False
 
 def add_leading_zero(num: int) -> str:
     """Adds a leading zero to `num`. For example: 7 -> 07, 3 -> 03, 18 -> 18"""
@@ -216,8 +217,11 @@ def handle_zip_photo(file_path: str, file_path_without_extension: str):
     convert_photo_file_type(file_path_without_extension + ".heic")
     delete_unconverted_photo(file_path, "zip")
 
-def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> None:
+def convert_photo_file_type(file_path: str) -> None:
     """Converts `file_path` (with extension included) to the file type of what is specified in the settings file. `_output_type` is an internal argument."""
+    
+    global heif_registered
+
     if not USER_SETTINGS["photos"]["type_conversion"]["enabled"]: return
 
     file_path_split_by_periods: list[str] = file_path.split(".")
@@ -228,21 +232,16 @@ def convert_photo_file_type(file_path: str, _output_type: None | str=None) -> No
         handle_zip_photo(file_path, file_path_without_extension)
         return
 
-    if _output_type is not None: # interal forced output_type for .heic conversion, see other comment
-        output_type: str = _output_type
-    else:
-        output_type: str = USER_SETTINGS["photos"]["type_conversion"]["conversions"].get(extension) # other wise, use settings mapping
-        if output_type is None: return # don't convert without mapping
+    output_type: str = USER_SETTINGS["photos"]["type_conversion"]["conversions"].get(extension) # other wise, use settings mapping
+    if output_type is None: return # don't convert without mapping
     
-    # open and save as new type
-    if extension == "heic":
-        heic_image = HEIC2PNG(file_path) # this function takes FOREVER... i really need to switch to pillowheif or something
-        heic_image.save()
-        if output_type != "png":
-            convert_photo_file_type(f"{file_path_without_extension}.png", output_type) # yeah, i know this is kinda stupid, but whatever. Also, I don't even know if this works. Haven't tested.
-    else:
-        image = Image.open(file_path)
-        image.save(f"{file_path_without_extension}.{output_type}", format=output_type)
+    # we only register it as this point to make sure we only register once it's actually needed (and only once)
+    if not heif_registered and extension in ["heic", "heif"]:
+        register_heif_opener() 
+        heif_registered = True
+
+    image = Image.open(file_path)
+    image.save(f"{file_path_without_extension}.{output_type}", format=output_type)
 
     print(f"  ⮡ Converted to file type {output_type}.") # output, not debugging
 
