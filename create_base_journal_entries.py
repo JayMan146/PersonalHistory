@@ -202,7 +202,7 @@ def handle_zip_photo(file_path: str, file_path_without_extension: str):
     delete_unconverted_photo(file_path, "zip")
 
 def convert_photo_file_type(file_path: str) -> None:
-    """Converts `file_path` (with extension included) to the file type of what is specified in the settings file. `_output_type` is an internal argument."""
+    """Converts `file_path` (with extension included) to the file type of what is specified in the settings file."""
     
     global heif_registered
 
