@@ -177,10 +177,9 @@ def extract_zipped_photo(file_path: str) -> None:
     for mov_file in mov_files:
         os.remove(mov_file) # delete all .mov or .MOV files
 
-    remaining_files = os.listdir(temporary_directory)
-    for remaining_file in remaining_files:
-        remaining_file_extension: str = remaining_file.split(".")[-1]
-        shutil.move(remaining_file, file_path + f".{remaining_file_extension}")
+    first_remaining_file = os.listdir(temporary_directory)[0] # can only take one, so just choose first!
+    remaining_file_extension: str = first_remaining_file.split(".")[-1]
+    shutil.move(temporary_directory + "/" + first_remaining_file, file_path + f".{remaining_file_extension}")
     
     shutil.rmtree(temporary_directory) # remove temporary directory and all remaining files
 
@@ -200,7 +199,7 @@ def handle_zip_photo(file_path: str, file_path_without_extension: str):
     if not USER_SETTINGS["photos"]["google_photos_extraction_enabled"]: return
 
     extract_zipped_photo(file_path_without_extension)
-    convert_photo_file_type(file_path_without_extension + ".heic")
+    convert_photo_file_type(glob.glob(file_path_without_extension + ".*")[0])
     delete_unconverted_photo(file_path, "zip")
 
 def convert_photo_file_type(file_path: str) -> None:
