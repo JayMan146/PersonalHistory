@@ -170,8 +170,8 @@ def extract_zipped_photo(file_path: str) -> None:
     directory: str = "/".join(directories) # full directory to photo
     
     temporary_directory: str = directory + "/temp" # temporary place to extract .zip file to
-    with zipfile.ZipFile(file_path + ".zip", "r") as google_photos_zip:
-        google_photos_zip.extractall(temporary_directory) # extract photos
+    with zipfile.ZipFile(file_path + ".zip", "r") as zip_archive:
+        zip_archive.extractall(temporary_directory) # extract photos
 
     mov_files: list[str] = glob.glob(temporary_directory + "/*.mov") + glob.glob(temporary_directory + "/*.MOV")
     for mov_file in mov_files:
