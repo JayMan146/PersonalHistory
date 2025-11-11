@@ -165,22 +165,24 @@ def get_photo_name_pieces(photo_name: str) -> tuple[int, int, str, int] | None:
 
     return (day, photo_number, month, year) # ordered by appearance
 
-def extract_google_zip(file_path: str) -> None:
+def extract_zipped_photo(file_path: str) -> None:
     *directories, _ = file_path.split("/")
     directory: str = "/".join(directories) # full directory to photo
     
-    output_directory: str = directory + "/temp" # temporary place to extract .zip file to
+    temporary_directory: str = directory + "/temp" # temporary place to extract .zip file to
     with zipfile.ZipFile(file_path + ".zip", "r") as google_photos_zip:
-        google_photos_zip.extractall(output_directory) # extract photos
-    
-    heic_files: list[str] = glob.glob(output_directory + "/*.heic") # get all heic files in directory | TODO: make this customizable
-    if heic_files:
-        heic_file: str = heic_files[0]
-    else:
-        return
+        google_photos_zip.extractall(temporary_directory) # extract photos
 
-    shutil.move(heic_file, file_path + ".heic")
-    shutil.rmtree(output_directory) # remove temporary directory and all remaining files
+    mov_files: list[str] = glob.glob(temporary_directory + "/*.mov") + glob.glob(temporary_directory + "/*.MOV")
+    for mov_file in mov_files:
+        os.remove(mov_file) # delete all .mov or .MOV files
+
+    remaining_files = os.listdir(temporary_directory)
+    for remaining_file in remaining_files:
+        remaining_file_extension: str = remaining_file.split(".")[-1]
+        shutil.move(remaining_file, file_path + f".{remaining_file_extension}")
+    
+    shutil.rmtree(temporary_directory) # remove temporary directory and all remaining files
 
     print(f"  ⮡ Extracted heic photo from zip archive.") # output, not debugging
 
@@ -197,7 +199,7 @@ def handle_zip_photo(file_path: str, file_path_without_extension: str):
     """Handles the case of a photo being converted from a zip file"""
     if not USER_SETTINGS["photos"]["google_photos_extraction_enabled"]: return
 
-    extract_google_zip(file_path_without_extension)
+    extract_zipped_photo(file_path_without_extension)
     convert_photo_file_type(file_path_without_extension + ".heic")
     delete_unconverted_photo(file_path, "zip")
 
