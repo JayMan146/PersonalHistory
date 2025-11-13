@@ -199,7 +199,7 @@ def handle_zip_photo(file_path: str, file_path_without_extension: str):
     if not USER_SETTINGS["photos"]["google_photos_extraction_enabled"]: return
 
     extract_zipped_photo(file_path_without_extension)
-    convert_photo_file_type(glob.glob(file_path_without_extension + ".*")[0])
+    convert_photo_file_type([file for file in glob.glob(file_path_without_extension + ".*") if file.split(".")[-1] != "zip"][0])
     delete_unconverted_photo(file_path, "zip")
 
 def convert_photo_file_type(file_path: str) -> None:
