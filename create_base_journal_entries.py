@@ -20,10 +20,10 @@ def add_leading_zero(num: int) -> str:
     """Adds a leading zero to `num`. For example: 7 -> 07, 3 -> 03, 18 -> 18"""
     return f"0{num}" if num < 10 else str(num)
 
-def convert_to_month(month_date: datetime.date) -> tuple[str, str]:
+def convert_to_month(month: int) -> tuple[str, str]:
     """Converts `month_date` into a tuple with the month name and the numbered month (the month with it's number, 1-12). eg. ("july", "07 july")"""
-    month_number: str = add_leading_zero(month_date.month)
-    month_name: str = MONTHS[month_date.month - 1]
+    month_number: str = add_leading_zero(month)
+    month_name: str = MONTHS[month - 1]
     numbered_month: str = f"{month_number} {month_name}"
     return (month_name, numbered_month)
 
@@ -37,7 +37,7 @@ def convert_to_long_date(short_date: datetime.date) -> str:
 
 def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]:
     """Converts `journal_date` into the file path for the appropriate journal, returning a tuple with the year folder and the markdown file path."""
-    numbered_month: str = convert_to_month(journal_date)[1]
+    numbered_month: str = convert_to_month(journal_date.month)[1]
     year_folder: str = f"{USER_SETTINGS["journal_root"]}/{journal_date.year}"
     markdown_file_path: str = f"{year_folder}/{numbered_month} {journal_date.year}.md"
     return (year_folder, markdown_file_path)
@@ -73,7 +73,7 @@ def get_entries_matching_year(match_date: datetime.date) -> list[str]:
 def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
     """Returns the path to all photos with the date `photo_date`."""
 
-    month, numbered_month = convert_to_month(photo_date)
+    month, numbered_month = convert_to_month(photo_date.month)
     photo_day_string: str = add_leading_zero(photo_date.day)
     entry_photo_path: str = f"./photos/{numbered_month} {photo_date.year}/{photo_day_string} <photo_number> {month} {photo_date.year}" # photos with date, but not with photo number. Once added, the photo may not exist
 
