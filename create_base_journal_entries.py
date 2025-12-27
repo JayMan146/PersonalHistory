@@ -42,7 +42,7 @@ def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]
     markdown_file_path: str = f"{year_folder}/{numbered_month} {journal_date.year}.md"
     return (year_folder, markdown_file_path)
 
-def get_entry(entry_date: datetime.date) -> str | None:
+def get_entry_markdown_path(entry_date: datetime.date) -> str | None:
     """Searches for and returns the journal entry of `entry_date`."""
     journal_markdown_file_path: str = convert_date_to_journal_path(entry_date)[1]
     if not os.path.exists(journal_markdown_file_path):
@@ -65,7 +65,7 @@ def get_entries_matching_year(match_date: datetime.date) -> list[str]:
     """Returns all journal entries matching the year of `match_date`, besides the original."""
     matching_entries: list[str] = []
     for previous_year in range(match_date.year - 1, USER_SETTINGS["other"]["earliest_journal"]["year"] - 1, -1): # loop over previous years until earliest journal, backwards
-        previous_entry_header_path: str | None = get_entry(match_date.replace(year=previous_year))
+        previous_entry_header_path: str | None = get_entry_markdown_path(match_date.replace(year=previous_year))
         if previous_entry_header_path is not None:
             matching_entries.append(f"[{previous_year}]({previous_entry_header_path})")
     return matching_entries
@@ -407,7 +407,7 @@ def find_all_recent_missing_entries() -> list[datetime.date]:
     recent_missing_entries: list[datetime.date] = []
     search_length: int = 100
     for _ in range(search_length): # could be formatted as a while loop, though this allows a limit. also could be formatted to go between a date range, but that sounds annoying to do and this... works.
-        current_entry: str | None = get_entry(current_date)
+        current_entry: str | None = get_entry_markdown_path(current_date)
         if current_entry or current_date < earliest_journal_date: # checking if the current entry exists only allows missing entries to be in a row, so it won't go like e.g. jan 24, jan 17, jan 25. though, i guess this doesn't allow for like "missing" a day... TODO
             break
         recent_missing_entries.append(current_date)
