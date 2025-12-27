@@ -9,6 +9,7 @@ USER_SETTINGS: dict
 
 @dataclasses.dataclass
 class JournalStatistic:
+	date: datetime.date
 	title_word_count: int
 	body_word_count: int
 	word_rating: str
@@ -37,20 +38,30 @@ def main():
 			if not os.path.exists(month_file_path):
 				continue
 
-			# use the day end or start from the earliest journal or today if applicable
-			start_day: int = earliest_journal.day if month == earliest_journal.month and year == earliest_journal.year else 1
-			end_day: int = today.day if month == today.month and year == today.year else calendar.monthrange(year, month)[1] # get days in month
-			for day in range(start_day, end_day):
-				entry_date = datetime.date(year, month, day)
-				long_date: str = convert_to_long_date(entry_date)
-				with open(month_file_path, "r", encoding="UTF-8") as journal_file:
-					journal_lines: list[str] = journal_file.readlines()
+			with open(month_file_path, "r", encoding="UTF-8") as journal_file:
+				journal_lines: list[str] = journal_file.readlines()
 
-				for line in journal_lines: 
-					if not line.startswith(f"# {long_date}"): # check if it is the specific entry in the file
-						continue
+				# use the day end or start from the earliest journal or today if applicable
+				start_day: int = earliest_journal.day if month == earliest_journal.month and year == earliest_journal.year else 1
+				end_day: int = today.day if month == today.month and year == today.year else calendar.monthrange(year, month)[1] # get days in month
+				for day in range(start_day, end_day):
+					entry_date = datetime.date(year, month, day)
+					long_date: str = convert_to_long_date(entry_date)
 
-					print(f"FOUND: {entry_date}")
+					for line in journal_lines: 
+						title_prefix: str = f"# {long_date}: "
+						if not line.startswith(title_prefix): # check if it is the specific entry in the file
+							continue
+
+						new_statistic: JournalStatistic = JournalStatistic(
+							entry_date,
+							len(line[len(title_prefix):].split(" ")),
+							0,
+							"good",
+							0,
+							"cloudy",
+							0
+						)
 
 if __name__ == "__main__":
 	main()
