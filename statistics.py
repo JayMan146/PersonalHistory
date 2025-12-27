@@ -18,7 +18,7 @@ class JournalStatistic:
 
 def main():
 	USER_SETTINGS = load_settings()
-	earliest_journal_dict: dict = USER_SETTINGS["earliest_journal"]
+	earliest_journal_dict: dict = USER_SETTINGS["other"]["earliest_journal"]
 	earliest_journal: datetime.date = datetime.date(earliest_journal_dict["year"], earliest_journal_dict["month"], earliest_journal_dict["day"])
 	today: datetime.date = datetime.date.today()
 
@@ -32,8 +32,8 @@ def main():
 		# use the month end or start from the earliest journal or today if applicable
 		start_month: int = earliest_journal.month if year == earliest_journal.year else 1
 		end_month: int = today.month if year == today.year else 12
-		for month in range(start_month, end_month):
-			month_file_path: str = year_folder_path + convert_to_month(month)[1] + str(year) + ".md"
+		for month in range(start_month, end_month + 1):
+			month_file_path: str = f"{year_folder_path}/{convert_to_month(month)[1]} {str(year)}.md"
 			if not os.path.exists(month_file_path):
 				continue
 
