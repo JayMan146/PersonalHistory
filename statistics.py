@@ -1,7 +1,8 @@
 import tkinter
 import dataclasses
 import datetime
-from create_base_journal_entries import load_settings, get_entry_markdown_path
+import calendar
+from create_base_journal_entries import load_settings
 
 USER_SETTINGS: dict
 
@@ -22,11 +23,16 @@ def main():
 
     statistics = []
 
-    current_day = earliest_journal
-    while current_day < today:
-        entry = get_entry_markdown_path(current_day)
-
-        current_day += datetime.timedelta(days=1)
+    for year in range(earliest_journal.year, today.year + 1):
+        # use the month end or start from the earliest journal or today if applicable
+        start_month: int = earliest_journal.month if year == earliest_journal.year else 1
+        end_month: int = today.month if year == today.year else 12
+        for month in range(start_month, end_month):
+            # use the day end or start from the earliest journal or today if applicable
+            start_day: int = earliest_journal.day if month == earliest_journal.month and year == earliest_journal.year else 1
+            end_day: int = today.day if month == today.month and year == today.year else calendar.monthrange(year, month)[1] # get days in month
+            for day in range(start_day, end_day):
+                pass
 
 if __name__ == "__main__":
     main()
