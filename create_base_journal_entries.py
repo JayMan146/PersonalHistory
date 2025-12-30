@@ -444,6 +444,7 @@ def load_settings() -> dict:
     return USER_SETTINGS
 
 def main() -> None:
+    global USER_SETTINGS
     try:
         USER_SETTINGS = load_settings() # this must happen first
         move_photos_from_photo_locations() # then get the photos moved before making the entries
