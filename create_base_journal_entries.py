@@ -246,7 +246,7 @@ def get_photo_folder(photo_name: str) -> str | None:
         if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
             print("  ⮡ Warning: unable to move this photo, as directory creation is disabled.") # output, not debugging
             return None
-        os.mkdir(new_photo_folder_path) 
+        os.makedirs(new_photo_folder_path) 
         print(f"Making new directory: {new_photo_folder_path}\n") # output, not debugging
 
     return new_photo_folder_path
