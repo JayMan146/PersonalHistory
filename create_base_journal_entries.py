@@ -14,7 +14,7 @@ USER_SETTINGS: dict
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 SETTINGS_DIRECTORY_FROM_ROOT: str = "./AutomationCode/" # if you want the settings to be in a different folder (still within the journal root directory), change this
-heif_registered: bool = False
+is_heif_registered: bool = False
 
 def add_leading_zero(num: int) -> str:
     """Adds a leading zero to `num`. For example: 7 -> 07, 3 -> 03, 18 -> 18"""
@@ -205,7 +205,7 @@ def handle_zip_photo(file_path: str, file_path_without_extension: str):
 def convert_photo_file_type(file_path: str) -> None:
     """Converts `file_path` (with extension included) to the file type of what is specified in the settings file."""
     
-    global heif_registered
+    global is_heif_registered
 
     if not USER_SETTINGS["photos"]["type_conversion"]["enabled"]: return
 
@@ -221,9 +221,9 @@ def convert_photo_file_type(file_path: str) -> None:
     if output_type is None: return # don't convert without mapping
     
     # we only register it as this point to make sure we only register once it's actually needed (and only once)
-    if not heif_registered and extension in ["heic", "heif"]:
+    if not is_heif_registered and extension in ["heic", "heif"]:
         register_heif_opener() 
-        heif_registered = True
+        is_heif_registered = True
 
     image = Image.open(file_path)
     image.save(f"{file_path_without_extension}.{output_type}", format=output_type)
@@ -255,9 +255,9 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
     """Goes through the process of checking and moving one photo from the directories"""
     full_photo_path: str = f"{directory}/{file}"
 
-    not_a_file: bool = os.path.isdir(file)
-    invalid_photo_name_format: bool = not valid_photo_name_format(file)
-    if not_a_file or invalid_photo_name_format:
+    is_not_a_file: bool = os.path.isdir(file)
+    has_invalid_photo_name_format: bool = not valid_photo_name_format(file)
+    if is_not_a_file or has_invalid_photo_name_format:
         return
 
     found_any_photos = True
@@ -280,8 +280,8 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
 def move_photos_from_photo_locations() -> None:
     """Finds photos with valid names in the downloads folder and moves them to the corresponding location."""
 
-    photo_moving_disabled: bool = not USER_SETTINGS["photos"]["enable_photo_transfer"]
-    if photo_moving_disabled:
+    is_photo_moving_disabled: bool = not USER_SETTINGS["photos"]["enable_photo_transfer"]
+    if is_photo_moving_disabled:
         return
     
     # get all directories and their associated files within
@@ -290,14 +290,14 @@ def move_photos_from_photo_locations() -> None:
         photo_directory_files[photo_directory] = os.listdir(photo_directory)
 
     # handle each photo in each directory
-    found_any_photos: bool = False
+    has_found_any_photos: bool = False
     for directory, files in photo_directory_files.items():
-        found_photos_in_this_directory: bool = False
+        has_found_photos_in_this_directory: bool = False
         for file in files:
-            photo_found_status = handle_photo_in_location(directory, file, found_any_photos, found_photos_in_this_directory)
+            photo_found_status = handle_photo_in_location(directory, file, has_found_any_photos, has_found_photos_in_this_directory)
             if isinstance(photo_found_status, tuple): # if bools were returned, updated them
-                found_any_photos, found_photos_in_this_directory = photo_found_status
-    if found_any_photos:
+                has_found_any_photos, has_found_photos_in_this_directory = photo_found_status
+    if has_found_any_photos:
         print("") # new line to separate output elements | yes, you must pass an empty string to print a newline
 
 def valid_photo_name_format(photo_name: str) -> bool:
@@ -307,12 +307,12 @@ def valid_photo_name_format(photo_name: str) -> bool:
         return False
     
     day, photo_number, month, year = photo_name_pieces
-    valid_day: bool = 1 <= day <= 31
-    valid_photo_number: bool = 0 <= photo_number <= 99
-    valid_month: bool = month in MONTHS
-    valid_year: bool = 2020 <= year <= 2200
+    is_valid_day: bool = 1 <= day <= 31
+    is_valid_photo_number: bool = 0 <= photo_number <= 99
+    is_valid_month: bool = month in MONTHS
+    is_valid_year: bool = 2020 <= year <= 2200
 
-    return (valid_day and valid_photo_number and valid_month and valid_year)
+    return (is_valid_day and is_valid_photo_number and is_valid_month and is_valid_year)
 
 def generate_entry(entry_date: datetime.date) -> str | None: # not really sure why this is separate from get_entry_string but i'm not gonna look into it yet. TODO
     """Generates the entry for `entry_date`."""
@@ -332,12 +332,12 @@ def determine_preliminary_new_lines(file_lines: list[str]) -> int:
     """Determines how many preliminary new lines are needed for a new entry based on `file_lines`."""
 
     final_line: str = file_lines[-1]
-    final_line_is_newline: bool = final_line == "\n"
-    final_character_is_newline: bool = final_line[-1] == "\n"
+    is_final_line_newline: bool = final_line == "\n"
+    is_final_character_newline: bool = final_line[-1] == "\n"
 
     preliminary_new_lines: int = 0
-    if not final_line_is_newline:
-        if final_character_is_newline:
+    if not is_final_line_newline:
+        if is_final_character_newline:
             preliminary_new_lines = 1
         else:
             preliminary_new_lines = 2
