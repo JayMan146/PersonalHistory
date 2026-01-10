@@ -420,9 +420,9 @@ def create_all_recent_missing_entries() -> None:
 
     recent_missing_entries: list[datetime.date] = find_all_recent_missing_entries()
 
-    print("Journal Text Written to File(s):\n") #output, not debugging
+    print("Journal Text Written to File(s):\n") # output, not debugging
 
-    #iterate backwards since we want the first found missing one to be written first, then the most recent missing one to be written last
+    # iterate backwards since we want the first found missing one to be written first, then the most recent missing one to be written last
     for entry_date in recent_missing_entries[::-1]: 
         entry = generate_entry(entry_date)
         if entry is None:
