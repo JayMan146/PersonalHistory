@@ -1,3 +1,5 @@
+**PLEASE NOTE! THIS IS LARGELY OUT OF DATE.**
+
 # Journal System
 
 This doesn't have any info yet, but I figured I should add the file.
