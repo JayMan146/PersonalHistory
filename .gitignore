@@ -4,3 +4,5 @@ __pycache__
 automation_station.py
 # I think this is already ignored, but I'm still putting it here. Don't need to track it
 .venv
+
+TODO.md
