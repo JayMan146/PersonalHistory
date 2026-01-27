@@ -188,7 +188,7 @@ def extract_zipped_photo(file_path: str) -> None:
 def delete_unconverted_photo(file_path: str, original_extension: str) -> None:
     """Removes an unconverted photo at `file_path` with the extension of `original_extension`, following rules in USER_SETTINGS."""
 
-    if USER_SETTINGS["photos"]["type_conversion"]["enable_deletion_of_pre_converted_files"]:
+    if USER_SETTINGS["photos"]["type_conversion"]["delete_pre_converted_files"]:
         os.remove(file_path)
         print(f"    ⮡ Deleted unconverted photo of file type {original_extension}.") # output, not debugging
     else:
