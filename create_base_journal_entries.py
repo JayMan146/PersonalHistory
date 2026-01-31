@@ -252,28 +252,28 @@ def get_photo_directory(photo_name: str) -> str | None:
 
     return new_photo_folder_path
 
-def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, found_any_photos_in_this_directory: bool=False) -> None | tuple[bool, bool]:
+def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found_any_photos: bool, found_any_photos_in_this_directory: bool=False) -> None | tuple[bool, bool]:
     """Goes through the process of checking and moving one photo from the directories"""
-    full_photo_path: str = f"{directory}/{file}"
+    full_photo_path: str = f"{photo_origin_directory}/{photo_name}"
 
-    is_file: bool = os.path.isfile(file)
-    has_invalid_photo_name_format: bool = not valid_photo_name_format(file)
+    is_file: bool = os.path.isfile(photo_name)
+    has_invalid_photo_name_format: bool = not valid_photo_name_format(photo_name)
     if not is_file or has_invalid_photo_name_format:
         return
 
     found_any_photos = True
 
     if not found_any_photos_in_this_directory:
-        print(f"Moving photos from {directory}:") # output, not debugging
+        print(f"Moving photos from {photo_origin_directory}:") # output, not debugging
     found_any_photos_in_this_directory = True
 
-    print(f"⮡ {file}") # output, not debugging
+    print(f"⮡ {photo_name}") # output, not debugging
  
-    new_photo_folder_path: str | None = get_photo_directory(file)
+    new_photo_folder_path: str | None = get_photo_directory(photo_name)
     if new_photo_folder_path is None:
         return None
     
-    new_photo_path: str = f"{new_photo_folder_path}{file}"
+    new_photo_path: str = f"{new_photo_folder_path}{photo_name}"
     
     wildcard_extension_photo_path: str = ".".join(new_photo_path.split(".")[:-1]) + ".*"
     if glob.glob(wildcard_extension_photo_path):
