@@ -288,8 +288,8 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
 def move_photos_from_photo_locations() -> None:
     """Finds photos with valid names in the downloads folder and moves them to the corresponding location."""
 
-    is_photo_moving_disabled: bool = not USER_SETTINGS["photos"]["enable_photo_transfer"]
-    if is_photo_moving_disabled:
+    photo_moving_enabled: bool = not USER_SETTINGS["photos"]["enable_photo_transfer"]
+    if not photo_moving_enabled:
         return
     
     # get all directories and their associated files within
