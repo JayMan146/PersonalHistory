@@ -256,9 +256,9 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
     """Goes through the process of checking and moving one photo from the directories"""
     full_photo_path: str = f"{photo_origin_directory}/{photo_name}"
 
-    is_file: bool = os.path.isfile(photo_name)
+    is_directory: bool = os.path.isdir(photo_name)
     has_invalid_photo_name_format: bool = not valid_photo_name_format(photo_name)
-    if not is_file or has_invalid_photo_name_format:
+    if is_directory or has_invalid_photo_name_format:
         return
 
     found_any_photos = True
@@ -288,7 +288,7 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
 def move_photos_from_photo_locations() -> None:
     """Finds photos with valid names in the downloads folder and moves them to the corresponding location."""
 
-    photo_moving_enabled: bool = not USER_SETTINGS["photos"]["enable_photo_transfer"]
+    photo_moving_enabled: bool = USER_SETTINGS["photos"]["enable_photo_transfer"]
     if not photo_moving_enabled:
         return
     
