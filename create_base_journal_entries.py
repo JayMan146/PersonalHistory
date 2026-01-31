@@ -275,6 +275,8 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
     
     new_photo_path: str = f"{new_photo_folder_path}{photo_name}"
     
+    # this check does not have a setting, because it will throw an error if you don't check for this
+    # i was going to make it a setting. it does check for more than what throws the error, technically.
     wildcard_extension_photo_path: str = ".".join(new_photo_path.split(".")[:-1]) + ".*"
     if glob.glob(wildcard_extension_photo_path):
         print("  ⮡ Warning: unable to move this photo, as a photo with this name already exists.")
