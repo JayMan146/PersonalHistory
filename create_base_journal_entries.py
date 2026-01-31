@@ -256,7 +256,7 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
     """Goes through the process of checking and moving one photo from the directories"""
     full_photo_path: str = f"{photo_origin_directory}/{photo_name}"
 
-    is_directory: bool = os.path.isdir(photo_name)
+    is_directory: bool = os.path.isdir(full_photo_path)
     has_invalid_photo_name_format: bool = not valid_photo_name_format(photo_name)
     if is_directory or has_invalid_photo_name_format:
         return
