@@ -255,9 +255,9 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
     """Goes through the process of checking and moving one photo from the directories"""
     full_photo_path: str = f"{directory}/{file}"
 
-    is_not_a_file: bool = os.path.isdir(file)
+    is_file: bool = os.path.isfile(file)
     has_invalid_photo_name_format: bool = not valid_photo_name_format(file)
-    if is_not_a_file or has_invalid_photo_name_format:
+    if not is_file or has_invalid_photo_name_format:
         return
 
     found_any_photos = True
