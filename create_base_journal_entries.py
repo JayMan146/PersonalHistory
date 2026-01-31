@@ -232,7 +232,8 @@ def convert_photo_file_type(file_path: str) -> None:
 
     delete_unconverted_photo(file_path, extension)
 
-def get_photo_folder(photo_name: str) -> str | None:
+def get_photo_directory(photo_name: str) -> str | None:
+    """Returns the directory that a photo would go to based on it's name"""
     photo_name_pieces = get_photo_name_pieces(photo_name)
     if photo_name_pieces is None: # probably will never be executed because of the validity check, but type safety and just in case yatta yatta
         return
@@ -268,7 +269,7 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
 
     print(f"⮡ {file}") # output, not debugging
  
-    new_photo_folder_path: str | None = get_photo_folder(file)
+    new_photo_folder_path: str | None = get_photo_directory(file)
     if new_photo_folder_path is None:
         return None
     
