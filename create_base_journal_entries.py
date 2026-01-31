@@ -254,9 +254,9 @@ def get_photo_directory(photo_name: str) -> str | None:
 
 def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found_any_photos: bool, found_any_photos_in_this_directory: bool=False) -> None | tuple[bool, bool]:
     """Goes through the process of checking and moving one photo from the directories"""
-    full_photo_path: str = f"{photo_origin_directory}/{photo_name}"
+    photo_origin_path: str = f"{photo_origin_directory}/{photo_name}"
 
-    is_directory: bool = os.path.isdir(full_photo_path)
+    is_directory: bool = os.path.isdir(photo_origin_path)
     has_invalid_photo_name_format: bool = not valid_photo_name_format(photo_name)
     if is_directory or has_invalid_photo_name_format:
         return
@@ -280,7 +280,7 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
         print("  ⮡ Warning: unable to move this photo, as a photo with this name already exists.")
         return None
     
-    shutil.move(full_photo_path, new_photo_folder_path)
+    shutil.move(photo_origin_path, new_photo_folder_path)
     convert_photo_file_type(new_photo_path)
     
     return (found_any_photos, found_any_photos_in_this_directory) # keep this through iterations
