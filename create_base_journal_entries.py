@@ -273,8 +273,15 @@ def handle_photo_in_location(directory: str, file: str, found_any_photos: bool, 
     if new_photo_folder_path is None:
         return None
     
+    new_photo_path: str = f"{new_photo_folder_path}{file}"
+    
+    wildcard_extension_photo_path: str = ".".join(new_photo_path.split(".")[:-1]) + ".*"
+    if glob.glob(wildcard_extension_photo_path):
+        print("  ⮡ Warning: unable to move this photo, as a photo with this name already exists.")
+        return None
+    
     shutil.move(full_photo_path, new_photo_folder_path)
-    convert_photo_file_type(f"{new_photo_folder_path}{file}")
+    convert_photo_file_type(new_photo_path)
     
     return (found_any_photos, found_any_photos_in_this_directory) # keep this through iterations
 
