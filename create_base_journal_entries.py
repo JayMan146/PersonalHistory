@@ -387,8 +387,8 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
             print("Attempted to write to file, but that behavior is disabled.") # output, not debugging
     print(entry, end="") # show what was written to file | output, not debugging
 
-def modify_date_by_crossover(date: datetime.date) -> datetime.timedelta:
-    current_time: datetime.datetime = datetime.datetime.today()
+def modify_date_by_crossover(date: datetime.datetime) -> datetime.timedelta:
+    current_time: datetime.datetime = date
     crossover_time_json_object: dict[str, int] = USER_SETTINGS["day_crossover"]["time"]
     crossover_time: datetime.datetime = datetime.datetime(
         current_time.year, current_time.month, current_time.day,
@@ -408,7 +408,7 @@ def modify_date_by_crossover(date: datetime.date) -> datetime.timedelta:
 def find_all_recent_missing_entries() -> list[datetime.date]:
     """Finds missing entries in the last 100 days, working backwards from today and stopping once it has found a valid entry."""
     starting_date: datetime.date = datetime.date.today()
-    starting_date += modify_date_by_crossover(starting_date)
+    starting_date += modify_date_by_crossover(datetime.datetime.today())
 
     earliest_journal_json_object: dict[str, int] = USER_SETTINGS["other"]["earliest_journal"]
     earliest_journal_date: datetime.date = datetime.date(earliest_journal_json_object["year"], earliest_journal_json_object["month"], earliest_journal_json_object["day"])
