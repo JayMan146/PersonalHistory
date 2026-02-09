@@ -10,6 +10,7 @@
 ## Extra Features
 
 * Statistics
+* Search for executable or python script to set SETTINGS_DIRECTORY_FROM_ROOT or add to settings
 
 ## Tweaks
 

@@ -13,7 +13,7 @@ from pillow_heif import register_heif_opener
 USER_SETTINGS: dict
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-SETTINGS_DIRECTORY_FROM_ROOT: str = "./AutomationCode/" # if you want the settings to be in a different folder (still within the journal root directory), change this
+SETTINGS_DIRECTORY_FROM_ROOT: str = "./JournalSystem/" # if you want the settings to be in a different folder (still within the journal root directory), change this
 is_heif_registered: bool = False
 
 def add_leading_zero(num: int) -> str:
