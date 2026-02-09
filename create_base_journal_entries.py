@@ -121,31 +121,6 @@ def generate_requires_programming_journal_formatting(key: str, item_list: list[s
 
     return preliminary_text + joined_items + ending_text
 
-def get_entry_string(entry_date: datetime.date, matching_entries: list[str], photo_paths: list[str]) -> str: # not really sure why this is separate from generate_entry but i'm not gonna look into it yet. TODO
-    """Creates a string of a journal entry with the given parameters."""
-
-    entry_string: str = f"# {convert_to_long_date(entry_date)}: " # header
-
-    if USER_SETTINGS["journal_format"]["custom_placement"].lower() == "before": # place custom stuff first if that's in settinsg
-        entry_string += generate_custom_journal_formatting() # repeated code, shut up.
-
-    # add the generated matching entries lines if valid    
-    matching_entries_line: str | None = generate_requires_programming_journal_formatting("matching_entries", matching_entries)
-    if matching_entries_line is not None:
-        entry_string += matching_entries_line
-    
-    # add the generated photos lines if valid
-    photos_line: str | None = generate_requires_programming_journal_formatting("photos", photo_paths)
-    if photos_line is not None:
-        entry_string += photos_line
-    
-    if USER_SETTINGS["journal_format"]["custom_placement"].lower() != "before": # place custom stuff after if that's in settinsg
-        entry_string += generate_custom_journal_formatting() # repeated code, shut up.
-
-    entry_string += "\n" * USER_SETTINGS["journal_format"]["writing_lines"] # add new lines for writing based on settings | ahh, python string multiplication
-
-    return entry_string
-
 def get_photo_name_pieces(photo_name: str) -> tuple[int, int, str, int] | None:
     """Returns the pieces of `photo_name` in the order of day, photo number, month, year. Returns `None` if invalid."""
 
@@ -324,19 +299,36 @@ def valid_photo_name_format(photo_name: str) -> bool:
 
     return (is_valid_day and is_valid_photo_number and is_valid_month and is_valid_year)
 
-def generate_entry(entry_date: datetime.date) -> str | None: # not really sure why this is separate from get_entry_string but i'm not gonna look into it yet. TODO
+def generate_entry(entry_date: datetime.date) -> str | None:
     """Generates the entry for `entry_date`."""
 
-    matching_entries: list[str] = []
+    entry_string: str = f"# {convert_to_long_date(entry_date)}: " # header
+
+    if USER_SETTINGS["journal_format"]["custom_placement"].lower() == "before": # place custom stuff first if that's in settinsg
+        entry_string += generate_custom_journal_formatting() # repeated code, shut up.
+
+    # add the generated matching entries lines if valid  
     if USER_SETTINGS["journal_format"]["requires_programming"]["matching_entries"]:
+        matching_entries: list[str] = []
         matching_entries = get_entries_matching_year(entry_date)
-
-    photo_paths: list[str] = []
+        matching_entries_line: str | None = generate_requires_programming_journal_formatting("matching_entries", matching_entries)
+        if matching_entries_line is not None:
+            entry_string += matching_entries_line
+    
+    # add the generated photos lines if valid
     if USER_SETTINGS["journal_format"]["requires_programming"]["photos"]:
+        photo_paths: list[str] = []
         photo_paths = get_photo_paths_by_date(entry_date)
+        photos_line: str | None = generate_requires_programming_journal_formatting("photos", photo_paths)
+        if photos_line is not None:
+            entry_string += photos_line
+    
+    if USER_SETTINGS["journal_format"]["custom_placement"].lower() != "before": # place custom stuff after if that's in settinsg
+        entry_string += generate_custom_journal_formatting() # repeated code, shut up.
 
-    new_entry: str = get_entry_string(entry_date, matching_entries, photo_paths)
-    return new_entry
+    entry_string += "\n" * USER_SETTINGS["journal_format"]["writing_lines"] # add new lines for writing based on settings | ahh, python string multiplication
+    
+    return entry_string
 
 def determine_preliminary_new_lines(file_lines: list[str]) -> int:
     """Determines how many preliminary new lines are needed for a new entry based on `file_lines`."""
