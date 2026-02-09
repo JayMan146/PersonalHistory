@@ -1,8 +1,7 @@
-# Ignore cached python file
-__pycache__
-# This code is temporary, so we don't need to track it.
+# Temporary, non-application code
 automation_station.py
-# I think this is already ignored, but I'm still putting it here. Don't need to track it
-.venv
-# don't track personal settings
+
+# self-explanatory
+__pycache__
 settings_jayman146.json
+.venv
