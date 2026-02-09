@@ -16,5 +16,5 @@
 
 ## Bug Fixes
 
-* Investigate separationg of `generate_entry` and `get_entry_string`
+* Investigate separation of `generate_entry` and `get_entry_string`
 * Allow for "missing days" by implementing better search
