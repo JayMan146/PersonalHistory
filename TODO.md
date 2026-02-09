@@ -6,6 +6,8 @@
 * Write README.md
 * Allow keeping the .MOV from .zip files and further settings for zip extraction
 * Barebones GUI for easy use
+    * Settings editor
+    * Settings profiles
 
 ## Extra Features
 
