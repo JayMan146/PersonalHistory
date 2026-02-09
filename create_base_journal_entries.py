@@ -440,6 +440,8 @@ def create_all_recent_missing_entries() -> None:
         write_entry(entry, entry_date)
 
 def load_settings() -> dict:
+    global USER_SETTINGS
+    
     with open(SETTINGS_DIRECTORY_FROM_ROOT + "settings_to_use.txt", "r", encoding="UTF-8") as settings_to_use_file:
         settings_file_name: str = settings_to_use_file.readline().strip()
     if not settings_file_name.endswith(".json"): # add missing file extension
@@ -454,9 +456,8 @@ def load_settings() -> dict:
     return USER_SETTINGS
 
 def main() -> None:
-    global USER_SETTINGS
     try:
-        USER_SETTINGS = load_settings() # this must happen first
+        load_settings() # this must happen first
         move_photos_from_photo_locations() # then get the photos moved before making the entries
         create_all_recent_missing_entries() # actually make 'em
     except FileNotFoundError as error:
