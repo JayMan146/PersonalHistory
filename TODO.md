@@ -5,6 +5,7 @@
 * Make journals H2 and add <month name> <year> as H1.
 * Write README.md
 * Allow keeping the .MOV from .zip files and further settings for zip extraction
+* Allow extract from iCloud photos zips and others?
 * Barebones GUI for easy use
     * Settings editor
     * Settings profiles
