@@ -12,10 +12,6 @@
 * Statistics
 * Search for executable or python script to set SETTINGS_DIRECTORY_FROM_ROOT or add to settings
 
-## Tweaks
-
-* Get rid of settings_to_use bs
-
 ## Bug Fixes
 
 * Investigate separationg of `generate_entry` and `get_entry_string`
