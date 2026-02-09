@@ -9,11 +9,14 @@
 * Barebones GUI for easy use
     * Settings editor
     * Settings profiles
+    * Import photos by opening/dragging whatever
 
 ## Extra Features
 
 * Statistics
 * Search for executable or python script to set SETTINGS_DIRECTORY_FROM_ROOT or add to settings
+* Better ordering that "before" or "after" for custom journal format
+* Fancier printing (yellow text for warnings, etc.)
 
 ## Bug Fixes
 
