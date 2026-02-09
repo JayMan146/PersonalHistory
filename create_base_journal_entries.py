@@ -432,6 +432,7 @@ def create_all_recent_missing_entries() -> None:
         write_entry(entry, entry_date)
 
 def load_settings() -> dict:
+    """Sets the global variable USER_SETTINGS to the json file in settings_to_use.txt, as well as returning it."""
     global USER_SETTINGS
     
     with open(SETTINGS_DIRECTORY_FROM_ROOT + "settings_to_use.txt", "r", encoding="UTF-8") as settings_to_use_file:
