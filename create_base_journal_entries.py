@@ -22,6 +22,8 @@ def add_leading_zero(num: int) -> str:
 
 def convert_to_month(month: int) -> tuple[str, str]:
     """Converts `month_date` into a tuple with the month name and the numbered month (the month with it's number, 1-12). eg. ("july", "07 july")"""
+    if month < 1 or month > 12:
+        raise ValueError("Invalid month number")
     month_number: str = add_leading_zero(month)
     month_name: str = MONTHS[month - 1]
     numbered_month: str = f"{month_number} {month_name}"
