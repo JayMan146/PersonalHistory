@@ -1,7 +1,11 @@
 # Temporary, non-application code
 automation_station.py
 
+# only track default settings
+*.json
+!settings_default.json
+settings_to_use.txt
+
 # self-explanatory
 __pycache__
-settings_jayman146.json
 .venv
