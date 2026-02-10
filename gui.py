@@ -4,6 +4,8 @@ from create_base_journal_entries import move_photos_from_photo_locations, create
 primary_window: tkinter.Tk = tkinter.Tk()
 settings_window: tkinter.Tk
 
+USER_SETTINGS: dict = load_settings()
+
 def edit_settings():
 	global settings_window
 	settings_window = tkinter.Tk()
@@ -16,7 +18,6 @@ def quit():
 	primary_window.destroy()
 
 def main():
-	load_settings()
 	primary_window.title("Journal System")
 
 	tkinter.Label(primary_window, text="Welcome to the Journal System!", width=35).grid(column=0, row=0)
