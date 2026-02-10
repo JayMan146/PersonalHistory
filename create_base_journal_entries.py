@@ -55,7 +55,7 @@ def get_entry_markdown_path(entry_date: datetime.date) -> str | None:
         journal_lines: list[str] = journal_file.readlines()
 
     for line in journal_lines: 
-        if not line.startswith(f"# {long_date}"): # check if it is the specific entry in the file
+        if not line.startswith(f"## {long_date}"): # check if it is the specific entry in the file
             continue
         header: str = convert_to_header_link(line)
         path_with_header: str = f"{journal_markdown_file_path}{header}" # adds the header to the file path (as it is in .md format)
@@ -304,7 +304,7 @@ def valid_photo_name_format(photo_name: str) -> bool:
 def generate_entry(entry_date: datetime.date) -> str | None:
     """Generates the entry for `entry_date`."""
 
-    entry_string: str = f"# {convert_to_long_date(entry_date)}: " # header
+    entry_string: str = f"## {convert_to_long_date(entry_date)}: " # header
 
     if USER_SETTINGS["journal_format"]["custom_placement"].lower() == "before": # place custom stuff first if that's in settinsg
         entry_string += generate_custom_journal_formatting() # repeated code, shut up.
@@ -362,8 +362,11 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
         if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
             print("Warning: unable to write entry, as file creation is disabled.") # output, not debugging
             return
-        with open(markdown_file_path, "x", encoding="UTF-8"):
+        with open(markdown_file_path, "x", encoding="UTF-8") as new_journal_file:
             print(f"Creating new journal file: {markdown_file_path}\n") # output, not debugging
+            if not USER_SETTINGS["other"]["enable_writing_to_file"]:
+                print("Attempted to write header to file, but that behavior is disabled.") # output, not debugging
+            new_journal_file.write(f"## {convert_to_month(entry_date.month)[0].title()} {entry_date.year}\n\n")
         
     number_of_preliminary_new_lines: int = 0
     with open(markdown_file_path, "r+", encoding="UTF-8") as journal_file_to_read:
@@ -378,7 +381,7 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
             journal_file_to_append.write(preliminary_new_lines)
             journal_file_to_append.write(entry)
         else:
-            print("Attempted to write to file, but that behavior is disabled.") # output, not debugging
+            print("Attempted to write entry to file, but that behavior is disabled.") # output, not debugging
     print(entry, end="") # show what was written to file | output, not debugging
 
 def modify_date_by_crossover(date: datetime.datetime) -> datetime.timedelta:
