@@ -167,9 +167,9 @@ def delete_unconverted_photo(file_path: str, original_extension: str) -> None:
 
 	if USER_SETTINGS["photos"]["type_conversion"]["delete_pre_converted_files"]:
 		os.remove(file_path)
-		print(f"    ⮡ Deleted unconverted photo of file type {original_extension}.") # output, not debugging
+		print(f"\t⮡ Deleted unconverted photo of file type {original_extension}.") # output, not debugging
 	else:
-		print(f"    ⮡ Warning: unable to delete unconverted photo, as that behavior is disabled.") # output, not debugging
+		print(f"\t⮡ Warning: unable to delete unconverted photo, as that behavior is disabled.") # output, not debugging
 
 def handle_zip_photo(file_path: str, file_path_without_extension: str):
 	"""Handles the case of a photo being converted from a zip file"""
