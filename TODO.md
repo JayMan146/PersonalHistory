@@ -9,6 +9,8 @@
     * Settings editor
     * Settings profiles
     * Import photos by opening/dragging whatever
+* Output Level
+    > 0 is nothing, 1 is very basic (wrote files, moved photos), 2 or 3 is current
 
 ## Extra Features
 
