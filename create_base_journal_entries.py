@@ -7,10 +7,18 @@ import shutil
 import json
 import typing
 import traceback
+import enum
 from PIL import Image
 from pillow_heif import register_heif_opener
 
+class ConsoleOutputLevel(enum.Enum):
+	NONE = 0
+	MINIMUM = 1
+	MEDIUM = 2
+	MAXIMUM = 3
+
 USER_SETTINGS: dict
+console_output_level: ConsoleOutputLevel
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 SETTINGS_DIRECTORY_FROM_ROOT: str = "./JournalSystem/" # if you want the settings to be in a different folder (still within the journal root directory), change this
@@ -438,7 +446,7 @@ def create_all_recent_missing_entries() -> None:
 
 def load_settings() -> dict:
 	"""Sets the global variable USER_SETTINGS to the json file in settings_to_use.txt, as well as returning it."""
-	global USER_SETTINGS
+	global USER_SETTINGS, console_output_level
 	
 	with open(SETTINGS_DIRECTORY_FROM_ROOT + "settings_to_use.txt", "r", encoding="UTF-8") as settings_to_use_file:
 		settings_file_name: str = settings_to_use_file.readline().strip()
@@ -447,6 +455,15 @@ def load_settings() -> dict:
 
 	with open(SETTINGS_DIRECTORY_FROM_ROOT + settings_file_name, "r", encoding="UTF-8") as settings_file:
 		USER_SETTINGS = json.load(settings_file)
+
+	# set console output level by int or str, with default of NONE
+	settings_console_output_level: str | int = USER_SETTINGS["other"]["console_output_level"]
+	if isinstance(settings_console_output_level, str):
+		console_output_level = ConsoleOutputLevel[settings_console_output_level.upper()]
+	elif isinstance(settings_console_output_level, int):
+		console_output_level = ConsoleOutputLevel(settings_console_output_level)
+	else:
+		console_output_level = ConsoleOutputLevel.NONE
 
 	if USER_SETTINGS.get("Confused?"): # don't want this floating around, as it isn't useful.
 		del USER_SETTINGS["Confused?"]
