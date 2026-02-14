@@ -18,6 +18,7 @@
 
 * Statistics
 * Better ordering that "before" or "after" for custom journal format
+* Add more than just previous years as intervals for previous journals
 * Fancier printing (yellow text for warnings, etc.)
 
 ## Bug Fixes
