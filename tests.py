@@ -53,6 +53,34 @@ class TestHelperFunctions(unittest.TestCase):
 			"stuff\n", "written entry"    
 		]), 2)
 
+	def test_modify_date_by_crossover(self):
+		self.assertEqual(main.modify_date_by_crossover(
+			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.datetime(1, 1, 1, 3, 0, 0), True
+		), datetime.timedelta(0))
+		self.assertEqual(main.modify_date_by_crossover(
+			datetime.datetime(2003, 8, 3, 2, 20, 11), datetime.datetime(1, 1, 1, 3, 0, 0), True
+		), datetime.timedelta(days=-1))
+
+		self.assertEqual(main.modify_date_by_crossover(
+			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.datetime(1, 1, 1, 21, 0, 0), False
+		), datetime.timedelta(0))
+		self.assertEqual(main.modify_date_by_crossover(
+			datetime.datetime(2003, 8, 1, 22, 20, 11), datetime.datetime(1, 1, 1, 21, 0, 0), False
+		), datetime.timedelta(days=1))
+
+		self.assertEqual(main.modify_date_by_crossover(
+			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.datetime(1, 1, 1, 3, 0, 0), None
+		), datetime.timedelta(0))
+		self.assertEqual(main.modify_date_by_crossover(
+			datetime.datetime(2003, 8, 3, 2, 20, 11), datetime.datetime(1, 1, 1, 3, 0, 0), None
+		), datetime.timedelta(0))
+		self.assertEqual(main.modify_date_by_crossover(
+			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.datetime(1, 1, 1, 21, 0, 0), None
+		), datetime.timedelta(0))
+		self.assertEqual(main.modify_date_by_crossover(
+			datetime.datetime(2003, 8, 1, 22, 20, 11), datetime.datetime(1, 1, 1, 21, 0, 0), None
+		), datetime.timedelta(0))
+
 if __name__ == "__main__":
 	main.load_settings()
 	unittest.main()

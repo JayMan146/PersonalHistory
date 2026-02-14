@@ -423,28 +423,29 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
 		ConsoleOutputLevel.MAXIMUM: entry
 	}, end="") # show what was written to file | output, not debugging
 
-def modify_date_by_crossover(date: datetime.datetime) -> datetime.timedelta:
-	current_time: datetime.datetime = date
-	crossover_time_json_object: dict[str, int] = USER_SETTINGS["day_crossover"]["time"]
-	crossover_time: datetime.datetime = datetime.datetime(
-		current_time.year, current_time.month, current_time.day,
-		crossover_time_json_object["hour"],
-		crossover_time_json_object["minute"],
-		crossover_time_json_object["second"]
+def modify_date_by_crossover(time_to_modify: datetime.datetime, crossover_time: datetime.datetime, move_backward: bool | None) -> datetime.timedelta:
+	if move_backward is None: return datetime.timedelta()
+
+	crossover_date: datetime.datetime = datetime.datetime(
+		time_to_modify.year, time_to_modify.month, time_to_modify.day,
+		crossover_time.hour, crossover_time.minute, crossover_time.second
 	)
-	day_crossover_move_direction: str = USER_SETTINGS["day_crossover"]["move_direction"]
-	if day_crossover_move_direction != "disable":
-		if day_crossover_move_direction == "backward" and current_time < crossover_time:
-			return datetime.timedelta(days=-1)
-		elif day_crossover_move_direction == "forward" and current_time > crossover_time:
-			return datetime.timedelta(days=1)
+	if move_backward and time_to_modify < crossover_date:
+		return datetime.timedelta(days=-1)
+	elif not move_backward and time_to_modify > crossover_date:
+		return datetime.timedelta(days=1)
 		
 	return datetime.timedelta()
 
 def find_all_recent_missing_entries() -> list[datetime.date]:
 	"""Finds missing entries in the last 100 days, working backwards from today and stopping once it has found a valid entry."""
-	starting_date: datetime.date = datetime.date.today()
-	starting_date += modify_date_by_crossover(datetime.datetime.today())
+	starting_date: datetime.datetime = datetime.datetime.today()
+
+	crossover_time_setting: dict[str, int] = USER_SETTINGS["day_crossover"]["time"]
+	crossover_time = datetime.datetime(starting_date.year, starting_date.month, starting_date.day, crossover_time_setting["hour"], crossover_time_setting["minute"], crossover_time_setting["second"])
+	crossover_direction_setting: str = USER_SETTINGS["day_crossover"]["move_direction"]
+	crossover_direction: bool | None = None if crossover_direction_setting == "disabled" else crossover_direction_setting == "backward"
+	starting_date += modify_date_by_crossover(starting_date, crossover_time, crossover_direction)
 
 	earliest_journal_json_object: dict[str, int] = USER_SETTINGS["other"]["earliest_journal"]
 	earliest_journal_date: datetime.date = datetime.date(earliest_journal_json_object["year"], earliest_journal_json_object["month"], earliest_journal_json_object["day"])
