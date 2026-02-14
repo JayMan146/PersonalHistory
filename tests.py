@@ -32,6 +32,16 @@ class TestHelperFunctions(unittest.TestCase):
         self.assertEqual(main.get_photo_name_pieces("03 00 february 2025"), (3, 0, "february", 2025))
         self.assertEqual(main.get_photo_name_pieces("18 17 march 2029"), (18, 17, "march", 2029))
 
+    def test_valid_photo_name_format(self):
+        self.assertTrue(main.valid_photo_name_format("30 02 august 2003"))
+        self.assertTrue(main.valid_photo_name_format("03 00 february 2025"))
+        self.assertTrue(main.valid_photo_name_format("18 17 march 2029"))
+        self.assertFalse(main.valid_photo_name_format("FunnyMeme"))
+        self.assertFalse(main.valid_photo_name_format("00 00 00 00"))
+        self.assertFalse(main.valid_photo_name_format("03 00 february 3001"))
+        self.assertFalse(main.valid_photo_name_format("18. 17 march 2029"))
+        self.assertFalse(main.valid_photo_name_format("32 00 june 2020"))
+
 if __name__ == "__main__":
     main.load_settings()
     unittest.main()
