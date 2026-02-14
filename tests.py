@@ -41,6 +41,17 @@ class TestHelperFunctions(unittest.TestCase):
         self.assertFalse(main.valid_photo_name_format("03 00 february 3001"))
         self.assertFalse(main.valid_photo_name_format("18. 17 march 2029"))
         self.assertFalse(main.valid_photo_name_format("32 00 june 2020"))
+    
+    def test_determine_preliminary_new_lines(self):
+        self.assertEqual(main.determine_preliminary_new_lines([
+            "stuff\n", "written entry\n", "\n"    
+        ]), 0)
+        self.assertEqual(main.determine_preliminary_new_lines([
+            "stuff\n", "written entry\n"    
+        ]), 1)
+        self.assertEqual(main.determine_preliminary_new_lines([
+            "stuff\n", "written entry"    
+        ]), 2)
 
 if __name__ == "__main__":
     main.load_settings()
