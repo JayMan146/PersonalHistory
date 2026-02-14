@@ -450,7 +450,7 @@ def find_all_recent_missing_entries() -> list[datetime.date]:
 	earliest_journal_json_object: dict[str, int] = USER_SETTINGS["other"]["earliest_journal"]
 	earliest_journal_date: datetime.date = datetime.date(earliest_journal_json_object["year"], earliest_journal_json_object["month"], earliest_journal_json_object["day"])
 
-	current_date: datetime.date = starting_date
+	current_date: datetime.date = starting_date.date()
 	recent_missing_entries: list[datetime.date] = []
 	search_length: int = 100
 	for _ in range(search_length): # could be formatted as a while loop, though this allows a limit. also could be formatted to go between a date range, but that sounds annoying to do and this... works.
