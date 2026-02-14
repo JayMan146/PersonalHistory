@@ -22,4 +22,5 @@
 
 ## Bug Fixes
 
+* Convert checks of USER_SETTINGS to be arguments (in some cases) rather than just explicit checks to make easier to test etc. and more reusable
 * Allow for "missing days" by implementing better search
