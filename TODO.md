@@ -14,6 +14,11 @@
 * Allow extract from iCloud photos zips and others?
 * Allow keeping the .MOV from .zip files and further settings for zip extraction
 
+## Tweaks
+
+* Convert checks of USER_SETTINGS to be arguments (in some cases) rather than just explicit checks to make easier to test etc. and more reusable
+* More tests, and a way of testing non-helper functions (test journal directory, and symlink system to real journals?) 
+
 ## Extra Features
 
 * Statistics
@@ -23,5 +28,4 @@
 
 ## Bug Fixes
 
-* Convert checks of USER_SETTINGS to be arguments (in some cases) rather than just explicit checks to make easier to test etc. and more reusable
 * Allow for "missing days" by implementing better search
