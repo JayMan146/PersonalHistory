@@ -1,9 +1,9 @@
 import tkinter as tk
-from create_base_journal_entries import move_photos_from_photo_locations, create_all_recent_missing_entries, load_settings
+import create_base_journal_entries as main
 
 primary_window: tk.Tk = tk.Tk()
 
-USER_SETTINGS: dict = load_settings()
+USER_SETTINGS: dict = main.load_settings()
 
 class MainMenuButton(tk.Button):
 	def __init__(self, **kwargs):
@@ -19,16 +19,16 @@ def edit_settings():
 def quit():
 	primary_window.destroy()
 
-def main():
+def gui():
 	primary_window.title("Journal System")
 
 	tk.Label(primary_window, text="Welcome to the Journal System!", width=35).grid(column=0, row=0)
-	MainMenuButton(text="Move Photos", command=move_photos_from_photo_locations).grid(column=0, row=1)
-	MainMenuButton(text="Create New Entries", command=create_all_recent_missing_entries).grid(column=0, row=2)
+	MainMenuButton(text="Move Photos", command=main.move_photos_from_photo_locations).grid(column=0, row=1)
+	MainMenuButton(text="Create New Entries", command=main.create_all_recent_missing_entries).grid(column=0, row=2)
 	MainMenuButton(text="Edit Settings...", command=edit_settings).grid(column=0, row=3)
 	MainMenuButton(text="Quit", command=quit).grid(column=0, row=4)
 
 	primary_window.mainloop()
 
 if __name__ == "__main__":
-	main()
+	gui()
