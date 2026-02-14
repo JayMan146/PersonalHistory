@@ -26,6 +26,11 @@ class TestHelperFunctions(unittest.TestCase):
             (f"{main.USER_SETTINGS["journal_root"]}/2025", f"{main.USER_SETTINGS["journal_root"]}/2025/02 february 2025.md"))
         self.assertEqual(main.convert_date_to_journal_path(datetime.date(2029, 3, 18)), \
             (f"{main.USER_SETTINGS["journal_root"]}/2029", f"{main.USER_SETTINGS["journal_root"]}/2029/03 march 2029.md"))
+        
+    def test_get_photo_name_pieces(self):
+        self.assertEqual(main.get_photo_name_pieces("30 02 august 2003"), (30, 2, "august", 2003))
+        self.assertEqual(main.get_photo_name_pieces("03 00 february 2025"), (3, 0, "february", 2025))
+        self.assertEqual(main.get_photo_name_pieces("18 17 march 2029"), (18, 17, "march", 2029))
 
 if __name__ == "__main__":
     main.load_settings()
