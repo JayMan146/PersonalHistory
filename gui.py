@@ -10,7 +10,6 @@ class MainMenuButton(tk.Button):
 		super().__init__(primary_window, width=20, height=1, **kwargs)
 
 def edit_settings():
-	global settings_window
 	settings_window: tk.Toplevel = tk.Toplevel()
 	settings_window.title("Journal System Settings")
 	
