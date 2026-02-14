@@ -24,11 +24,11 @@ DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "sat
 SETTINGS_DIRECTORY_FROM_ROOT: str = "./JournalSystem/" # if you want the settings to be in a different folder (still within the journal root directory), change this
 is_heif_registered: bool = False
 
-def output_to_console_based_on_level(outputs: tuple[str, str, str]) -> None:
-	"""Outputs `outputs` to the console based on the current output level. `outputs[0]` is minimum, `outputs[1]` is medium, etc."""
-	for level, output in enumerate(outputs, start=1):
-		if console_output_level == ConsoleOutputLevel(level) and output:
-			print(output)
+def output_to_console_based_on_level(outputs: dict[ConsoleOutputLevel, str]) -> None:
+	"""Outputs `outputs` to the console based on the current output level. If the key matches the current level, it will be outputted."""
+	output: str | None = outputs.get(console_output_level)
+	if output:
+		print(output)
 
 def add_leading_zero(num: int) -> str:
 	"""Adds a leading zero to `num`. For example: 7 -> 07, 3 -> 03, 18 -> 18"""
