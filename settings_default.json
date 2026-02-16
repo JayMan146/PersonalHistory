@@ -1,6 +1,5 @@
 {
     "Confused?": "Read the README file. In fact, you should read that before touching any of this.",
-    "journal_root": "path/to/a/directory",
     "journal_format": {
         "requires_programming": {
             "matching_entries": {

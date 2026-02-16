@@ -21,11 +21,11 @@ class TestHelperFunctions(unittest.TestCase):
 
 	def test_convert_date_to_journal_path(self):
 		self.assertEqual(main.convert_date_to_journal_path(datetime.date(2003, 8, 30)), \
-			(f"{main.USER_SETTINGS["journal_root"]}/2003", f"{main.USER_SETTINGS["journal_root"]}/2003/08 august 2003.md"))
+			(f"{main.JOURNAL_ROOT}/2003", f"{main.JOURNAL_ROOT}/2003/08 august 2003.md"))
 		self.assertEqual(main.convert_date_to_journal_path(datetime.date(2025, 2, 3)), \
-			(f"{main.USER_SETTINGS["journal_root"]}/2025", f"{main.USER_SETTINGS["journal_root"]}/2025/02 february 2025.md"))
+			(f"{main.JOURNAL_ROOT}/2025", f"{main.JOURNAL_ROOT}/2025/02 february 2025.md"))
 		self.assertEqual(main.convert_date_to_journal_path(datetime.date(2029, 3, 18)), \
-			(f"{main.USER_SETTINGS["journal_root"]}/2029", f"{main.USER_SETTINGS["journal_root"]}/2029/03 march 2029.md"))
+			(f"{main.JOURNAL_ROOT}/2029", f"{main.JOURNAL_ROOT}/2029/03 march 2029.md"))
 		
 	def test_get_photo_name_pieces(self):
 		self.assertEqual(main.get_photo_name_pieces("30 02 august 2003"), (30, 2, "august", 2003))
@@ -82,5 +82,6 @@ class TestHelperFunctions(unittest.TestCase):
 		), datetime.timedelta(0))
 
 if __name__ == "__main__":
+	main.determine_root_paths()
 	main.load_current_profile_settings()
 	unittest.main()

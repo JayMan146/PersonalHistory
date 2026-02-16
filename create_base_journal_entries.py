@@ -18,15 +18,19 @@ class ConsoleOutputLevel(enum.Enum):
 	MAXIMUM = 3
 
 USER_SETTINGS: dict
-console_output_level: ConsoleOutputLevel
+CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevel
+CURRENT_WORKING_DIRECTORY: str = os.getcwd()
+JOURNAL_ROOT: str
+WORKING_DIRECTORY_FROM_ROOT: str
+
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-SETTINGS_DIRECTORY_FROM_ROOT: str = "./JournalSystem/" # if you want the settings to be in a different folder (still within the journal root directory), change this
+
 is_heif_registered: bool = False
 
 def output_to_console_based_on_level(outputs: dict[ConsoleOutputLevel, str], **kwargs) -> None:
 	"""Outputs `outputs` to the console based on the current output level. If the key matches the current level, it will be outputted."""
-	output: str | None = outputs.get(console_output_level)
+	output: str | None = outputs.get(CURRENT_CONSOLE_OUTPUT_LEVEL)
 	if output:
 		print(output, **kwargs)
 
@@ -54,7 +58,7 @@ def convert_to_long_date(short_date: datetime.date) -> str:
 def convert_date_to_journal_path(journal_date: datetime.date) -> tuple[str, str]:
 	"""Converts `journal_date` into the file path for the appropriate journal, returning a tuple with the year folder and the markdown file path."""
 	numbered_month: str = convert_to_month(journal_date.month)[1]
-	year_folder: str = f"{USER_SETTINGS["journal_root"]}/{journal_date.year}"
+	year_folder: str = f"{JOURNAL_ROOT}/{journal_date.year}"
 	markdown_file_path: str = f"{year_folder}/{numbered_month} {journal_date.year}.md"
 	return (year_folder, markdown_file_path)
 
@@ -73,7 +77,7 @@ def get_entry_markdown_path(entry_date: datetime.date) -> str | None:
 			continue
 		header: str = convert_to_header_link(line)
 		path_with_header: str = f"{journal_markdown_file_path}{header}" # adds the header to the file path (as it is in .md format)
-		fixed_path = path_with_header.replace(USER_SETTINGS["journal_root"], "..").replace(" ", "%20") # make it a local path and with %20 instead of spaces
+		fixed_path = path_with_header.replace(JOURNAL_ROOT, "..").replace(" ", "%20") # make it a local path and with %20 instead of spaces
 		return fixed_path
 	return None # technically, it will do this since it won't return anything if it doesn't find it, but i prefer explicit None returns (sometimes).
 
@@ -97,7 +101,7 @@ def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
 	for photo_number in range(0, 100):
 		photo_number_string: str = add_leading_zero(photo_number)
 		photo_path_with_photo_number: str = entry_photo_path.replace("<photo_number>", photo_number_string)
-		full_path: str = photo_path_with_photo_number.replace("./", f"{USER_SETTINGS["journal_root"]}/{photo_date.year}/")
+		full_path: str = photo_path_with_photo_number.replace("./", f"{JOURNAL_ROOT}/{photo_date.year}/")
 		file_path: list = glob.glob(f"{full_path}.*")
 		if not file_path: # doesn't exist
 			continue
@@ -230,7 +234,7 @@ def get_photo_directory(photo_name: str) -> str | None:
 	_, _, month, year = photo_name_pieces
 	month_number_with_zero = add_leading_zero(MONTHS.index(month) + 1)
 	photo_folder_name: str = f"{month_number_with_zero} {month} {year}"
-	new_photo_folder_path: str = f"{USER_SETTINGS["journal_root"]}/{year}/photos/{photo_folder_name}/"
+	new_photo_folder_path: str = f"{JOURNAL_ROOT}/{year}/photos/{photo_folder_name}/"
 
 	if not os.path.exists(new_photo_folder_path): # create the photo folder if it doesn't exist
 		if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
@@ -480,18 +484,18 @@ def create_all_recent_missing_entries() -> None:
 		
 def load_settings_profile(profile: str) -> dict:
 	"""Sets the global variable USER_SETTINGS to the selected profile, as well as returning it."""
-	global USER_SETTINGS, console_output_level
+	global USER_SETTINGS, CURRENT_CONSOLE_OUTPUT_LEVEL
 	with open(profile + ".json", "r", encoding="UTF-8") as settings_file:
 		USER_SETTINGS = json.load(settings_file)
 
 	# set console output level by int or str, with default of NONE
 	settings_console_output_level: str | int = USER_SETTINGS["other"]["console_output_level"]
 	if isinstance(settings_console_output_level, str):
-		console_output_level = ConsoleOutputLevel[settings_console_output_level.upper()]
+		CURRENT_CONSOLE_OUTPUT_LEVEL = ConsoleOutputLevel[settings_console_output_level.upper()]
 	elif isinstance(settings_console_output_level, int):
-		console_output_level = ConsoleOutputLevel(settings_console_output_level)
+		CURRENT_CONSOLE_OUTPUT_LEVEL = ConsoleOutputLevel(settings_console_output_level)
 	else:
-		console_output_level = ConsoleOutputLevel.NONE
+		CURRENT_CONSOLE_OUTPUT_LEVEL = ConsoleOutputLevel.NONE
 
 	if USER_SETTINGS.get("Confused?"): # don't want this floating around, as it isn't useful.
 		del USER_SETTINGS["Confused?"]
@@ -501,17 +505,23 @@ def load_settings_profile(profile: str) -> dict:
 def get_current_profile() -> str:
 	"""Gets the currently selected profile in `settings_profile.txt`"""
 	
-	with open(SETTINGS_DIRECTORY_FROM_ROOT + "settings_profile.txt", "r", encoding="UTF-8") as settings_profile_file:
-		settings_file_name: str = settings_profile_file.readline().strip()
+	with open("./settings_profile.txt", "r", encoding="UTF-8") as settings_profile_file:
+		profile: str = settings_profile_file.readline().strip()
 
-	return SETTINGS_DIRECTORY_FROM_ROOT + settings_file_name
+	return profile
 
 def load_current_profile_settings() -> dict:
 	"""Loads the settings of the current profile"""
 	return load_settings_profile(get_current_profile())
 
+def determine_root_paths() -> None:
+	global JOURNAL_ROOT, WORKING_DIRECTORY_FROM_ROOT
+	JOURNAL_ROOT, relative = CURRENT_WORKING_DIRECTORY.rsplit("/", 1)
+	WORKING_DIRECTORY_FROM_ROOT = f"./{relative}/"
+
 def main() -> None:
 	try:
+		determine_root_paths()
 		load_current_profile_settings() # this must happen first
 		move_photos_from_photo_locations() # then get the photos moved before making the entries
 		create_all_recent_missing_entries() # actually make 'em
