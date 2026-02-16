@@ -477,17 +477,11 @@ def create_all_recent_missing_entries() -> None:
 		if entry is None:
 			continue
 		write_entry(entry, entry_date)
-
-def load_settings() -> dict:
-	"""Sets the global variable USER_SETTINGS to the json file in settings_to_use.txt, as well as returning it."""
+		
+def load_settings_profile(profile: str) -> dict:
+	"""Sets the global variable USER_SETTINGS to the selected profile, as well as returning it."""
 	global USER_SETTINGS, console_output_level
-	
-	with open(SETTINGS_DIRECTORY_FROM_ROOT + "settings_to_use.txt", "r", encoding="UTF-8") as settings_to_use_file:
-		settings_file_name: str = settings_to_use_file.readline().strip()
-	if not settings_file_name.endswith(".json"): # add missing file extension
-		settings_file_name += ".json"
-
-	with open(SETTINGS_DIRECTORY_FROM_ROOT + settings_file_name, "r", encoding="UTF-8") as settings_file:
+	with open(profile + ".json", "r", encoding="UTF-8") as settings_file:
 		USER_SETTINGS = json.load(settings_file)
 
 	# set console output level by int or str, with default of NONE
@@ -504,13 +498,25 @@ def load_settings() -> dict:
 
 	return USER_SETTINGS
 
+def get_current_profile() -> str:
+	"""Gets the currently selected profile in `settings_profile.txt`"""
+	
+	with open(SETTINGS_DIRECTORY_FROM_ROOT + "settings_profile.txt", "r", encoding="UTF-8") as settings_profile_file:
+		settings_file_name: str = settings_profile_file.readline().strip()
+
+	return SETTINGS_DIRECTORY_FROM_ROOT + settings_file_name
+
+def load_current_profile_settings() -> dict:
+	"""Loads the settings of the current profile"""
+	return load_settings_profile(get_current_profile())
+
 def main() -> None:
 	try:
-		load_settings() # this must happen first
+		load_current_profile_settings() # this must happen first
 		move_photos_from_photo_locations() # then get the photos moved before making the entries
 		create_all_recent_missing_entries() # actually make 'em
 	except FileNotFoundError as error:
-		print(f"A file is missing. Double check the paths in settings and settings_to_use.txt file and make sure settings_to_use.txt exists. The full error is:\n{error}") # output, not debugging
+		print(f"A file is missing. Double check the paths in settings and settings_profile.txt file and make sure settings_profile.txt exists. The full error is:\n{error}") # output, not debugging
 		traceback.print_tb(error.__traceback__)
 	except KeyError as error:
 		print("Something was missing in a dictionary. Double check the README to make sure you have every setting in your settings file set. The full error is:\n{error}") # output, not debugging
