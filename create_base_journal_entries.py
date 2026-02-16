@@ -19,7 +19,7 @@ class ConsoleOutputLevel(enum.Enum):
 
 USER_SETTINGS: dict
 CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevel
-JOURNAL_ROOT: str = os.getcwd().rsplit("/", 1)[0]
+JOURNAL_ROOT: str = os.getcwd().rsplit("/", 1)[0] # gets the cwd, current working directory, and discards the last directory (giving the root)
 
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
