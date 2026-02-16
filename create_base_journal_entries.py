@@ -19,9 +19,7 @@ class ConsoleOutputLevel(enum.Enum):
 
 USER_SETTINGS: dict
 CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevel
-CURRENT_WORKING_DIRECTORY: str = os.getcwd()
-JOURNAL_ROOT: str
-WORKING_DIRECTORY_FROM_ROOT: str
+JOURNAL_ROOT: str = os.getcwd().rsplit("/", 1)[0]
 
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
@@ -514,14 +512,9 @@ def load_current_profile_settings() -> dict:
 	"""Loads the settings of the current profile"""
 	return load_settings_profile(get_current_profile())
 
-def determine_root_paths() -> None:
-	global JOURNAL_ROOT, WORKING_DIRECTORY_FROM_ROOT
-	JOURNAL_ROOT, relative = CURRENT_WORKING_DIRECTORY.rsplit("/", 1)
-	WORKING_DIRECTORY_FROM_ROOT = f"./{relative}/"
 
 def main() -> None:
 	try:
-		determine_root_paths()
 		load_current_profile_settings() # this must happen first
 		move_photos_from_photo_locations() # then get the photos moved before making the entries
 		create_all_recent_missing_entries() # actually make 'em

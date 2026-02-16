@@ -82,6 +82,5 @@ class TestHelperFunctions(unittest.TestCase):
 		), datetime.timedelta(0))
 
 if __name__ == "__main__":
-	main.determine_root_paths()
 	main.load_current_profile_settings()
 	unittest.main()
