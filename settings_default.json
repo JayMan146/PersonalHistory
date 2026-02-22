@@ -42,9 +42,7 @@
         "type_conversion": {
             "enabled": false,
             "delete_pre_converted_files": false,
-            "conversions": {
-                "jpg": "png"
-            }
+            "conversions": {}
         },
         "enable_google_photos_extraction": true
     },
