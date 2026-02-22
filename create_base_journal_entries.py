@@ -521,21 +521,3 @@ def load_current_settings_profile(use_defaults: bool=True) -> dict:
 		USER_SETTINGS = merge_with_default_settings(USER_SETTINGS)
 
 	return USER_SETTINGS
-
-def main() -> None:
-	try:
-		load_current_settings_profile(use_defaults=True) # this must happen first
-		move_photos_from_photo_locations() # then get the photos moved before making the entries
-		create_all_recent_missing_entries() # actually make 'em
-	except FileNotFoundError as error:
-		print(f"A file is missing. Double check the paths in settings and settings_profile.txt file and make sure settings_profile.txt exists. The full error is:\n{error}") # output, not debugging
-		traceback.print_tb(error.__traceback__)
-	except KeyError as error:
-		print("Something was missing in a dictionary. Double check the README to make sure you have every setting in your settings file set. The full error is:\n{error}") # output, not debugging
-		traceback.print_tb(error.__traceback__)
-	except Exception as error:
-		print(f"There's been a miscellaneous error:\n{error}") # output, not debugging
-		traceback.print_tb(error.__traceback__)
-
-if __name__ == "__main__":
-	main()
