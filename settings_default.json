@@ -1,5 +1,5 @@
 {
-    "journal_format": {
+    "format": {
         "requires_programming": {
             "matching_entries": {
                 "enabled": true,
@@ -44,7 +44,7 @@
         "enable_google_photos_extraction": true
     },
     "other": {
-        "earliest_journal": {
+        "earliest_entry": {
             "day": 0,
             "month": 0,
             "year": 0

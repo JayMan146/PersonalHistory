@@ -83,7 +83,7 @@ def get_entry_markdown_path(entry_date: datetime.date) -> str | None:
 def get_entries_matching_year(match_date: datetime.date) -> list[str]:
 	"""Returns all journal entries matching the year of `match_date`, besides the original."""
 	matching_entries: list[str] = []
-	for previous_year in range(match_date.year - 1, USER_SETTINGS["other"]["earliest_journal"]["year"] - 1, -1): # loop over previous years until earliest journal, backwards
+	for previous_year in range(match_date.year - 1, USER_SETTINGS["other"]["earliest_entry"]["year"] - 1, -1): # loop over previous years until earliest journal, backwards
 		previous_entry_header_path: str | None = get_entry_markdown_path(match_date.replace(year=previous_year))
 		if previous_entry_header_path is not None:
 			matching_entries.append(f"[{previous_year}]({previous_entry_header_path})")
@@ -110,22 +110,22 @@ def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
 	
 	return photo_paths
 
-def generate_custom_journal_formatting() -> str:
+def generate_custom_formatting() -> str:
 	"""Generates a list of the custom journal formatting settings to be added to an entry."""
-	custom_journal_formatting_settings_path = USER_SETTINGS["journal_format"]["custom"]
+	custom_formatting_settings_path = USER_SETTINGS["format"]["custom"]
 
-	preliminary_text: str = custom_journal_formatting_settings_path["preliminary_text"]
-	ending_text: str = custom_journal_formatting_settings_path["ending_text"]
+	preliminary_text: str = custom_formatting_settings_path["preliminary_text"]
+	ending_text: str = custom_formatting_settings_path["ending_text"]
 
-	item_separator: str = custom_journal_formatting_settings_path["separator"]
-	items: list[str] = custom_journal_formatting_settings_path["items"]
+	item_separator: str = custom_formatting_settings_path["separator"]
+	items: list[str] = custom_formatting_settings_path["items"]
 	joined_items = item_separator.join(items)
 
 	return preliminary_text + joined_items + ending_text
 
-def generate_requires_programming_journal_formatting(key: str, item_list: list[str]) -> str | None:
+def generate_requires_programming_formatting(key: str, item_list: list[str]) -> str | None:
 	"""Generates a line of the requires_programming section of the settings based on `key` and `item_list` (items to be joined together, e.g. `photo_paths`)"""
-	requires_programming_settings_path: dict[str, typing.Any] = USER_SETTINGS["journal_format"]["requires_programming"][key]
+	requires_programming_settings_path: dict[str, typing.Any] = USER_SETTINGS["format"]["requires_programming"][key]
 
 	is_disabled: bool = not requires_programming_settings_path["enabled"]
 	is_empty: bool = not bool(item_list)
@@ -334,29 +334,29 @@ def generate_entry(entry_date: datetime.date) -> str | None:
 
 	entry_string: str = f"## {convert_to_long_date(entry_date)}: " # header
 
-	if USER_SETTINGS["journal_format"]["custom_placement"].lower() == "before": # place custom stuff first if that's in settinsg
-		entry_string += generate_custom_journal_formatting() # repeated code, shut up.
+	if USER_SETTINGS["format"]["custom_placement"].lower() == "before": # place custom stuff first if that's in settinsg
+		entry_string += generate_custom_formatting() # repeated code, shut up.
 
 	# add the generated matching entries lines if valid  
-	if USER_SETTINGS["journal_format"]["requires_programming"]["matching_entries"]:
+	if USER_SETTINGS["format"]["requires_programming"]["matching_entries"]:
 		matching_entries: list[str] = []
 		matching_entries = get_entries_matching_year(entry_date)
-		matching_entries_line: str | None = generate_requires_programming_journal_formatting("matching_entries", matching_entries)
+		matching_entries_line: str | None = generate_requires_programming_formatting("matching_entries", matching_entries)
 		if matching_entries_line is not None:
 			entry_string += matching_entries_line
 	
 	# add the generated photos lines if valid
-	if USER_SETTINGS["journal_format"]["requires_programming"]["photos"]:
+	if USER_SETTINGS["format"]["requires_programming"]["photos"]:
 		photo_paths: list[str] = []
 		photo_paths = get_photo_paths_by_date(entry_date)
-		photos_line: str | None = generate_requires_programming_journal_formatting("photos", photo_paths)
+		photos_line: str | None = generate_requires_programming_formatting("photos", photo_paths)
 		if photos_line is not None:
 			entry_string += photos_line
 	
-	if USER_SETTINGS["journal_format"]["custom_placement"].lower() != "before": # place custom stuff after if that's in settinsg
-		entry_string += generate_custom_journal_formatting() # repeated code, shut up.
+	if USER_SETTINGS["format"]["custom_placement"].lower() != "before": # place custom stuff after if that's in settinsg
+		entry_string += generate_custom_formatting() # repeated code, shut up.
 
-	entry_string += "\n" * USER_SETTINGS["journal_format"]["writing_lines"] # add new lines for writing based on settings | ahh, python string multiplication
+	entry_string += "\n" * USER_SETTINGS["format"]["writing_lines"] # add new lines for writing based on settings | ahh, python string multiplication
 	
 	return entry_string
 
@@ -450,15 +450,15 @@ def find_all_recent_missing_entries() -> list[datetime.date]:
 	crossover_direction: bool | None = None if crossover_direction_setting == "disabled" else crossover_direction_setting == "backward"
 	starting_date += modify_date_by_crossover(starting_date, crossover_time, crossover_direction)
 
-	earliest_journal_json_object: dict[str, int] = USER_SETTINGS["other"]["earliest_journal"]
-	earliest_journal_date: datetime.date = datetime.date(earliest_journal_json_object["year"], earliest_journal_json_object["month"], earliest_journal_json_object["day"])
+	earliest_entry_json_object: dict[str, int] = USER_SETTINGS["other"]["earliest_entry"]
+	earliest_entry_date: datetime.date = datetime.date(earliest_entry_json_object["year"], earliest_entry_json_object["month"], earliest_entry_json_object["day"])
 
 	current_date: datetime.date = starting_date.date()
 	recent_missing_entries: list[datetime.date] = []
 	search_length: int = 100
 	for _ in range(search_length): # could be formatted as a while loop, though this allows a limit. also could be formatted to go between a date range, but that sounds annoying to do and this... works.
 		current_entry: str | None = get_entry_markdown_path(current_date)
-		if current_entry or current_date < earliest_journal_date: # checking if the current entry exists only allows missing entries to be in a row, so it won't go like e.g. jan 24, jan 17, jan 25. though, i guess this doesn't allow for like "missing" a day... TODO
+		if current_entry or current_date < earliest_entry_date: # checking if the current entry exists only allows missing entries to be in a row, so it won't go like e.g. jan 24, jan 17, jan 25. though, i guess this doesn't allow for like "missing" a day... TODO
 			break
 		recent_missing_entries.append(current_date)
 		current_date -= datetime.timedelta(days=1)
