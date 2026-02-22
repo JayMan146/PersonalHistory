@@ -6,7 +6,6 @@ import zipfile
 import shutil
 import json
 import typing
-import traceback
 import enum
 import mergedeep
 from PIL import Image
