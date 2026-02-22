@@ -82,5 +82,5 @@ class TestHelperFunctions(unittest.TestCase):
 		), datetime.timedelta(0))
 
 if __name__ == "__main__":
-	main.load_current_profile_settings()
+	main.load_current_settings_profile()
 	unittest.main()

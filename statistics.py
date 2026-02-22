@@ -3,7 +3,7 @@ import dataclasses
 import datetime
 import calendar
 import os
-from create_base_journal_entries import load_current_profile_settings, convert_to_month, convert_to_long_date
+from create_base_journal_entries import load_current_settings_profile, convert_to_month, convert_to_long_date
 
 USER_SETTINGS: dict
 
@@ -18,7 +18,7 @@ class JournalStatistic:
 	number_of_photos: int
 
 def main():
-	USER_SETTINGS = load_current_profile_settings()
+	USER_SETTINGS = load_current_settings_profile()
 	earliest_journal_dict: dict = USER_SETTINGS["other"]["earliest_journal"]
 	earliest_journal: datetime.date = datetime.date(earliest_journal_dict["year"], earliest_journal_dict["month"], earliest_journal_dict["day"])
 	today: datetime.date = datetime.date.today()

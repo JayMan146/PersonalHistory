@@ -8,6 +8,7 @@ import json
 import typing
 import traceback
 import enum
+import mergedeep
 from PIL import Image
 from pillow_heif import register_heif_opener
 
@@ -480,6 +481,12 @@ def create_all_recent_missing_entries() -> None:
 			continue
 		write_entry(entry, entry_date)
 		
+def merge_with_default_settings(settings: dict[str, dict]) -> dict[str, dict]:
+	"""Deep merges `settings` with the default settings (profile `settings_default`)"""
+	new_settings: dict = load_settings_profile("settings_default")
+	mergedeep.merge(new_settings, settings)
+	return new_settings
+		
 def load_settings_profile(profile: str) -> dict:
 	"""Sets the global variable USER_SETTINGS to the selected profile, as well as returning it."""
 	global USER_SETTINGS, CURRENT_CONSOLE_OUTPUT_LEVEL
@@ -495,9 +502,6 @@ def load_settings_profile(profile: str) -> dict:
 	else:
 		CURRENT_CONSOLE_OUTPUT_LEVEL = ConsoleOutputLevel.NONE
 
-	if USER_SETTINGS.get("Confused?"): # don't want this floating around, as it isn't useful.
-		del USER_SETTINGS["Confused?"]
-
 	return USER_SETTINGS
 
 def get_current_profile() -> str:
@@ -508,14 +512,19 @@ def get_current_profile() -> str:
 
 	return profile
 
-def load_current_profile_settings() -> dict:
+def load_current_settings_profile(use_defaults: bool=True) -> dict:
 	"""Loads the settings of the current profile"""
-	return load_settings_profile(get_current_profile())
+	global USER_SETTINGS
 
+	USER_SETTINGS = load_settings_profile(get_current_profile())
+	if use_defaults:
+		USER_SETTINGS = merge_with_default_settings(USER_SETTINGS)
+
+	return USER_SETTINGS
 
 def main() -> None:
 	try:
-		load_current_profile_settings() # this must happen first
+		load_current_settings_profile(use_defaults=True) # this must happen first
 		move_photos_from_photo_locations() # then get the photos moved before making the entries
 		create_all_recent_missing_entries() # actually make 'em
 	except FileNotFoundError as error:
