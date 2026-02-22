@@ -23,7 +23,6 @@ CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevel
 JOURNAL_ROOT: str = os.getcwd().rsplit("/", 1)[0] # gets the cwd, current working directory, and discards the last directory (giving the root)
 
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
-DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
 is_heif_registered: bool = False
 
@@ -48,6 +47,8 @@ def convert_to_month(month: int) -> tuple[str, str]:
 
 def convert_to_long_date(short_date: datetime.date) -> str:
 	"""Converts `short_date` into a long date format like Monday 03 February 2025"""
+	
+	DAYS_OF_THE_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 	weekday: str = DAYS_OF_THE_WEEK[short_date.weekday()].title()
 	day_with_leading_zero: str = add_leading_zero(short_date.day)
 	month: str = MONTHS[short_date.month - 1].title() # subtract one since month number and indexes are separate
