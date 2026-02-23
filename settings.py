@@ -2,14 +2,14 @@ import mergedeep
 import json
 import enum
 
-class ConsoleOutputLevel(enum.Enum):
+class ConsoleOutputLevels(enum.Enum):
 	NONE = 0
 	MINIMUM = 1
 	MEDIUM = 2
 	MAXIMUM = 3
 
 USER_SETTINGS: dict[str, dict]
-CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevel
+CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevels
 
 def merge_with_default_settings(settings: dict[str, dict]) -> dict[str, dict]:
 	"""Deep merges `settings` with the default settings (profile `settings_default`)"""
@@ -17,15 +17,15 @@ def merge_with_default_settings(settings: dict[str, dict]) -> dict[str, dict]:
 	mergedeep.merge(new_settings, settings)
 	return new_settings
 
-def determine_console_output_level(setting: str | int) -> ConsoleOutputLevel:
+def determine_console_output_level(setting: str | int) -> ConsoleOutputLevels:
 	# set console output level by int or str, with default of NONE
 	settings_console_output_level: str | int = setting
 	if isinstance(settings_console_output_level, str):
-		current_console_output_level = ConsoleOutputLevel[settings_console_output_level.upper()]
+		current_console_output_level = ConsoleOutputLevels[settings_console_output_level.upper()]
 	elif isinstance(settings_console_output_level, int):
-		current_console_output_level = ConsoleOutputLevel(settings_console_output_level)
+		current_console_output_level = ConsoleOutputLevels(settings_console_output_level)
 	else:
-		current_console_output_level = ConsoleOutputLevel.NONE
+		current_console_output_level = ConsoleOutputLevels.NONE
 
 	return current_console_output_level
 		

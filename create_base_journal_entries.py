@@ -16,7 +16,7 @@ MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "ju
 
 is_heif_registered: bool = False
 
-def output_to_console_by_level(outputs: dict[settings.ConsoleOutputLevel, str], **print_key_word_arguments) -> None:
+def output_to_console_by_level(outputs: dict[settings.ConsoleOutputLevels, str], **print_key_word_arguments) -> None:
 	"""Outputs `outputs` to the console based on the current output level. If the key matches the current level, it will be outputted."""
 	current_console_output_level_int: int = settings.CURRENT_CONSOLE_OUTPUT_LEVEL.value
 	for level, output in outputs.items():
@@ -170,14 +170,14 @@ def extract_zipped_photo(file_path: str) -> None:
 	
 	shutil.rmtree(temporary_directory) # remove temporary directory and all remaining files
 
-	output_to_console_by_level({settings.ConsoleOutputLevel.MAXIMUM: "  ⮡ Extracted heic photo from zip archive."})
+	output_to_console_by_level({settings.ConsoleOutputLevels.MAXIMUM: "  ⮡ Extracted heic photo from zip archive."})
 
 def delete_unconverted_photo(file_path: str, original_extension: str) -> None:
 	"""Removes an unconverted photo at `file_path` with the extension of `original_extension`, following rules in settings.USER_SETTINGS."""
 
 	if settings.USER_SETTINGS["photos"]["type_conversion"]["delete_pre_converted_files"]:
 		os.remove(file_path)
-		output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: f"\t⮡ Deleted unconverted photo of file type {original_extension}."})
+		output_to_console_by_level({settings.ConsoleOutputLevels.MEDIUM: f"\t⮡ Deleted unconverted photo of file type {original_extension}."})
 
 def handle_zip_photo(file_path: str, file_path_without_extension: str):
 	"""Handles the case of a photo being converted from a zip file"""
@@ -213,7 +213,7 @@ def convert_photo_file_type(file_path: str) -> None:
 	image = Image.open(file_path)
 	image.save(f"{file_path_without_extension}.{output_type}", format=output_type)
 
-	output_to_console_by_level({settings.ConsoleOutputLevel.MAXIMUM: f"  ⮡ Converted to file type {output_type}."})
+	output_to_console_by_level({settings.ConsoleOutputLevels.MAXIMUM: f"  ⮡ Converted to file type {output_type}."})
 
 	delete_unconverted_photo(file_path, extension)
 
@@ -230,10 +230,10 @@ def get_photo_directory(photo_name: str) -> str | None:
 
 	if not os.path.exists(new_photo_folder_path): # create the photo folder if it doesn't exist
 		if not settings.USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
-			output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: "  ⮡ Warning: unable to move this photo, as directory creation is disabled."})
+			output_to_console_by_level({settings.ConsoleOutputLevels.MEDIUM: "  ⮡ Warning: unable to move this photo, as directory creation is disabled."})
 			return None
 		os.makedirs(new_photo_folder_path) 
-		output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: f"Making new directory: {new_photo_folder_path}\n"})
+		output_to_console_by_level({settings.ConsoleOutputLevels.MEDIUM: f"Making new directory: {new_photo_folder_path}\n"})
 
 	return new_photo_folder_path
 
@@ -248,19 +248,19 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
 
 	if not found_any_photos:
 		output_to_console_by_level({
-			settings.ConsoleOutputLevel.MINIMUM: "Moving photos."
+			settings.ConsoleOutputLevels.MINIMUM: "Moving photos."
 		})
 	found_any_photos = True
 
 	if not found_any_photos_in_this_directory:
 		output_to_console_by_level({
-			settings.ConsoleOutputLevel.MEDIUM: f"Moving photos from {photo_origin_directory}.",
-			settings.ConsoleOutputLevel.MAXIMUM: f"Moving photos from {photo_origin_directory}:"
+			settings.ConsoleOutputLevels.MEDIUM: f"Moving photos from {photo_origin_directory}.",
+			settings.ConsoleOutputLevels.MAXIMUM: f"Moving photos from {photo_origin_directory}:"
 		})
 	found_any_photos_in_this_directory = True
 
 	output_to_console_by_level({
-		settings.ConsoleOutputLevel.MAXIMUM: f"⮡ {photo_name}"
+		settings.ConsoleOutputLevels.MAXIMUM: f"⮡ {photo_name}"
 	})
  
 	new_photo_folder_path: str | None = get_photo_directory(photo_name)
@@ -274,7 +274,7 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
 	wildcard_extension_photo_path: str = ".".join(new_photo_path.split(".")[:-1]) + ".*"
 	if glob.glob(wildcard_extension_photo_path):
 		output_to_console_by_level({
-			settings.ConsoleOutputLevel.MAXIMUM: "  ⮡ Warning: unable to move this photo, as a photo with this name already exists."
+			settings.ConsoleOutputLevels.MAXIMUM: "  ⮡ Warning: unable to move this photo, as a photo with this name already exists."
 		})
 		return None
 	
@@ -305,7 +305,7 @@ def move_photos_from_photo_locations() -> None:
 				has_found_any_photos, has_found_photos_in_this_directory = photo_found_status
 	if has_found_any_photos: 
 		output_to_console_by_level({
-			settings.ConsoleOutputLevel.MAXIMUM: ""
+			settings.ConsoleOutputLevels.MAXIMUM: ""
 		})
 		
 def valid_photo_name_format(photo_name: str) -> bool:
@@ -375,27 +375,27 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
 	if not os.path.isdir(year_folder):
 		if not settings.USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level({
-				settings.ConsoleOutputLevel.MEDIUM: "Warning: unable to write entry, as directory creation is disabled."
+				settings.ConsoleOutputLevels.MEDIUM: "Warning: unable to write entry, as directory creation is disabled."
 			})
 			return
 		os.mkdir(year_folder)
 		output_to_console_by_level({
-			settings.ConsoleOutputLevel.MEDIUM: f"Making new directory: {year_folder}\n"
+			settings.ConsoleOutputLevels.MEDIUM: f"Making new directory: {year_folder}\n"
 		})
 
 	if not os.path.exists(markdown_file_path):
 		if not settings.USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level({
-				settings.ConsoleOutputLevel.MEDIUM: "Warning: unable to write entry, as file creation is disabled."
+				settings.ConsoleOutputLevels.MEDIUM: "Warning: unable to write entry, as file creation is disabled."
 			})
 			return
 		with open(markdown_file_path, "x", encoding="UTF-8") as new_journal_file:
 			output_to_console_by_level({
-				settings.ConsoleOutputLevel.MEDIUM: f"Creating new journal file: {markdown_file_path}\n"
+				settings.ConsoleOutputLevels.MEDIUM: f"Creating new journal file: {markdown_file_path}\n"
 			})
 			if not settings.USER_SETTINGS["other"]["enable_writing_to_file"]:
 				output_to_console_by_level({
-					settings.ConsoleOutputLevel.MEDIUM: "Attempted to write header to file, but that behavior is disabled."
+					settings.ConsoleOutputLevels.MEDIUM: "Attempted to write header to file, but that behavior is disabled."
 				})
 			new_journal_file.write(f"## {convert_to_month(entry_date.month)[0].title()} {entry_date.year}\n\n")
 		
@@ -413,10 +413,10 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
 			journal_file_to_append.write(entry)
 		else:
 			output_to_console_by_level({
-				settings.ConsoleOutputLevel.MEDIUM: "Attempted to write entry to file, but that behavior is disabled."
+				settings.ConsoleOutputLevels.MEDIUM: "Attempted to write entry to file, but that behavior is disabled."
 			})
 	output_to_console_by_level({
-		settings.ConsoleOutputLevel.MAXIMUM: entry
+		settings.ConsoleOutputLevels.MAXIMUM: entry
 	}, end="") # show what was written to file | output, not debugging
 
 def modify_date_by_crossover(time_to_modify: datetime.datetime, crossover_time: datetime.datetime, move_backward: bool | None) -> datetime.timedelta:
@@ -464,7 +464,7 @@ def create_all_recent_missing_entries() -> None:
 	recent_missing_entries: list[datetime.date] = find_all_recent_missing_entries()
 
 	output_to_console_by_level({
-		settings.ConsoleOutputLevel.MAXIMUM: "Journal Text Written to File(s):\n"
+		settings.ConsoleOutputLevels.MAXIMUM: "Journal Text Written to File(s):\n"
 	})
 
 	# iterate backwards since we want the first found missing one to be written first, then the most recent missing one to be written last
