@@ -1,7 +1,6 @@
 import create_base_journal_entries as main
 import settings
 import traceback
-import json
 
 def easy_run() -> None:
 	try:
