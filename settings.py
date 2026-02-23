@@ -18,17 +18,16 @@ def merge_with_default_settings(settings: dict[str, dict]) -> dict[str, dict]:
 	return new_settings
 
 def determine_console_output_level(setting: str | int) -> ConsoleOutputLevel:
-	global CURRENT_CONSOLE_OUTPUT_LEVEL
 	# set console output level by int or str, with default of NONE
 	settings_console_output_level: str | int = setting
 	if isinstance(settings_console_output_level, str):
-		CURRENT_CONSOLE_OUTPUT_LEVEL = ConsoleOutputLevel[settings_console_output_level.upper()]
+		current_console_output_level = ConsoleOutputLevel[settings_console_output_level.upper()]
 	elif isinstance(settings_console_output_level, int):
-		CURRENT_CONSOLE_OUTPUT_LEVEL = ConsoleOutputLevel(settings_console_output_level)
+		current_console_output_level = ConsoleOutputLevel(settings_console_output_level)
 	else:
-		CURRENT_CONSOLE_OUTPUT_LEVEL = ConsoleOutputLevel.NONE
+		current_console_output_level = ConsoleOutputLevel.NONE
 
-	return CURRENT_CONSOLE_OUTPUT_LEVEL
+	return current_console_output_level
 		
 def load_settings_profile(profile: str, should_determine_console_output_level: bool=True) -> dict:
 	"""Sets the global variable USER_SETTINGS to the selected profile, as well as returning it."""
@@ -39,7 +38,7 @@ def load_settings_profile(profile: str, should_determine_console_output_level: b
 	other_settings_section: dict | None = USER_SETTINGS.get("other")
 	console_output_level_setting: str | int | None = other_settings_section.get("console_output_level") if other_settings_section is not None else None
 	if console_output_level_setting and should_determine_console_output_level:
-		determine_console_output_level(console_output_level_setting)
+		CURRENT_CONSOLE_OUTPUT_LEVEL = determine_console_output_level(console_output_level_setting)
 		
 	return USER_SETTINGS
 
