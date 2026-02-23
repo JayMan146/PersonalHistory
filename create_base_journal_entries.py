@@ -18,9 +18,11 @@ is_heif_registered: bool = False
 
 def output_to_console_by_level(outputs: dict[settings.ConsoleOutputLevel, str], **print_key_word_arguments) -> None:
 	"""Outputs `outputs` to the console based on the current output level. If the key matches the current level, it will be outputted."""
-	output: str | None = outputs.get(settings.CURRENT_CONSOLE_OUTPUT_LEVEL)
-	if output:
-		print(output, **print_key_word_arguments)
+	current_console_output_level_int: int = settings.CURRENT_CONSOLE_OUTPUT_LEVEL.value
+	for level, output in outputs.items():
+		level_int: int = level.value
+		if level_int <= current_console_output_level_int:
+			print(output, **print_key_word_arguments)
 
 def add_leading_zero(num: int) -> str:
 	"""Adds a leading zero to `num`. For example: 7 -> 07, 3 -> 03, 18 -> 18"""
