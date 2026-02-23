@@ -1,4 +1,5 @@
 import create_base_journal_entries as main
+import settings
 import datetime
 import unittest
 
@@ -82,5 +83,5 @@ class TestHelperFunctions(unittest.TestCase):
 		), datetime.timedelta(0))
 
 if __name__ == "__main__":
-	main.load_current_settings_profile()
+	settings.load_current_settings_profile()
 	unittest.main()

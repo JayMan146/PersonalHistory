@@ -1,9 +1,11 @@
 import create_base_journal_entries as main
+import settings
 import traceback
+import json
 
 def easy_run() -> None:
 	try:
-		main.load_current_settings_profile(use_defaults=True) # this must happen first
+		settings.load_current_settings_profile(use_defaults=True) # this must happen first
 		main.move_photos_from_photo_locations() # then get the photos moved before making the entries
 		main.create_all_recent_missing_entries() # actually make 'em
 	except FileNotFoundError as error:

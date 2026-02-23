@@ -1,33 +1,24 @@
 import datetime
-from ConvertToHeaderLink.convert_to_header_link import convert_to_header_link
 import glob
 import os
 import zipfile
 import shutil
-import json
 import typing
-import enum
-import mergedeep
 from PIL import Image
 from pillow_heif import register_heif_opener
 
-class ConsoleOutputLevel(enum.Enum):
-	NONE = 0
-	MINIMUM = 1
-	MEDIUM = 2
-	MAXIMUM = 3
+from ConvertToHeaderLink.convert_to_header_link import convert_to_header_link
+import settings
 
-USER_SETTINGS: dict
-CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevel
 JOURNAL_ROOT: str = os.getcwd().rsplit("/", 1)[0] # gets the cwd, current working directory, and discards the last directory (giving the root)
 
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 
 is_heif_registered: bool = False
 
-def output_to_console_by_level(outputs: dict[ConsoleOutputLevel, str], **print_key_word_arguments) -> None:
+def output_to_console_by_level(outputs: dict[settings.ConsoleOutputLevel, str], **print_key_word_arguments) -> None:
 	"""Outputs `outputs` to the console based on the current output level. If the key matches the current level, it will be outputted."""
-	output: str | None = outputs.get(CURRENT_CONSOLE_OUTPUT_LEVEL)
+	output: str | None = outputs.get(settings.CURRENT_CONSOLE_OUTPUT_LEVEL)
 	if output:
 		print(output, **print_key_word_arguments)
 
@@ -83,7 +74,7 @@ def get_entry_markdown_path(entry_date: datetime.date) -> str | None:
 def get_entries_matching_year(match_date: datetime.date) -> list[str]:
 	"""Returns all journal entries matching the year of `match_date`, besides the original."""
 	matching_entries: list[str] = []
-	for previous_year in range(match_date.year - 1, USER_SETTINGS["other"]["earliest_entry"]["year"] - 1, -1): # loop over previous years until earliest journal, backwards
+	for previous_year in range(match_date.year - 1, settings.USER_SETTINGS["other"]["earliest_entry"]["year"] - 1, -1): # loop over previous years until earliest journal, backwards
 		previous_entry_header_path: str | None = get_entry_markdown_path(match_date.replace(year=previous_year))
 		if previous_entry_header_path is not None:
 			matching_entries.append(f"[{previous_year}]({previous_entry_header_path})")
@@ -112,7 +103,7 @@ def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
 
 def generate_custom_formatting() -> str:
 	"""Generates a list of the custom journal formatting settings to be added to an entry."""
-	custom_formatting_settings_path = USER_SETTINGS["format"]["custom"]
+	custom_formatting_settings_path = settings.USER_SETTINGS["format"]["custom"]
 
 	preliminary_text: str = custom_formatting_settings_path["preliminary_text"]
 	ending_text: str = custom_formatting_settings_path["ending_text"]
@@ -125,7 +116,7 @@ def generate_custom_formatting() -> str:
 
 def generate_requires_programming_formatting(key: str, item_list: list[str]) -> str | None:
 	"""Generates a line of the requires_programming section of the settings based on `key` and `item_list` (items to be joined together, e.g. `photo_paths`)"""
-	requires_programming_settings_path: dict[str, typing.Any] = USER_SETTINGS["format"]["requires_programming"][key]
+	requires_programming_settings_path: dict[str, typing.Any] = settings.USER_SETTINGS["format"]["requires_programming"][key]
 
 	is_disabled: bool = not requires_programming_settings_path["enabled"]
 	is_empty: bool = not bool(item_list)
@@ -177,18 +168,18 @@ def extract_zipped_photo(file_path: str) -> None:
 	
 	shutil.rmtree(temporary_directory) # remove temporary directory and all remaining files
 
-	output_to_console_by_level({ConsoleOutputLevel.MAXIMUM: "  ⮡ Extracted heic photo from zip archive."}) # output, not debugging
+	output_to_console_by_level({settings.ConsoleOutputLevel.MAXIMUM: "  ⮡ Extracted heic photo from zip archive."}) # output, not debugging
 
 def delete_unconverted_photo(file_path: str, original_extension: str) -> None:
-	"""Removes an unconverted photo at `file_path` with the extension of `original_extension`, following rules in USER_SETTINGS."""
+	"""Removes an unconverted photo at `file_path` with the extension of `original_extension`, following rules in settings.USER_SETTINGS."""
 
-	if USER_SETTINGS["photos"]["type_conversion"]["delete_pre_converted_files"]:
+	if settings.USER_SETTINGS["photos"]["type_conversion"]["delete_pre_converted_files"]:
 		os.remove(file_path)
-		output_to_console_by_level({ConsoleOutputLevel.MEDIUM: f"\t⮡ Deleted unconverted photo of file type {original_extension}."}) # output, not debugging
+		output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: f"\t⮡ Deleted unconverted photo of file type {original_extension}."}) # output, not debugging
 
 def handle_zip_photo(file_path: str, file_path_without_extension: str):
 	"""Handles the case of a photo being converted from a zip file"""
-	if not USER_SETTINGS["photos"]["enable_google_photos_extraction"]: return
+	if not settings.USER_SETTINGS["photos"]["enable_google_photos_extraction"]: return
 
 	extract_zipped_photo(file_path_without_extension)
 	convert_photo_file_type([file for file in glob.glob(file_path_without_extension + ".*") if file.split(".")[-1] != "zip"][0])
@@ -199,7 +190,7 @@ def convert_photo_file_type(file_path: str) -> None:
 	
 	global is_heif_registered
 
-	if not USER_SETTINGS["photos"]["type_conversion"]["enabled"]: return
+	if not settings.USER_SETTINGS["photos"]["type_conversion"]["enabled"]: return
 
 	file_path_split_by_periods: list[str] = file_path.split(".")
 	file_path_without_extension = ".".join(file_path_split_by_periods[:-1])
@@ -209,7 +200,7 @@ def convert_photo_file_type(file_path: str) -> None:
 		handle_zip_photo(file_path, file_path_without_extension)
 		return
 
-	output_type: str = USER_SETTINGS["photos"]["type_conversion"]["conversions"].get(extension) # other wise, use settings mapping
+	output_type: str = settings.USER_SETTINGS["photos"]["type_conversion"]["conversions"].get(extension) # other wise, use settings mapping
 	if output_type is None: return # don't convert without mapping
 	
 	# we only register it as this point to make sure we only register once it's actually needed (and only once)
@@ -220,7 +211,7 @@ def convert_photo_file_type(file_path: str) -> None:
 	image = Image.open(file_path)
 	image.save(f"{file_path_without_extension}.{output_type}", format=output_type)
 
-	output_to_console_by_level({ConsoleOutputLevel.MAXIMUM: f"  ⮡ Converted to file type {output_type}."}) # output, not debugging
+	output_to_console_by_level({settings.ConsoleOutputLevel.MAXIMUM: f"  ⮡ Converted to file type {output_type}."}) # output, not debugging
 
 	delete_unconverted_photo(file_path, extension)
 
@@ -236,11 +227,11 @@ def get_photo_directory(photo_name: str) -> str | None:
 	new_photo_folder_path: str = f"{JOURNAL_ROOT}/{year}/photos/{photo_folder_name}/"
 
 	if not os.path.exists(new_photo_folder_path): # create the photo folder if it doesn't exist
-		if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
-			output_to_console_by_level({ConsoleOutputLevel.MEDIUM: "  ⮡ Warning: unable to move this photo, as directory creation is disabled."}) # output, not debugging
+		if not settings.USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+			output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: "  ⮡ Warning: unable to move this photo, as directory creation is disabled."}) # output, not debugging
 			return None
 		os.makedirs(new_photo_folder_path) 
-		output_to_console_by_level({ConsoleOutputLevel.MEDIUM: f"Making new directory: {new_photo_folder_path}\n"}) # output, not debugging
+		output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: f"Making new directory: {new_photo_folder_path}\n"}) # output, not debugging
 
 	return new_photo_folder_path
 
@@ -255,19 +246,19 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
 
 	if not found_any_photos:
 		output_to_console_by_level({
-			ConsoleOutputLevel.MINIMUM: "Moving photos."
+			settings.ConsoleOutputLevel.MINIMUM: "Moving photos."
 		})
 	found_any_photos = True
 
 	if not found_any_photos_in_this_directory:
 		output_to_console_by_level({
-			ConsoleOutputLevel.MEDIUM: f"Moving photos from {photo_origin_directory}.",
-			ConsoleOutputLevel.MAXIMUM: f"Moving photos from {photo_origin_directory}:"
+			settings.ConsoleOutputLevel.MEDIUM: f"Moving photos from {photo_origin_directory}.",
+			settings.ConsoleOutputLevel.MAXIMUM: f"Moving photos from {photo_origin_directory}:"
 		})
 	found_any_photos_in_this_directory = True
 
 	output_to_console_by_level({
-		ConsoleOutputLevel.MAXIMUM: f"⮡ {photo_name}"
+		settings.ConsoleOutputLevel.MAXIMUM: f"⮡ {photo_name}"
 	})
  
 	new_photo_folder_path: str | None = get_photo_directory(photo_name)
@@ -281,7 +272,7 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
 	wildcard_extension_photo_path: str = ".".join(new_photo_path.split(".")[:-1]) + ".*"
 	if glob.glob(wildcard_extension_photo_path):
 		output_to_console_by_level({
-			ConsoleOutputLevel.MAXIMUM: "  ⮡ Warning: unable to move this photo, as a photo with this name already exists."
+			settings.ConsoleOutputLevel.MAXIMUM: "  ⮡ Warning: unable to move this photo, as a photo with this name already exists."
 		})
 		return None
 	
@@ -293,13 +284,13 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
 def move_photos_from_photo_locations() -> None:
 	"""Finds photos with valid names in the downloads folder and moves them to the corresponding location."""
 
-	photo_moving_enabled: bool = USER_SETTINGS["photos"]["enable_photo_transfer"]
+	photo_moving_enabled: bool = settings.USER_SETTINGS["photos"]["enable_photo_transfer"]
 	if not photo_moving_enabled:
 		return
 	
 	# get all directories and their associated files within
 	photo_directory_files: dict[str, list[str]] = {}
-	for photo_directory in USER_SETTINGS["photos"]["photo_locations"]:
+	for photo_directory in settings.USER_SETTINGS["photos"]["photo_locations"]:
 		photo_directory_files[photo_directory] = os.listdir(photo_directory)
 
 	# handle each photo in each directory
@@ -312,7 +303,7 @@ def move_photos_from_photo_locations() -> None:
 				has_found_any_photos, has_found_photos_in_this_directory = photo_found_status
 	if has_found_any_photos: 
 		output_to_console_by_level({
-			ConsoleOutputLevel.MAXIMUM: ""
+			settings.ConsoleOutputLevel.MAXIMUM: ""
 		})
 		
 def valid_photo_name_format(photo_name: str) -> bool:
@@ -334,11 +325,11 @@ def generate_entry(entry_date: datetime.date) -> str | None:
 
 	entry_string: str = f"## {convert_to_long_date(entry_date)}: " # header
 
-	if USER_SETTINGS["format"]["custom_placement"].lower() == "before": # place custom stuff first if that's in settinsg
+	if settings.USER_SETTINGS["format"]["custom_placement"].lower() == "before": # place custom stuff first if that's in settinsg
 		entry_string += generate_custom_formatting() # repeated code, shut up.
 
 	# add the generated matching entries lines if valid  
-	if USER_SETTINGS["format"]["requires_programming"]["matching_entries"]:
+	if settings.USER_SETTINGS["format"]["requires_programming"]["matching_entries"]:
 		matching_entries: list[str] = []
 		matching_entries = get_entries_matching_year(entry_date)
 		matching_entries_line: str | None = generate_requires_programming_formatting("matching_entries", matching_entries)
@@ -346,17 +337,17 @@ def generate_entry(entry_date: datetime.date) -> str | None:
 			entry_string += matching_entries_line
 	
 	# add the generated photos lines if valid
-	if USER_SETTINGS["format"]["requires_programming"]["photos"]:
+	if settings.USER_SETTINGS["format"]["requires_programming"]["photos"]:
 		photo_paths: list[str] = []
 		photo_paths = get_photo_paths_by_date(entry_date)
 		photos_line: str | None = generate_requires_programming_formatting("photos", photo_paths)
 		if photos_line is not None:
 			entry_string += photos_line
 	
-	if USER_SETTINGS["format"]["custom_placement"].lower() != "before": # place custom stuff after if that's in settinsg
+	if settings.USER_SETTINGS["format"]["custom_placement"].lower() != "before": # place custom stuff after if that's in settinsg
 		entry_string += generate_custom_formatting() # repeated code, shut up.
 
-	entry_string += "\n" * USER_SETTINGS["format"]["writing_lines"] # add new lines for writing based on settings | ahh, python string multiplication
+	entry_string += "\n" * settings.USER_SETTINGS["format"]["writing_lines"] # add new lines for writing based on settings | ahh, python string multiplication
 	
 	return entry_string
 
@@ -380,29 +371,29 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
 	year_folder, markdown_file_path = convert_date_to_journal_path(entry_date)
 	
 	if not os.path.isdir(year_folder):
-		if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+		if not settings.USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level({
-				ConsoleOutputLevel.MEDIUM: "Warning: unable to write entry, as directory creation is disabled."
+				settings.ConsoleOutputLevel.MEDIUM: "Warning: unable to write entry, as directory creation is disabled."
 			})
 			return
 		os.mkdir(year_folder)
 		output_to_console_by_level({
-			ConsoleOutputLevel.MEDIUM: f"Making new directory: {year_folder}\n"
+			settings.ConsoleOutputLevel.MEDIUM: f"Making new directory: {year_folder}\n"
 		})
 
 	if not os.path.exists(markdown_file_path):
-		if not USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+		if not settings.USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level({
-				ConsoleOutputLevel.MEDIUM: "Warning: unable to write entry, as file creation is disabled."
+				settings.ConsoleOutputLevel.MEDIUM: "Warning: unable to write entry, as file creation is disabled."
 			})
 			return
 		with open(markdown_file_path, "x", encoding="UTF-8") as new_journal_file:
 			output_to_console_by_level({
-				ConsoleOutputLevel.MEDIUM: f"Creating new journal file: {markdown_file_path}\n"
+				settings.ConsoleOutputLevel.MEDIUM: f"Creating new journal file: {markdown_file_path}\n"
 			})
-			if not USER_SETTINGS["other"]["enable_writing_to_file"]:
+			if not settings.USER_SETTINGS["other"]["enable_writing_to_file"]:
 				output_to_console_by_level({
-					ConsoleOutputLevel.MEDIUM: "Attempted to write header to file, but that behavior is disabled."
+					settings.ConsoleOutputLevel.MEDIUM: "Attempted to write header to file, but that behavior is disabled."
 				})
 			new_journal_file.write(f"## {convert_to_month(entry_date.month)[0].title()} {entry_date.year}\n\n")
 		
@@ -415,15 +406,15 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
 			
 	preliminary_new_lines: str = "\n" * number_of_preliminary_new_lines
 	with open(markdown_file_path, "a", encoding="UTF-8") as journal_file_to_append:
-		if USER_SETTINGS["other"]["enable_writing_to_file"]:
+		if settings.USER_SETTINGS["other"]["enable_writing_to_file"]:
 			journal_file_to_append.write(preliminary_new_lines)
 			journal_file_to_append.write(entry)
 		else:
 			output_to_console_by_level({
-				ConsoleOutputLevel.MEDIUM: "Attempted to write entry to file, but that behavior is disabled."
+				settings.ConsoleOutputLevel.MEDIUM: "Attempted to write entry to file, but that behavior is disabled."
 			})
 	output_to_console_by_level({
-		ConsoleOutputLevel.MAXIMUM: entry
+		settings.ConsoleOutputLevel.MAXIMUM: entry
 	}, end="") # show what was written to file | output, not debugging
 
 def modify_date_by_crossover(time_to_modify: datetime.datetime, crossover_time: datetime.datetime, move_backward: bool | None) -> datetime.timedelta:
@@ -444,13 +435,13 @@ def find_all_recent_missing_entries() -> list[datetime.date]:
 	"""Finds missing entries in the last 100 days, working backwards from today and stopping once it has found a valid entry."""
 	starting_date: datetime.datetime = datetime.datetime.today()
 
-	crossover_time_setting: dict[str, int] = USER_SETTINGS["day_crossover"]["time"]
+	crossover_time_setting: dict[str, int] = settings.USER_SETTINGS["day_crossover"]["time"]
 	crossover_time = datetime.datetime(starting_date.year, starting_date.month, starting_date.day, crossover_time_setting["hour"], crossover_time_setting["minute"], crossover_time_setting["second"])
-	crossover_direction_setting: str = USER_SETTINGS["day_crossover"]["move_direction"]
+	crossover_direction_setting: str = settings.USER_SETTINGS["day_crossover"]["move_direction"]
 	crossover_direction: bool | None = None if crossover_direction_setting == "disabled" else crossover_direction_setting == "backward"
 	starting_date += modify_date_by_crossover(starting_date, crossover_time, crossover_direction)
 
-	earliest_entry_json_object: dict[str, int] = USER_SETTINGS["other"]["earliest_entry"]
+	earliest_entry_json_object: dict[str, int] = settings.USER_SETTINGS["other"]["earliest_entry"]
 	earliest_entry_date: datetime.date = datetime.date(earliest_entry_json_object["year"], earliest_entry_json_object["month"], earliest_entry_json_object["day"])
 
 	current_date: datetime.date = starting_date.date()
@@ -471,7 +462,7 @@ def create_all_recent_missing_entries() -> None:
 	recent_missing_entries: list[datetime.date] = find_all_recent_missing_entries()
 
 	output_to_console_by_level({
-		ConsoleOutputLevel.MAXIMUM: "Journal Text Written to File(s):\n"
+		settings.ConsoleOutputLevel.MAXIMUM: "Journal Text Written to File(s):\n"
 	})
 
 	# iterate backwards since we want the first found missing one to be written first, then the most recent missing one to be written last
@@ -480,44 +471,3 @@ def create_all_recent_missing_entries() -> None:
 		if entry is None:
 			continue
 		write_entry(entry, entry_date)
-		
-def merge_with_default_settings(settings: dict[str, dict]) -> dict[str, dict]:
-	"""Deep merges `settings` with the default settings (profile `settings_default`)"""
-	new_settings: dict = load_settings_profile("settings_default")
-	mergedeep.merge(new_settings, settings)
-	return new_settings
-		
-def load_settings_profile(profile: str) -> dict:
-	"""Sets the global variable USER_SETTINGS to the selected profile, as well as returning it."""
-	global USER_SETTINGS, CURRENT_CONSOLE_OUTPUT_LEVEL
-	with open(profile + ".json", "r", encoding="UTF-8") as settings_file:
-		USER_SETTINGS = json.load(settings_file)
-
-	# set console output level by int or str, with default of NONE
-	settings_console_output_level: str | int = USER_SETTINGS["other"]["console_output_level"]
-	if isinstance(settings_console_output_level, str):
-		CURRENT_CONSOLE_OUTPUT_LEVEL = ConsoleOutputLevel[settings_console_output_level.upper()]
-	elif isinstance(settings_console_output_level, int):
-		CURRENT_CONSOLE_OUTPUT_LEVEL = ConsoleOutputLevel(settings_console_output_level)
-	else:
-		CURRENT_CONSOLE_OUTPUT_LEVEL = ConsoleOutputLevel.NONE
-
-	return USER_SETTINGS
-
-def get_current_profile() -> str:
-	"""Gets the currently selected profile in `settings_profile.txt`"""
-	
-	with open("./settings_profile.txt", "r", encoding="UTF-8") as settings_profile_file:
-		profile: str = settings_profile_file.readline().strip()
-
-	return profile
-
-def load_current_settings_profile(use_defaults: bool=True) -> dict:
-	"""Loads the settings of the current profile"""
-	global USER_SETTINGS
-
-	USER_SETTINGS = load_settings_profile(get_current_profile())
-	if use_defaults:
-		USER_SETTINGS = merge_with_default_settings(USER_SETTINGS)
-
-	return USER_SETTINGS

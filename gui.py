@@ -1,9 +1,10 @@
 import tkinter as tk
 import create_base_journal_entries as main
+import settings
 
 primary_window: tk.Tk = tk.Tk()
 
-USER_SETTINGS: dict = main.load_settings()
+USER_SETTINGS: dict = settings.load_current_settings_profile()
 
 class MainMenuButton(tk.Button):
 	def __init__(self, **kwargs):
