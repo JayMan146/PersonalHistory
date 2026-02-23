@@ -2,7 +2,7 @@ import mergedeep
 import json
 import enum
 
-class ConsoleOutputLevels(enum.Enum):
+class ConsoleOutputLevels(enum.IntEnum):
 	NONE = 0
 	MINIMUM = 1
 	MEDIUM = 2
