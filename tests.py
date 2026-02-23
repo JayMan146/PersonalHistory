@@ -81,7 +81,30 @@ class TestHelperFunctions(unittest.TestCase):
 		self.assertEqual(main.modify_date_by_crossover(
 			datetime.datetime(2003, 8, 1, 22, 20, 11), datetime.datetime(1, 1, 1, 21, 0, 0), None
 		), datetime.timedelta(0))
-
+		
+class TestSettings(unittest.TestCase):
+	def test_determine_console_output_level(self):
+		none_various_caps: str = "NonE"
+		minimum_various_caps: str = "mINImUm"
+		medium_various_caps: str = "medIUm"
+		maximum_various_caps: str = "MAXiMUM"
+		self.assertEqual(settings.determine_console_output_level(none_various_caps.lower()), settings.ConsoleOutputLevel.NONE)
+		self.assertEqual(settings.determine_console_output_level(minimum_various_caps.lower()), settings.ConsoleOutputLevel.MINIMUM)
+		self.assertEqual(settings.determine_console_output_level(medium_various_caps.lower()), settings.ConsoleOutputLevel.MEDIUM)
+		self.assertEqual(settings.determine_console_output_level(maximum_various_caps.lower()), settings.ConsoleOutputLevel.MAXIMUM)
+		self.assertEqual(settings.determine_console_output_level(none_various_caps), settings.ConsoleOutputLevel.NONE)
+		self.assertEqual(settings.determine_console_output_level(minimum_various_caps), settings.ConsoleOutputLevel.MINIMUM)
+		self.assertEqual(settings.determine_console_output_level(medium_various_caps), settings.ConsoleOutputLevel.MEDIUM)
+		self.assertEqual(settings.determine_console_output_level(maximum_various_caps), settings.ConsoleOutputLevel.MAXIMUM)
+		self.assertEqual(settings.determine_console_output_level(none_various_caps.upper()), settings.ConsoleOutputLevel.NONE)
+		self.assertEqual(settings.determine_console_output_level(minimum_various_caps.upper()), settings.ConsoleOutputLevel.MINIMUM)
+		self.assertEqual(settings.determine_console_output_level(medium_various_caps.upper()), settings.ConsoleOutputLevel.MEDIUM)
+		self.assertEqual(settings.determine_console_output_level(maximum_various_caps.upper()), settings.ConsoleOutputLevel.MAXIMUM)
+		self.assertEqual(settings.determine_console_output_level(0), settings.ConsoleOutputLevel.NONE)
+		self.assertEqual(settings.determine_console_output_level(1), settings.ConsoleOutputLevel.MINIMUM)
+		self.assertEqual(settings.determine_console_output_level(2), settings.ConsoleOutputLevel.MEDIUM)
+		self.assertEqual(settings.determine_console_output_level(3), settings.ConsoleOutputLevel.MAXIMUM)
+	
 if __name__ == "__main__":
 	settings.load_current_settings_profile()
 	unittest.main()
