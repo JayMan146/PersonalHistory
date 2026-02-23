@@ -23,6 +23,10 @@
 * Add more than just previous years as intervals for previous journals
 * Fancier printing (yellow text for warnings, etc.)
 
+## Refactoring
+
+* Split up create_base_journal_entries into separate modules: settings, journal, photos, util (possibly better name)
+
 ## Bug Fixes
 
 * Allow for "missing days" by implementing better search
