@@ -168,14 +168,14 @@ def extract_zipped_photo(file_path: str) -> None:
 	
 	shutil.rmtree(temporary_directory) # remove temporary directory and all remaining files
 
-	output_to_console_by_level({settings.ConsoleOutputLevel.MAXIMUM: "  ⮡ Extracted heic photo from zip archive."}) # output, not debugging
+	output_to_console_by_level({settings.ConsoleOutputLevel.MAXIMUM: "  ⮡ Extracted heic photo from zip archive."})
 
 def delete_unconverted_photo(file_path: str, original_extension: str) -> None:
 	"""Removes an unconverted photo at `file_path` with the extension of `original_extension`, following rules in settings.USER_SETTINGS."""
 
 	if settings.USER_SETTINGS["photos"]["type_conversion"]["delete_pre_converted_files"]:
 		os.remove(file_path)
-		output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: f"\t⮡ Deleted unconverted photo of file type {original_extension}."}) # output, not debugging
+		output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: f"\t⮡ Deleted unconverted photo of file type {original_extension}."})
 
 def handle_zip_photo(file_path: str, file_path_without_extension: str):
 	"""Handles the case of a photo being converted from a zip file"""
@@ -211,7 +211,7 @@ def convert_photo_file_type(file_path: str) -> None:
 	image = Image.open(file_path)
 	image.save(f"{file_path_without_extension}.{output_type}", format=output_type)
 
-	output_to_console_by_level({settings.ConsoleOutputLevel.MAXIMUM: f"  ⮡ Converted to file type {output_type}."}) # output, not debugging
+	output_to_console_by_level({settings.ConsoleOutputLevel.MAXIMUM: f"  ⮡ Converted to file type {output_type}."})
 
 	delete_unconverted_photo(file_path, extension)
 
@@ -228,10 +228,10 @@ def get_photo_directory(photo_name: str) -> str | None:
 
 	if not os.path.exists(new_photo_folder_path): # create the photo folder if it doesn't exist
 		if not settings.USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
-			output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: "  ⮡ Warning: unable to move this photo, as directory creation is disabled."}) # output, not debugging
+			output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: "  ⮡ Warning: unable to move this photo, as directory creation is disabled."})
 			return None
 		os.makedirs(new_photo_folder_path) 
-		output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: f"Making new directory: {new_photo_folder_path}\n"}) # output, not debugging
+		output_to_console_by_level({settings.ConsoleOutputLevel.MEDIUM: f"Making new directory: {new_photo_folder_path}\n"})
 
 	return new_photo_folder_path
 
