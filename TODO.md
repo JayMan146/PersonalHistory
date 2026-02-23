@@ -3,10 +3,6 @@
 ## Necessary Features
 
 * Move all of this to testing area, have some sort of "release" version or git clone or something in my Journal
-* Output Level
-    > 0 is nothing, 1 is very basic (wrote files, moved photos), 2 or 3 is current
-* System to prompt for journal root and SETTINGS_DIRECTORY_FROM_ROOT if not found in settings (correctly)
-* Put SETTINGS_DIRECTORY_FROM_ROOT in settings
 * Write README.md
 * Barebones GUI for easy use
     * Settings editor
