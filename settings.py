@@ -1,12 +1,19 @@
 import mergedeep
 import json
 import enum
+import dataclasses
 
 class ConsoleOutputLevels(enum.IntEnum):
 	NONE = 0
 	MINIMUM = 1
 	MEDIUM = 2
 	MAXIMUM = 3
+
+@dataclasses.dataclass
+class ConsoleOutput:
+	levels: list[ConsoleOutputLevels]
+	message: str
+	print_kwargs: dict = dataclasses.field(default_factory=dict)
 
 USER_SETTINGS: dict[str, dict]
 CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevels
