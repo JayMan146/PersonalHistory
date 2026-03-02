@@ -398,7 +398,7 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
 					settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 					"Attempted to write header to file, but that behavior is disabled.")
 				])
-			new_journal_file.write(f"## {convert_to_month(entry_date.month)[0].title()} {entry_date.year}\n\n")
+			new_journal_file.write(f"# {convert_to_month(entry_date.month)[0].title()} {entry_date.year}\n\n")
 		
 	number_of_preliminary_new_lines: int = 0
 	with open(markdown_file_path, "r+", encoding="UTF-8") as journal_file_to_read:
