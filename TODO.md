@@ -10,6 +10,7 @@
     * Import photos by opening/dragging whatever
 * Allow extract from iCloud photos zips and others?
 * Allow keeping the .MOV from .zip files and further settings for zip extraction
+* Add method for initial setup
 
 ## Tweaks
 
