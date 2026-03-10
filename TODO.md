@@ -3,6 +3,7 @@
 ## Necessary Features
 
 * Move all of this to testing area, have some sort of "release" version or git clone or something in my Journal
+* More tests, and a way of testing non-helper functions (related to above bullet point)
 * Write README.md
 * Barebones GUI for easy use
     * Settings editor
@@ -11,11 +12,6 @@
 * Allow extract from iCloud photos zips and others?
 * Allow keeping the .MOV from .zip files and further settings for zip extraction
 * Add method for initial setup
-
-## Tweaks
-
-* Convert checks of USER_SETTINGS to be arguments (in some cases) rather than just explicit checks to make easier to test etc. and more reusable
-* More tests, and a way of testing non-helper functions (test journal directory, and symlink system to real journals?) 
 
 ## Extra Features
 
@@ -26,8 +22,11 @@
 
 ## Refactoring
 
+* Convert checks of USER_SETTINGS to be arguments (in some cases) rather than just explicit checks to make easier to test etc. and more reusable
 * Split up create_base_journal_entries into separate modules: settings, journal, photos, util (possibly better name)
 
 ## Bug Fixes
 
 * Allow for "missing days" by implementing better search
+
+## Tweaks (None)
