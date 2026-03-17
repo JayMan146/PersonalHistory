@@ -1,4 +1,4 @@
-import create_base_journal_entries as main
+import journal_system as main
 import settings
 import traceback
 

@@ -3,7 +3,7 @@ import dataclasses
 import datetime
 import calendar
 import os
-from create_base_journal_entries import convert_to_month, convert_to_long_date
+from journal_system import convert_to_month, convert_to_long_date
 import settings
 
 USER_SETTINGS: dict
