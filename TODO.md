@@ -12,6 +12,7 @@
 * Allow extract from iCloud photos zips and others?
 * Allow keeping the .MOV from .zip files and further settings for zip extraction
 * Add method for initial setup
+* Prevent outputting "Journal Text Written to File(s):" if nothing was actually written. Instead, output something like "No Text Was Written to Any Files."
 
 ## Extra Features
 
