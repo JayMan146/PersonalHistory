@@ -85,6 +85,8 @@ def get_photo_paths_by_date(photo_date: datetime.date) -> list[str]:
 
 	month, numbered_month = convert_to_month(photo_date.month)
 	photo_day_string: str = add_leading_zero(photo_date.day)
+	# "./" is used as the actual text here. it is replaced with journal root to search using glob.
+	# Note: don't make it use journal root out right, and break it. did that once already. shhh
 	entry_photo_path: str = f"./photos/{numbered_month} {photo_date.year}/{photo_day_string} <photo_number> {month} {photo_date.year}" # photos with date, but not with photo number. Once added, the photo may not exist
 
 	photo_paths: list[str] = []
