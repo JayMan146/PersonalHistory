@@ -366,7 +366,7 @@ def determine_preliminary_new_lines(file_lines: list[str]) -> int:
 			preliminary_new_lines = 2
 	return preliminary_new_lines
 
-def write_entry(entry: str, entry_date: datetime.date) -> None:
+def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool=False) -> None: # this function is large, maybe break it up TODO
 	"""Takes `entry` and writes it to the file corresponding to `entry_date`."""
 	year_folder, markdown_file_path = convert_date_to_journal_path(entry_date)
 	
@@ -416,7 +416,14 @@ def write_entry(entry: str, entry_date: datetime.date) -> None:
 			journal_file_to_append.write(entry)
 		else:
 			output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], "Attempted to write entry to file, but that behavior is disabled.")])
+
+	if not any_entries_written:
+		output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "Journal Text Written to File(s):\n")])
+		any_entries_written = True
+
 	output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], entry, {"end": ""})]) # show what was written to file
+
+	return any_entries_written
 
 def modify_date_by_crossover(time_to_modify: datetime.datetime, crossover_time: datetime.datetime, move_backward: bool | None) -> datetime.timedelta:
 	if move_backward is None: return datetime.timedelta()
@@ -462,11 +469,13 @@ def create_all_recent_missing_entries() -> None:
 
 	recent_missing_entries: list[datetime.date] = find_all_recent_missing_entries()
 
-	output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "Journal Text Written to File(s):\n")])
-
 	# iterate backwards since we want the first found missing one to be written first, then the most recent missing one to be written last
+	any_entries_written: bool = False
 	for entry_date in recent_missing_entries[::-1]: 
 		entry = generate_entry(entry_date)
 		if entry is None:
 			continue
-		write_entry(entry, entry_date)
+		any_entries_written = write_entry(entry, entry_date, any_entries_written)
+
+	if not any_entries_written:
+		output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "No Text Was Written to Any Files.")])
