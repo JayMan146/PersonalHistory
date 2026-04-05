@@ -22,6 +22,7 @@
 
 ## Refactoring
 
+* Break up write_entry into smaller functions
 * Follow [ISO 8601](https://iso8601.com/), to a degree. This involves changing the photo format, headers of journals, and folder structure
 * Optional, make each entry a separate file. Folders for each month, photos directory per month.
 * Convert checks of USER_SETTINGS to be arguments (in some cases) rather than just explicit checks to make easier to test etc. and more reusable
