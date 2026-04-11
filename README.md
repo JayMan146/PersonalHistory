@@ -1,6 +1,10 @@
 # Journal System
 
-This Journal System, with the work-in-progress name of Personal History is a some-in-one solution for digital journaling. It can handle photos in journals, linking back to old ones from increments of one year ago, and has a ton of customizability. When run, the scripts will put outlines into files for you to write in, based on your settings. However, you will need a text editor to write your journals. This can be Windows Notepad, VSCode, or anything that can edit plain text files.
+This Journal System, with the work-in-progress name of "Personal History" is a some-in-one solution for digital journaling. It can handle photos in journals, linking back to old ones from increments of one year ago, and has a ton of customizability. When run, the scripts will put outlines into files for you to write in, based on your settings. However, you will need a text editor to write your journals. This can be Windows Notepad, VSCode, or anything that can edit plain text files.
+
+## Installation
+
+First, you'll want to download the code in some manner, either through downloading it or `git clone`-ing it. After that, you'll need a directory, anywhere for your journals to live. For example, I have a folder named `Journals`. Then, place the `JournalSystem` folder in there. After that, you're good to go, read the the [Usage](#usage) section below on how to use it. 
 
 ## Usage
 
