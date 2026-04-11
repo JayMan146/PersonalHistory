@@ -81,6 +81,10 @@ class TestHelperFunctions(unittest.TestCase):
 		self.assertEqual(main.modify_date_by_crossover(
 			datetime.datetime(2003, 8, 1, 22, 20, 11), datetime.time(21, 0, 0), None
 		), datetime.timedelta(0))
+
+	def test_convert_to_header_link(self):
+		self.assertEqual(main.convert_to_header_link("# How To Eat Monkeys!"), "#how-to-eat-monkeys")
+		self.assertEqual(main.convert_to_header_link("### I... (might) tHINK that... someone—who shall be unamed—is 15-years-old."), "#i-might-think-that-someonewho-shall-be-unamedis-15-years-old")
 		
 class TestSettings(unittest.TestCase):
 	def test_determine_console_output_level(self):
