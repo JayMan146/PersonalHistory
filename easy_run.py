@@ -5,7 +5,7 @@ import traceback
 def easy_run() -> None:
 	try:
 		settings.load_current_settings_profile(use_defaults=True) # this must happen first
-		if settings.first_time_run:
+		if settings.is_first_time_run:
 			main.on_first_time_run()
 			return
 		main.move_photos_from_photo_locations() # then get the photos moved before making the entries
