@@ -198,7 +198,7 @@ def delete_unconverted_photo(file_path: str, original_extension: str) -> None:
 
 def handle_zip_photo(file_path: str, file_path_without_extension: str):
 	"""Handles the case of a photo being converted from a zip file"""
-	if not settings.USER_SETTINGS["photos"]["enable_google_photos_extraction"]: return
+	if not settings.USER_SETTINGS["photos"]["enable_zip_extraction"]: return
 
 	extract_zipped_photo(file_path_without_extension)
 	convert_photo_file_type([file for file in glob.glob(file_path_without_extension + ".*") if file.split(".")[-1] != "zip"][0])

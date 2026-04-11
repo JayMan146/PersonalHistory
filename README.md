@@ -72,6 +72,8 @@ There are also `separator`, `prefix`, and `suffix` fields exactly the same as in
 
 `enable_photo_transfer` is a boolean to control photo transfer. This is taking specifically named photos in certain directories and moving them automatically to the Journals.
 
+`enable_zip_extraction` is a boolean to control extraction of photos from zip files. If a zip file is named to the correct format, it will take the photo in the zip file and keep the photo file. Then, it is handled like other photos.
+
 `photo_locations` is a list of file paths (strings) that the system will look to transfer photos from.
 
 #### Type Conversion

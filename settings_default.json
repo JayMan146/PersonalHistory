@@ -36,13 +36,13 @@
     },
     "photos": {
         "enable_photo_transfer": false,
+        "enable_zip_extraction": true,
         "photo_locations": [],
         "type_conversion": {
             "enabled": false,
             "delete_pre_converted_files": true,
             "conversions": {}
-        },
-        "enable_google_photos_extraction": true
+        }
     },
     "earliest_entry": {
         "day": 1000,
