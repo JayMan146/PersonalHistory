@@ -1,5 +1,3 @@
-**PLEASE NOTE! THIS IS LARGELY OUT OF DATE.**
-
 # Journal System
 
 ## Settings
