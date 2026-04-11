@@ -93,17 +93,19 @@ There are also `separator`, `prefix`, and `suffix` fields exactly the same as in
 }
 ```
 
-### Other
-
-This is anything that didn't fit anywhere else.
+### Earliest Entry
 
 `earliest_entry` is an object with the integers `day`, `month`, and `year`. This just specifies how far back the program should look for journals, and it won't go past this. Just set it to the first journal you have.
+
+### Permissions
 
 `enable_writing_to_file` is a boolean that enables or disables the functionality of the program writting to the file. It will warn you if it is unable to complete the task. It's mostly helpful as a debug tool. New files and directories will still be created, as that is handled in the below setting.
 
 `enable_new_directory_and_file_creation` is a boolean enables or disables the creation of new directories or files. Most of the time this doesn't do much, but will sometimes fail to write to a file that doesn't exist or move a photo to a directory that doesn't exist, and therefore will report that.
 
-`console_output_level` determines how much information will be printed to the console. Can be set to `none`, `minimum`, `medium`, or `maximum`. Setting it to `0`, `1`, `2`, or `3` is the same as the previous options.
+### Console Output Level
+
+`console_output_level` is an integer or string that determines how much information will be printed to the console. Can be set to `none`, `minimum`, `medium`, or `maximum`. Setting it to `0`, `1`, `2`, or `3` is the same as the previous options.
 
 ## Settings Profile
 

@@ -4,6 +4,7 @@ import enum
 import dataclasses
 import os
 import journal_system
+from typing import Any
 
 class ConsoleOutputLevels(enum.IntEnum):
 	NONE = 0
@@ -17,7 +18,7 @@ class ConsoleOutput:
 	message: str
 	print_kwargs: dict = dataclasses.field(default_factory=dict)
 
-USER_SETTINGS: dict[str, dict]
+USER_SETTINGS: dict[str, Any]
 CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevels
 
 def merge_with_default_settings(settings: dict[str, dict]) -> dict[str, dict]:
@@ -44,8 +45,7 @@ def load_settings_profile(profile: str, should_determine_console_output_level: b
 	with open(profile + ".json", "r", encoding="UTF-8") as settings_file:
 		USER_SETTINGS = json.load(settings_file)
 
-	other_settings_section: dict | None = USER_SETTINGS.get("other")
-	console_output_level_setting: str | int | None = other_settings_section.get("console_output_level") if other_settings_section is not None else None
+	console_output_level_setting: str | int | None = USER_SETTINGS.get("console_output_level")
 	if console_output_level_setting and should_determine_console_output_level:
 		CURRENT_CONSOLE_OUTPUT_LEVEL = determine_console_output_level(console_output_level_setting)
 		

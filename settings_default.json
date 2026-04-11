@@ -44,14 +44,14 @@
         },
         "enable_google_photos_extraction": true
     },
-    "other": {
-        "earliest_entry": {
-            "day": 0,
-            "month": 0,
-            "year": 0
-        },
+    "earliest_entry": {
+        "day": 0,
+        "month": 0,
+        "year": 0
+    },
+    "permissions": {
         "enable_writing_to_file": true,
-        "enable_new_directory_and_file_creation": true,
-        "console_output_level": "minimum"
-    }
+        "enable_new_directory_and_file_creation": true
+    },
+    "console_output_level": "minimum"
 }

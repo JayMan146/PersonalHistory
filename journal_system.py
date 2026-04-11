@@ -74,7 +74,7 @@ def get_entry_markdown_path(entry_date: datetime.date) -> str | None:
 def get_entries_matching_year(match_date: datetime.date) -> list[str]:
 	"""Returns all journal entries matching the year of `match_date`, besides the original."""
 	matching_entries: list[str] = []
-	for previous_year in range(match_date.year - 1, settings.USER_SETTINGS["other"]["earliest_entry"]["year"] - 1, -1): # loop over previous years until earliest journal, backwards
+	for previous_year in range(match_date.year - 1, settings.USER_SETTINGS["earliest_entry"]["year"] - 1, -1): # loop over previous years until earliest journal, backwards
 		previous_entry_header_path: str | None = get_entry_markdown_path(match_date.replace(year=previous_year))
 		if previous_entry_header_path is not None:
 			matching_entries.append(f"[{previous_year}]({previous_entry_header_path})")
@@ -232,7 +232,7 @@ def get_photo_directory(photo_name: str) -> str | None:
 	new_photo_folder_path: str = f"{JOURNAL_ROOT}/{year}/photos/{photo_folder_name}/"
 
 	if not os.path.exists(new_photo_folder_path): # create the photo folder if it doesn't exist
-		if not settings.USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+		if not settings.USER_SETTINGS["permissions"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MEDIUM], "  ⮡ Warning: unable to move this photo, as directory creation is disabled.")])
 			return None
 		os.makedirs(new_photo_folder_path) 
@@ -371,7 +371,7 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 	year_folder, markdown_file_path = convert_date_to_journal_path(entry_date)
 	
 	if not os.path.isdir(year_folder):
-		if not settings.USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+		if not settings.USER_SETTINGS["permissions"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level([
 				settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 				"Warning: unable to write entry, as directory creation is disabled.")
@@ -384,7 +384,7 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 		])
 
 	if not os.path.exists(markdown_file_path):
-		if not settings.USER_SETTINGS["other"]["enable_new_directory_and_file_creation"]:
+		if not settings.USER_SETTINGS["permissions"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level([
 				settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 				"Warning: unable to write entry, as file creation is disabled.")
@@ -395,7 +395,7 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 				settings.ConsoleOutput([settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 				f"Creating new journal file: {markdown_file_path}\n")
 			])
-			if not settings.USER_SETTINGS["other"]["enable_writing_to_file"]:
+			if not settings.USER_SETTINGS["permissions"]["enable_writing_to_file"]:
 				output_to_console_by_level([
 					settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 					"Attempted to write header to file, but that behavior is disabled.")
@@ -411,7 +411,7 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 			
 	preliminary_new_lines: str = "\n" * number_of_preliminary_new_lines
 	with open(markdown_file_path, "a", encoding="UTF-8") as journal_file_to_append:
-		if settings.USER_SETTINGS["other"]["enable_writing_to_file"]:
+		if settings.USER_SETTINGS["permissions"]["enable_writing_to_file"]:
 			journal_file_to_append.write(preliminary_new_lines)
 			journal_file_to_append.write(entry)
 		else:
@@ -449,7 +449,7 @@ def find_all_recent_missing_entries() -> list[datetime.date]:
 	crossover_direction: bool | None = None if crossover_direction_setting == "disabled" else crossover_direction_setting == "backward"
 	starting_date += modify_date_by_crossover(starting_date, crossover_time, crossover_direction)
 
-	earliest_entry_json_object: dict[str, int] = settings.USER_SETTINGS["other"]["earliest_entry"]
+	earliest_entry_json_object: dict[str, int] = settings.USER_SETTINGS["earliest_entry"]
 	earliest_entry_date: datetime.date = datetime.date(earliest_entry_json_object["year"], earliest_entry_json_object["month"], earliest_entry_json_object["day"])
 
 	current_date: datetime.date = starting_date.date()
