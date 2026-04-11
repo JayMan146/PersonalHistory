@@ -23,7 +23,8 @@
             "suffix": ""
         },
         "custom_placement": "before",
-        "writing_lines": 3
+        "writing_lines": 3,
+        "header_suffix": ": "
     },
     "day_crossover": {
         "time": {

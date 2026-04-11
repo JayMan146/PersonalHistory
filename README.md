@@ -12,6 +12,8 @@ Refer back to the default settings profile for reference and the style of things
 
 `custom_placement` is either `before` or `after` and determines if the [Custom](#custom) Format Items are before or after the [Requires Programming](#requires-programming) Format Items. 
 
+`header_suffix` is a string to place after the header (date) for each journal entry.
+
 #### Requires Programming
 
 The `required_programming` object is for specifically made format items that require specific implementation. It currently has two objects: `matching_entries` and `photos`. They have the same format, as follows:

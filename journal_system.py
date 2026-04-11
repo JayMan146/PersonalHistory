@@ -320,10 +320,10 @@ def valid_photo_name_format(photo_name: str) -> bool:
 
 	return (is_valid_day and is_valid_photo_number and is_valid_month and is_valid_year)
 
-def generate_entry(entry_date: datetime.date) -> str | None:
+def generate_entry(entry_date: datetime.date, header_suffix: str) -> str | None:
 	"""Generates the entry for `entry_date`."""
 
-	entry_string: str = f"## {convert_to_long_date(entry_date)}: " # header
+	entry_string: str = f"## {convert_to_long_date(entry_date)}{header_suffix}" # header
 
 	if settings.USER_SETTINGS["format"]["custom_placement"].lower() == "before": # place custom stuff first if that's in settinsg
 		entry_string += generate_custom_formatting() # repeated code, shut up.
@@ -472,7 +472,7 @@ def create_all_recent_missing_entries() -> None:
 	# iterate backwards since we want the first found missing one to be written first, then the most recent missing one to be written last
 	any_entries_written: bool = False
 	for entry_date in recent_missing_entries[::-1]: 
-		entry = generate_entry(entry_date)
+		entry = generate_entry(entry_date, settings.USER_SETTINGS["format"]["header_suffix"])
 		if entry is None:
 			continue
 		any_entries_written = write_entry(entry, entry_date, any_entries_written)
