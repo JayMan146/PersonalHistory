@@ -1,5 +1,7 @@
 # Journal System
 
+This Journal System, with the work-in-progress name of Personal History is a some-in-one solution for digital journaling. It can handle photos in journals, linking back to old ones from increments of one year ago, and has a ton of customizability. When run, the scripts will put outlines into files for you to write in, based on your settings.
+
 ## Usage
 
 The easiest way to use this is to run the script `easy_run.py`. This will transfer any specified photos (if enabled) and puts in any entries that are needed. The program will place the specified outline of any journals that don't exist in the past 100 days (planned to be changed at some point, see [TODO](./TODO.md)).
@@ -11,6 +13,12 @@ You can write anywhere in the journals, just don't mess with the dates in the he
 ## Integration Between the System and Your Journals
 
 Since this is an open-source software, it is meant to be very free. The journals are just plain text files, so you can stop or start using this system whenever you want. It tracks no information, and is entirely local. It's only interaction with what you have written is skipping over it to find certain entries, just based on the headers.
+
+## File System
+
+Files are arranged into folders for each year, and then one markdown file for each month. Why is it like this, you may ask? Because I like it that way. And, it seems like a good balance between not everything being in one big file and a bunch of files (like one per entry). I think it adds novelty to the new month. In each year folder, there is a photos folder along with month folders for each month's photos. In general, don't mess with the names of any of these—the system will handle it all. Just write down your entry. But, you can do whatever you want with it. They're your files.
+
+Something I would like to specifically highlight here is the naming scheme of the photos. Using the [Photo Transfer Setting](#photos) requires a specific format, and moves them to the month folders in the photos directory. However, since the photos in the journals are just links to the photos, they can be anywhere and be named anything. The program just does this for the sake of uniformity.
 
 ## Settings
 
