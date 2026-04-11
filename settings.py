@@ -20,6 +20,7 @@ class ConsoleOutput:
 
 USER_SETTINGS: dict[str, Any]
 CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevels
+first_time_run: bool = False
 
 def merge_with_default_settings(settings: dict[str, dict]) -> dict[str, dict]:
 	"""Deep merges `settings` with the default settings (profile `settings_default`)"""
@@ -53,13 +54,14 @@ def load_settings_profile(profile: str, should_determine_console_output_level: b
 
 def create_default_settings_profile_txt() -> None:
 	with open("./settings_profile.txt", "x", encoding="UTF-8") as settings_profile_file:
-		settings_profile_file.write("settings_default.json")
+		settings_profile_file.write("settings_default")
 
 def get_current_profile() -> str:
+	global first_time_run
 	"""Gets the currently selected profile in `settings_profile.txt`"""
 	
 	if not os.path.exists("./settings_profile.txt"):
-		journal_system.on_first_time_run()
+		first_time_run = True
 		create_default_settings_profile_txt()
 	
 	with open("./settings_profile.txt", "r", encoding="UTF-8") as settings_profile_file:

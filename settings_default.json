@@ -45,9 +45,9 @@
         "enable_google_photos_extraction": true
     },
     "earliest_entry": {
-        "day": 0,
-        "month": 0,
-        "year": 0
+        "day": 1000,
+        "month": 1,
+        "year": 1
     },
     "permissions": {
         "enable_writing_to_file": true,
