@@ -17,17 +17,18 @@ ALLOWED_HEADER_CHARACTERS = list("0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOP
 is_heif_registered: bool = False
 
 def convert_to_header_link(header: str) -> str:
-    header = header.lstrip("#").strip()
-    new_header_character_list: list[str] = []
-    for char in header:
-        if char in ALLOWED_HEADER_CHARACTERS:
-            new_header_character_list.append(char.lower())
-        elif char == " ":
-            new_header_character_list.append("-")
-    
-    new_header_string: str = "".join(new_header_character_list)
-    with_leading_hashtag: str = "#" + new_header_string
-    return with_leading_hashtag
+	"""Takes some header, like "## Saturday 11 April 2026: An Interesting Day!" and converts it to a link such as "saturday-11-april-2026-an-interesting-day". """
+	header = header.lstrip("#").strip()
+	new_header_character_list: list[str] = []
+	for char in header:
+		if char in ALLOWED_HEADER_CHARACTERS:
+			new_header_character_list.append(char.lower())
+		elif char == " ":
+			new_header_character_list.append("-")
+	
+	new_header_string: str = "".join(new_header_character_list)
+	with_leading_hashtag: str = "#" + new_header_string
+	return with_leading_hashtag
 
 def output_to_console_by_level(outputs: list[settings.ConsoleOutput]) -> None:
 	"""Uses each output in `outputs` and checks if it matches settings.CURRENT_CONSOLE_OUTPUT_LEVEL. If so, print it."""
