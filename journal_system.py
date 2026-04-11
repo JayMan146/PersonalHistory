@@ -479,3 +479,11 @@ def create_all_recent_missing_entries() -> None:
 
 	if not any_entries_written:
 		output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "No Text Was Written to Any Files.")])
+		
+def on_first_time_run() -> None:
+	"""What is done if it is the first time the user runs the system. Creates a single entry for today."""
+	today = datetime.date.today()
+	entry = generate_entry(today, settings.USER_SETTINGS["format"]["header_suffix"])
+	if entry is None:
+		return
+	write_entry(entry, today)

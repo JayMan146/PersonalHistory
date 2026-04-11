@@ -107,6 +107,6 @@ This is anything that didn't fit anywhere else.
 
 ## Settings Profile
 
-In the JouranlSystem directory, there is a file named `settings_profile.txt`. This file serves as a way to have several settings profiles that you can switch between. Only the first line is read, and that is the file used as the settings. The rest of the file is ignored, so you could put whatever you want there. This will be easier to do once I implement the GUI (see [TODO](./TODO.md)).
+In the JouranlSystem directory, there is a file named `settings_profile.txt`. This file serves as a way to have several settings profiles that you can switch between. Only the first line is read, and that is the file used as the settings. If you forget to add the `.json` file extension, it will be appended automatically. The rest of the file is ignored, so you could put whatever you want there. This will be easier to do once I implement the GUI (see [TODO](./TODO.md)).
 
-If you forget to add the `.json` file extension, it will be appended automatically.
+The existance file is how the system checks if you have used it before (and have written any journals). So, if you delete the file, then it assume this is the first time you run it.
