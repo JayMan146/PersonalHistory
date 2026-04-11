@@ -4,7 +4,7 @@ This Journal System, with the work-in-progress name of Personal History is a som
 
 ## Usage
 
-The easiest way to use this is to run the script `easy_run.py`. This will transfer any specified photos (if enabled) and puts in any entries that are needed. The program will place the specified outline of any journals that don't exist in the past 100 days (planned to be changed at some point, see [TODO](./TODO.md)).
+The easiest way to use this is to run the script `easy_run.py`. This will transfer any specified photos (if enabled) and puts in any entries that are needed. Currently, the format of these photos is `<day> <index> <month> <year>.<extension>`. Day is the day of the month, index is the number of the photo for that day, between `00` and `99`. Month is the month of the photo, written out. Year and extension are self-explanatory. Both day and index require leading zeros (for example, `05`, not `5`). Here is an example of a photo name: `12 02 january 2026` Finally, the program will place the specified outline of any journals that don't exist in the past 100 days (planned to be changed at some point, see [TODO](./TODO.md)). If it is your first time using it, it will create an entry only for today and ignore any other days or photos.
 
 Alternatively, once I actually make it functional, use `gui.py` to use an interface to handle your journals. See [TODO](./TODO.md)
 
