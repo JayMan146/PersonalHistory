@@ -366,7 +366,7 @@ def determine_preliminary_new_lines(file_lines: list[str]) -> int:
 			preliminary_new_lines = 2
 	return preliminary_new_lines
 
-def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool=False) -> None: # this function is large, maybe break it up TODO
+def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool=False) -> bool: # this function is large, maybe break it up TODO
 	"""Takes `entry` and writes it to the file corresponding to `entry_date`."""
 	year_folder, markdown_file_path = convert_date_to_journal_path(entry_date)
 	
@@ -376,7 +376,7 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 				settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 				"Warning: unable to write entry, as directory creation is disabled.")
 			])
-			return
+			return False
 		os.mkdir(year_folder)
 		output_to_console_by_level([
 			settings.ConsoleOutput([settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
@@ -389,7 +389,7 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 				settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 				"Warning: unable to write entry, as file creation is disabled.")
 			])
-			return
+			return False
 		with open(markdown_file_path, "x", encoding="UTF-8") as new_journal_file:
 			output_to_console_by_level([
 				settings.ConsoleOutput([settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
