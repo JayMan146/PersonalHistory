@@ -90,3 +90,15 @@ This is anything that didn't fit anywhere else.
 This file serves as a way to have several settings files with different names that you can switch between. Only the first line is read, and that is the file used as the settings. The rest of the file is ignored, so you could put whatever you want there.
 
 If you forget to add the .json file extension, it will be appended automatically.
+
+## Usage
+
+The easiest way to use this is to run the script `easy_run.py`. This will transfer any specified photos (if enabled) and puts in any entries that are needed. The program will place the specified outline of any journals that don't exist in the past 100 days (planned to be changed at some point, see [TODO](./TODO.md)).
+
+Alternatively, once I actually make it functionally, use `gui.py` to use a gui to handle your journals.
+
+You can write anywhere in the journals, just don't mess with the dates in the headers of the journals (e.g. `## Wednesday 04 March 2026`)
+
+## Integration Between the System and Your Journals
+
+Since this is an open-source software, it is meant to be very free. The journals are just plain text files, so you can stop or start using this system whenever you want. It tracks no information, and is entirely local. It's only interaction with what you have written is skipping over it to find certain entries, just based on the headers.
