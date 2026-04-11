@@ -56,30 +56,30 @@ class TestHelperFunctions(unittest.TestCase):
 
 	def test_modify_date_by_crossover(self):
 		self.assertEqual(main.modify_date_by_crossover(
-			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.datetime(1, 1, 1, 3, 0, 0), True
+			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.time(3, 0, 0), True
 		), datetime.timedelta(0))
 		self.assertEqual(main.modify_date_by_crossover(
-			datetime.datetime(2003, 8, 3, 2, 20, 11), datetime.datetime(1, 1, 1, 3, 0, 0), True
+			datetime.datetime(2003, 8, 3, 2, 20, 11), datetime.time(3, 0, 0), True
 		), datetime.timedelta(days=-1))
 
 		self.assertEqual(main.modify_date_by_crossover(
-			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.datetime(1, 1, 1, 21, 0, 0), False
+			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.time(21, 0, 0), False
 		), datetime.timedelta(0))
 		self.assertEqual(main.modify_date_by_crossover(
-			datetime.datetime(2003, 8, 1, 22, 20, 11), datetime.datetime(1, 1, 1, 21, 0, 0), False
+			datetime.datetime(2003, 8, 1, 22, 20, 11), datetime.time(21, 0, 0), False
 		), datetime.timedelta(days=1))
 
 		self.assertEqual(main.modify_date_by_crossover(
-			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.datetime(1, 1, 1, 3, 0, 0), None
+			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.time(3, 0, 0), None
 		), datetime.timedelta(0))
 		self.assertEqual(main.modify_date_by_crossover(
-			datetime.datetime(2003, 8, 3, 2, 20, 11), datetime.datetime(1, 1, 1, 3, 0, 0), None
+			datetime.datetime(2003, 8, 3, 2, 20, 11), datetime.time(3, 0, 0), None
 		), datetime.timedelta(0))
 		self.assertEqual(main.modify_date_by_crossover(
-			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.datetime(1, 1, 1, 21, 0, 0), None
+			datetime.datetime(2003, 8, 2, 15, 20, 11), datetime.time(21, 0, 0), None
 		), datetime.timedelta(0))
 		self.assertEqual(main.modify_date_by_crossover(
-			datetime.datetime(2003, 8, 1, 22, 20, 11), datetime.datetime(1, 1, 1, 21, 0, 0), None
+			datetime.datetime(2003, 8, 1, 22, 20, 11), datetime.time(21, 0, 0), None
 		), datetime.timedelta(0))
 		
 class TestSettings(unittest.TestCase):

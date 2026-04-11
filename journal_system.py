@@ -425,7 +425,7 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 
 	return any_entries_written
 
-def modify_date_by_crossover(time_to_modify: datetime.datetime, crossover_time: datetime.datetime, move_backward: bool | None) -> datetime.timedelta:
+def modify_date_by_crossover(time_to_modify: datetime.datetime, crossover_time: datetime.time, move_backward: bool | None) -> datetime.timedelta:
 	if move_backward is None: return datetime.timedelta()
 
 	crossover_date: datetime.datetime = datetime.datetime(
@@ -444,7 +444,7 @@ def find_all_recent_missing_entries() -> list[datetime.date]:
 	starting_date: datetime.datetime = datetime.datetime.today()
 
 	crossover_time_setting: dict[str, int] = settings.USER_SETTINGS["day_crossover"]["time"]
-	crossover_time = datetime.datetime(starting_date.year, starting_date.month, starting_date.day, crossover_time_setting["hour"], crossover_time_setting["minute"], crossover_time_setting["second"])
+	crossover_time = datetime.time(crossover_time_setting["hour"], crossover_time_setting["minute"], crossover_time_setting["second"])
 	crossover_direction_setting: str = settings.USER_SETTINGS["day_crossover"]["move_direction"]
 	crossover_direction: bool | None = None if crossover_direction_setting == "disabled" else crossover_direction_setting == "backward"
 	starting_date += modify_date_by_crossover(starting_date, crossover_time, crossover_direction)
