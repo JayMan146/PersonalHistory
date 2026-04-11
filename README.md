@@ -4,11 +4,35 @@
 
 ## Settings
 
-Refer back to the default settings profile for reference and the style of things.
+Refer back to the default settings profile for reference and the style of things. This assumes you understand the basics of json.
 
 ### Format
 
-I'll write this later.
+`format` is an object for items that go between the heading of the journal and the actual entry itself, which can include extra information you want. It also has a few other parameters for the format.
+
+`writing_lines` is an integer for the number of lines to place between the format items and the next entry for writing.
+
+`custom_placement` is either `before` or `after` and determines if the [Custom](#custom) Format Items are before or after the [Requires Programming](#requires-programming) Format Items. 
+
+#### Requires Programming
+
+The `required_programming` object is for specifically made format items that require specific implementation. It currently has two objects: `matching_entries` and `photos`. They have the same format, as follows:
+
+`enabled`, a boolean to toggle it.
+
+`separator`, a string to separate each instance of the item (between each matching entry or photo)
+
+`prefix`, a string to put before this item.
+
+`suffix`, a string to put after this item.
+
+#### Custom
+
+The `custom` object is for custom format items in the entry. This has the following items:
+
+`items`, a list of strings for all of the custom items.
+
+There are also `separator`, `prefix`, and `suffix` fields exactly the same as in the [Requires Programming](#requires-programming) section.
 
 ### Day Crossover
 
