@@ -2,8 +2,6 @@
 
 # Journal System
 
-This doesn't have any info yet, but I figured I should add the file.
-
 ## Settings
 
 Refer back to the default settings profile for reference and the style of things.
