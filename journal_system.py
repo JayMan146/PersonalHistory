@@ -320,7 +320,7 @@ def valid_photo_name_format(photo_name: str) -> bool:
 
 	return (is_valid_day and is_valid_photo_number and is_valid_month and is_valid_year)
 
-def generate_entry(entry_date: datetime.date, header_suffix: str) -> str | None:
+def generate_entry(entry_date: datetime.date, header_suffix: str) -> str:
 	"""Generates the entry for `entry_date`."""
 
 	entry_string: str = f"## {convert_to_long_date(entry_date)}{header_suffix}" # header
@@ -473,8 +473,6 @@ def create_all_recent_missing_entries() -> None:
 	any_entries_written: bool = False
 	for entry_date in recent_missing_entries[::-1]: 
 		entry = generate_entry(entry_date, settings.USER_SETTINGS["format"]["header_suffix"])
-		if entry is None:
-			continue
 		any_entries_written = write_entry(entry, entry_date, any_entries_written)
 
 	if not any_entries_written:
@@ -484,6 +482,4 @@ def on_first_time_run() -> None:
 	"""What is done if it is the first time the user runs the system. Creates a single entry for today."""
 	today = datetime.date.today()
 	entry = generate_entry(today, settings.USER_SETTINGS["format"]["header_suffix"])
-	if entry is None:
-		return
 	write_entry(entry, today)
