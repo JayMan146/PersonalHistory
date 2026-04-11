@@ -11,10 +11,23 @@ from ConvertToHeaderLink.convert_to_header_link import convert_to_header_link
 import settings
 
 JOURNAL_ROOT: str = os.getcwd().rsplit("/", 1)[0] # gets the cwd, current working directory, and discards the last directory (giving the root)
-
 MONTHS: list[str] = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+ALLOWED_HEADER_CHARACTERS = list("0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM-")
 
 is_heif_registered: bool = False
+
+def convert_to_header_link(header: str) -> str:
+    header = header.lstrip("#").strip()
+    new_header_character_list: list[str] = []
+    for char in header:
+        if char in ALLOWED_HEADER_CHARACTERS:
+            new_header_character_list.append(char.lower())
+        elif char == " ":
+            new_header_character_list.append("-")
+    
+    new_header_string: str = "".join(new_header_character_list)
+    with_leading_hashtag: str = "#" + new_header_string
+    return with_leading_hashtag
 
 def output_to_console_by_level(outputs: list[settings.ConsoleOutput]) -> None:
 	"""Uses each output in `outputs` and checks if it matches settings.CURRENT_CONSOLE_OUTPUT_LEVEL. If so, print it."""
