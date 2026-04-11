@@ -4,7 +4,6 @@
 
 * Move all of this to testing area, have some sort of "release" version or git clone or something in my Journal
 * More tests, and a way of testing non-helper functions (related to above bullet point)
-* Write README.md
 * Barebones GUI for easy use
     * Settings editor
     * Settings profiles
@@ -24,7 +23,6 @@
 
 * Break up write_entry into smaller functions
 * Follow [ISO 8601](https://iso8601.com/), to a degree. This involves changing the photo format, headers of journals, and folder structure
-* Optional, make each entry a separate file. Folders for each month, photos directory per month.
 * Convert checks of USER_SETTINGS to be arguments (in some cases) rather than just explicit checks to make easier to test etc. and more reusable
 * Split up create_base_journal_entries into separate modules: settings, journal, photos, util (possibly better name)
 
