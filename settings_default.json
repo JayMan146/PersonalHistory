@@ -4,14 +4,14 @@
             "matching_entries": {
                 "enabled": true,
                 "separator": ", ",
-                "preliminary_text": "\nPrevious Same-Date Journals: ",
-                "ending_text": "\n"
+                "prefix": "\nPrevious Same-Date Journals: ",
+                "suffix": "\n"
             },
             "photos": {
                 "enabled": true,
                 "separator": "\n\n",
-                "preliminary_text": "\n",
-                "ending_text": "\n"
+                "prefix": "\n",
+                "suffix": "\n"
             }
         },
         "custom": {
@@ -19,8 +19,8 @@
                 "Today's Rating: \n"
             ],
             "separator": "\n",
-            "preliminary_text": "\n\n",
-            "ending_text": ""
+            "prefix": "\n\n",
+            "suffix": ""
         },
         "custom_placement": "before",
         "writing_lines": 3

@@ -107,14 +107,14 @@ def generate_custom_formatting() -> str:
 	"""Generates a list of the custom journal formatting settings to be added to an entry."""
 	custom_formatting_settings_path = settings.USER_SETTINGS["format"]["custom"]
 
-	preliminary_text: str = custom_formatting_settings_path["preliminary_text"]
-	ending_text: str = custom_formatting_settings_path["ending_text"]
+	prefix: str = custom_formatting_settings_path["prefix"]
+	suffix: str = custom_formatting_settings_path["suffix"]
 
 	item_separator: str = custom_formatting_settings_path["separator"]
 	items: list[str] = custom_formatting_settings_path["items"]
 	joined_items = item_separator.join(items)
 
-	return preliminary_text + joined_items + ending_text
+	return prefix + joined_items + suffix
 
 def generate_requires_programming_formatting(key: str, item_list: list[str]) -> str | None:
 	"""Generates a line of the requires_programming section of the settings based on `key` and `item_list` (items to be joined together, e.g. `photo_paths`)"""
@@ -125,13 +125,13 @@ def generate_requires_programming_formatting(key: str, item_list: list[str]) -> 
 	if is_disabled or is_empty:
 		return
 	
-	preliminary_text: str = requires_programming_settings_path["preliminary_text"]
-	ending_text: str = requires_programming_settings_path["ending_text"]
+	prefix: str = requires_programming_settings_path["prefix"]
+	suffix: str = requires_programming_settings_path["suffix"]
 
 	item_separator: str = requires_programming_settings_path["separator"]
 	joined_items = item_separator.join(item_list)
 
-	return preliminary_text + joined_items + ending_text
+	return prefix + joined_items + suffix
 
 def get_photo_name_pieces(photo_name: str) -> tuple[int, int, str, int] | None:
 	"""Returns the pieces of `photo_name` in the order of day, photo number, month, year. Returns `None` if invalid."""
