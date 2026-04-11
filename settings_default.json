@@ -45,9 +45,9 @@
         }
     },
     "earliest_entry": {
-        "year": 1,
+        "year": 1000,
         "month": 1,
-        "day": 1000
+        "day": 1
     },
     "permissions": {
         "enable_writing_to_file": true,
