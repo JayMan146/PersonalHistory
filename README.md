@@ -93,7 +93,7 @@ If you forget to add the `.json` file extension, it will be appended automatical
 
 The easiest way to use this is to run the script `easy_run.py`. This will transfer any specified photos (if enabled) and puts in any entries that are needed. The program will place the specified outline of any journals that don't exist in the past 100 days (planned to be changed at some point, see [TODO](./TODO.md)).
 
-Alternatively, once I actually make it functionally, use `gui.py` to use a gui to handle your journals.
+Alternatively, once I actually make it functional, use `gui.py` to use an interface to handle your journals.
 
 You can write anywhere in the journals, just don't mess with the dates in the headers of the journals (e.g. `## Wednesday 04 March 2026`)
 
