@@ -6,7 +6,7 @@ This Journal System, with the work-in-progress name of Personal History is a som
 
 The easiest way to use this is to run the script `easy_run.py`. This will transfer any specified photos (if enabled) and puts in any entries that are needed. The program will place the specified outline of any journals that don't exist in the past 100 days (planned to be changed at some point, see [TODO](./TODO.md)).
 
-Alternatively, once I actually make it functional, use `gui.py` to use an interface to handle your journals.
+Alternatively, once I actually make it functional, use `gui.py` to use an interface to handle your journals. See [TODO](./TODO.md)
 
 You can write anywhere in the journals, just don't mess with the dates in the headers of the journals (e.g. `## Wednesday 04 March 2026`)
 
@@ -105,8 +105,8 @@ This is anything that didn't fit anywhere else.
 
 `console_output_level` determines how much information will be printed to the console. Can be set to `none`, `minimum`, `medium`, or `maximum`. Setting it to `0`, `1`, `2`, or `3` is the same as the previous options.
 
-## Settings to Use
+## Settings Profile
 
-This file serves as a way to have several settings files with different names that you can switch between. Only the first line is read, and that is the file used as the settings. The rest of the file is ignored, so you could put whatever you want there.
+In the JouranlSystem directory, there is a file named `settings_profile.txt`. This file serves as a way to have several settings profiles that you can switch between. Only the first line is read, and that is the file used as the settings. The rest of the file is ignored, so you could put whatever you want there. This will be easier to do once I implement the GUI (see [TODO](./TODO.md)).
 
 If you forget to add the `.json` file extension, it will be appended automatically.
