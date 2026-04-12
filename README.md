@@ -4,7 +4,7 @@ This Journal System, with the work-in-progress name of "Personal History" is a s
 
 ## Installation
 
-First, you'll want to download the code in some manner, either through downloading it or `git clone`-ing it. After that, you'll need a directory, anywhere for your journals to live. For example, I have a folder named `Journals`. Then, place the `JournalSystem` folder in there. Then, you'll want to run the [initalize.py](./initalize.py) script to set up the journals. After that, you're good to go, read the the [Usage](#usage) section below on how to use it. 
+First, you'll want to download the code in some manner, either through downloading it or `git clone`-ing it. After that, you'll need a directory, anywhere for your journals to live. For example, I have a folder named `Journals`. Then, place the `JournalSystem` folder in there. Then, you'll want to run the [initialize.py](./initialize.py) script to set up the journals. After that, you're good to go, read the the [Usage](#usage) section below on how to use it. 
 
 ## Usage
 
