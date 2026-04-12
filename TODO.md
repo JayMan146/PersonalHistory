@@ -2,6 +2,7 @@
 
 ## Necessary Features
 
+* Redo first time run system, have separate script for doing so rather than "detecting" it.
 * More tests, and a way of testing non-helper functions
 * Barebones GUI for easy use
     * Settings editor
