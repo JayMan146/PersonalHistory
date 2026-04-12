@@ -51,6 +51,9 @@ def load_settings_profile(profile: str, should_determine_console_output_level: b
 	return USER_SETTINGS
 
 def create_default_settings_profile_txt() -> None:
+	# don't create if it exists
+	if os.path.exists("./settings_profile.txt"): return
+
 	with open("./settings_profile.txt", "x", encoding="UTF-8") as settings_profile_file:
 		settings_profile_file.write("settings_default")
 
