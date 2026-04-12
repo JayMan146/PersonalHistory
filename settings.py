@@ -6,6 +6,8 @@ import os
 import glob
 from typing import Any
 
+import journal_system
+
 class ConsoleOutputLevels(enum.IntEnum):
 	NONE = 0
 	MINIMUM = 1
@@ -42,12 +44,28 @@ def determine_console_output_level(setting: str | int) -> ConsoleOutputLevels:
 def load_profile(profile: str, should_determine_console_output_level: bool=True) -> dict:
 	"""Sets the global variable USER_SETTINGS to the selected profile, as well as returning it."""
 	global USER_SETTINGS, CURRENT_CONSOLE_OUTPUT_LEVEL
+
+	performed_profile_overwrite_failsafe: bool = False
+	# failsafe if profile does not exist
+	if profile not in get_all_profiles():
+		profile = "default"
+		performed_profile_overwrite_failsafe = True
+
 	with open("settings/" + profile + ".json", "r", encoding="UTF-8") as settings_file:
 		USER_SETTINGS = json.load(settings_file)
 
 	console_output_level_setting: str | int | None = USER_SETTINGS.get("console_output_level")
 	if console_output_level_setting and should_determine_console_output_level:
 		CURRENT_CONSOLE_OUTPUT_LEVEL = determine_console_output_level(console_output_level_setting)
+
+	# this has to be done after overwritting such that CURRENT_CONSOLE_OUTPUT_LEVEL is defined
+	if performed_profile_overwrite_failsafe:
+		journal_system.output_to_console_by_level([
+			ConsoleOutput(
+				[ConsoleOutputLevels.NONE, ConsoleOutputLevels.MINIMUM, ConsoleOutputLevels.MEDIUM, ConsoleOutputLevels.MAXIMUM],
+				"Error: Failed to load selected profile from `selected_profile.txt`, since it does not exist or cannot be found."
+			)
+		])
 		
 	return USER_SETTINGS
 
