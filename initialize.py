@@ -6,7 +6,7 @@ def intialize_journals() -> None:
 	"""Creates a single entry for today."""
 	
 	# get settings ready for new use
-	settings.load_selected_profile("default")
+	settings.load_profile("default")
 	settings.create_default_selected_profile_txt()
 
 	# to allow the code later on that writes the message in the journal to be positioned better

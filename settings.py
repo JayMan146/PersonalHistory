@@ -23,7 +23,7 @@ CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevels
 
 def merge_with_default_settings(settings: dict[str, dict]) -> dict[str, dict]:
 	"""Deep merges `settings` with the default settings (profile `default`)"""
-	new_settings: dict = load_selected_profile("default", False)
+	new_settings: dict = load_profile("default", False)
 	mergedeep.merge(new_settings, settings)
 	return new_settings
 
@@ -39,7 +39,7 @@ def determine_console_output_level(setting: str | int) -> ConsoleOutputLevels:
 
 	return current_console_output_level
 		
-def load_selected_profile(profile: str, should_determine_console_output_level: bool=True) -> dict:
+def load_profile(profile: str, should_determine_console_output_level: bool=True) -> dict:
 	"""Sets the global variable USER_SETTINGS to the selected profile, as well as returning it."""
 	global USER_SETTINGS, CURRENT_CONSOLE_OUTPUT_LEVEL
 	with open("settings/" + profile + ".json", "r", encoding="UTF-8") as settings_file:
@@ -71,7 +71,7 @@ def load_current_selected_profile(use_defaults: bool=True) -> dict:
 	"""Loads the settings of the current profile"""
 	global USER_SETTINGS
 
-	USER_SETTINGS = load_selected_profile(get_selected_profile())
+	USER_SETTINGS = load_profile(get_selected_profile())
 	if use_defaults:
 		USER_SETTINGS = merge_with_default_settings(USER_SETTINGS)
 
