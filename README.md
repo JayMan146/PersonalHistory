@@ -40,7 +40,9 @@ Refer back to the default settings profile for reference and the style of things
 
 #### Requires Programming
 
-The `required_programming` object is for specifically made format items that require specific implementation. It currently has two objects: `matching_entries` and `photos`. They have the same format, as follows:
+The `required_programming` object is for specifically made format items that require specific implementation. It currently has two objects: `matching_entries` and `photos`. Matching entries is for linking back to journals written on the same day, just a different year. For example, the journal for `05 June 2024` will have a link to `05 June 2023`. Photos is hopefully self-explanatory—it holds links to photos that are for the day. Read more about this in the [Photos Section](#photos).
+
+These two format objects have the same format, as follows:
 
 `enabled`, a boolean to toggle it.
 
