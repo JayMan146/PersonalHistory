@@ -3,6 +3,7 @@ import json
 import enum
 import dataclasses
 import os
+import glob
 from typing import Any
 
 class ConsoleOutputLevels(enum.IntEnum):
@@ -75,3 +76,13 @@ def load_current_selected_profile(use_defaults: bool=True) -> dict:
 		USER_SETTINGS = merge_with_default_settings(USER_SETTINGS)
 
 	return USER_SETTINGS
+
+def get_all_profiles() -> list[str]:
+	profile_paths: list[str] = glob.glob("./settings/*.json")
+	profiles: list[str] = []
+	for profile_path in profile_paths:
+		file: str = profile_path.split("/")[-1]
+		file_name: str = file.split(".")[0]
+		profiles.append(file_name)
+
+	return profiles
