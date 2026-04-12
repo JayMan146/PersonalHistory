@@ -92,8 +92,7 @@ There are also `separator`, `prefix`, and `suffix` fields exactly the same as in
 
 ```json
 "conversions": {
-    "PNG": "png",
-    "jpg": "jpeg",
+    "jpeg": "png",
     "heic": "jpeg",
     "heif": "jpeg"
 }
