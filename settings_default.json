@@ -15,9 +15,7 @@
             }
         },
         "custom": {
-            "items": [
-                "Today's Rating: \n"
-            ],
+            "items": [],
             "separator": "\n",
             "prefix": "\n\n",
             "suffix": ""
