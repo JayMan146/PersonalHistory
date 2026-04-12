@@ -3,7 +3,6 @@ import json
 import enum
 import dataclasses
 import os
-import journal_system
 from typing import Any
 
 class ConsoleOutputLevels(enum.IntEnum):
@@ -20,7 +19,6 @@ class ConsoleOutput:
 
 USER_SETTINGS: dict[str, Any]
 CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevels
-is_first_time_run: bool = False
 
 def merge_with_default_settings(settings: dict[str, dict]) -> dict[str, dict]:
 	"""Deep merges `settings` with the default settings (profile `settings_default`)"""
@@ -59,10 +57,6 @@ def create_default_settings_profile_txt() -> None:
 def get_current_profile() -> str:
 	global is_first_time_run
 	"""Gets the currently selected profile in `settings_profile.txt`"""
-	
-	if not os.path.exists("./settings_profile.txt"):
-		is_first_time_run = True
-		create_default_settings_profile_txt()
 	
 	with open("./settings_profile.txt", "r", encoding="UTF-8") as settings_profile_file:
 		profile: str = settings_profile_file.readline().strip()
