@@ -110,5 +110,5 @@ class TestSettings(unittest.TestCase):
 		self.assertEqual(settings.determine_console_output_level(3), settings.ConsoleOutputLevels.MAXIMUM)
 	
 if __name__ == "__main__":
-	settings.load_current_settings_profile()
+	settings.load_current_selected_profile()
 	unittest.main()

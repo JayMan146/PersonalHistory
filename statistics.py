@@ -19,7 +19,7 @@ class JournalStatistic:
 	number_of_photos: int
 
 def main():
-	USER_SETTINGS = settings.load_current_settings_profile()
+	USER_SETTINGS = settings.load_current_selected_profile()
 	earliest_journal_dict: dict = USER_SETTINGS["earliest_journal"]
 	earliest_journal: datetime.date = datetime.date(earliest_journal_dict["year"], earliest_journal_dict["month"], earliest_journal_dict["day"])
 	today: datetime.date = datetime.date.today()

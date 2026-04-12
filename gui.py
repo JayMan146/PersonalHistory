@@ -4,7 +4,7 @@ import settings
 
 primary_window: tk.Tk = tk.Tk()
 
-USER_SETTINGS: dict = settings.load_current_settings_profile()
+USER_SETTINGS: dict = settings.load_current_selected_profile()
 
 class MainMenuButton(tk.Button):
 	def __init__(self, **kwargs):

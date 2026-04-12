@@ -21,8 +21,8 @@ USER_SETTINGS: dict[str, Any]
 CURRENT_CONSOLE_OUTPUT_LEVEL: ConsoleOutputLevels
 
 def merge_with_default_settings(settings: dict[str, dict]) -> dict[str, dict]:
-	"""Deep merges `settings` with the default settings (profile `settings_default`)"""
-	new_settings: dict = load_settings_profile("settings_default", False)
+	"""Deep merges `settings` with the default settings (profile `default`)"""
+	new_settings: dict = load_selected_profile("default", False)
 	mergedeep.merge(new_settings, settings)
 	return new_settings
 
@@ -38,10 +38,10 @@ def determine_console_output_level(setting: str | int) -> ConsoleOutputLevels:
 
 	return current_console_output_level
 		
-def load_settings_profile(profile: str, should_determine_console_output_level: bool=True) -> dict:
+def load_selected_profile(profile: str, should_determine_console_output_level: bool=True) -> dict:
 	"""Sets the global variable USER_SETTINGS to the selected profile, as well as returning it."""
 	global USER_SETTINGS, CURRENT_CONSOLE_OUTPUT_LEVEL
-	with open(profile + ".json", "r", encoding="UTF-8") as settings_file:
+	with open("settings/" + profile + ".json", "r", encoding="UTF-8") as settings_file:
 		USER_SETTINGS = json.load(settings_file)
 
 	console_output_level_setting: str | int | None = USER_SETTINGS.get("console_output_level")
@@ -50,27 +50,27 @@ def load_settings_profile(profile: str, should_determine_console_output_level: b
 		
 	return USER_SETTINGS
 
-def create_default_settings_profile_txt() -> None:
+def create_default_selected_profile_txt() -> None:
 	# don't create if it exists
-	if os.path.exists("./settings_profile.txt"): return
+	if os.path.exists("./settings/selected_profile.txt"): return
 
-	with open("./settings_profile.txt", "x", encoding="UTF-8") as settings_profile_file:
-		settings_profile_file.write("settings_default")
+	with open("./settings/selected_profile.txt", "x", encoding="UTF-8") as selected_profile_file:
+		selected_profile_file.write("default")
 
-def get_current_profile() -> str:
+def get_selected_profile() -> str:
 	global is_first_time_run
-	"""Gets the currently selected profile in `settings_profile.txt`"""
+	"""Gets the currently selected profile in `selected_profile.txt`"""
 	
-	with open("./settings_profile.txt", "r", encoding="UTF-8") as settings_profile_file:
-		profile: str = settings_profile_file.readline().strip()
+	with open("./settings/selected_profile.txt", "r", encoding="UTF-8") as selected_profile_file:
+		profile: str = selected_profile_file.readline().strip()
 
 	return profile
 
-def load_current_settings_profile(use_defaults: bool=True) -> dict:
+def load_current_selected_profile(use_defaults: bool=True) -> dict:
 	"""Loads the settings of the current profile"""
 	global USER_SETTINGS
 
-	USER_SETTINGS = load_settings_profile(get_current_profile())
+	USER_SETTINGS = load_selected_profile(get_selected_profile())
 	if use_defaults:
 		USER_SETTINGS = merge_with_default_settings(USER_SETTINGS)
 

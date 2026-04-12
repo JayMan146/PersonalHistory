@@ -170,6 +170,6 @@ There are also `separator`, `prefix`, and `suffix` fields exactly the same as in
 
 ## Settings Profile
 
-In the JouranlSystem directory, there is a file named `settings_profile.txt`. This file serves as a way to have several settings profiles that you can switch between. Only the first line is read, and that is the file used as the settings. Do not add the .json file extension, just the name of the file. The rest of the file is ignored, so you could put whatever you want there. This will be easier to do once I implement the GUI (see [TODO](./TODO.md)).
+In the JouranlSystem directory, there is a file named `selected_profile.txt`. This file serves as a way to have several settings profiles that you can switch between. Only the first line is read, and that is the file used as the settings. Do not add the .json file extension, just the name of the file. The rest of the file is ignored, so you could put whatever you want there. This will be easier to do once I implement the GUI (see [TODO](./TODO.md)).
 
 The existance file is how the system checks if you have used it before (and have written any journals). So, if you delete the file, then it assume this is the first time you run it.

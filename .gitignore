@@ -3,8 +3,8 @@ automation_station.py
 
 # only track default settings
 *.json
-!settings_default.json
-settings_profile.txt
+!default.json
+selected_profile.txt
 
 # self-explanatory
 __pycache__
