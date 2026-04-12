@@ -30,7 +30,61 @@ Refer back to the default settings profile for reference and the style of things
 
 ### Format
 
-`format` is an object for items that go between the heading of the journal and the actual entry itself, which can include extra information you want. It also has a few other parameters for the format.
+`format` is an object for items that go between the heading of the journal and the actual entry itself, which can include extra information you want. It also has a few other parameters for the format. Here's an example of a journal with various custom formatting:
+
+```md
+## Saturday 17 August 2013: This is My Journal Title!
+
+![](./photos/17%20august%202013/17%2000%20august%202013.png)
+This is a caption I've written for this photo that was automatically inserted by the program.
+
+![](./photos/17%20august%202013/17%2001%20august%202013.png)
+Here's another photo I might have.
+
+Previous Same-Date Journals: [2012](../2012/08%20august%202024.md#friday-17-august-2012-a-title-of-a-past-journal), [2011](../2012/08%20august%202024.md#wednesday-17-august-2011-another-title-of-a-past-journal)
+
+Today's Rating: This is a format item about how I would rate the day!
+
+Three Things I'm Grateful for Today:
+1. Here is another
+2. Format
+3. Item!
+
+This is my actual entry. I had a great day involving a lot of pancakes.
+```
+
+This example could be achieved with the following `format` object:
+
+```json
+"format": {
+    "requires_programming": {
+        "matching_entries": {
+            "enabled": true,
+            "separator": ", ",
+            "prefix": "\nPrevious Same-Date Journals: ",
+            "suffix": "\n"
+        },
+        "photos": {
+            "enabled": true,
+            "separator": "\n\n",
+            "prefix": "\n",
+            "suffix": "\n"
+        }
+    },
+    "custom": {
+        "items": [
+            "Today's Rating:\n",
+            "Three Things I'm Grateful for Today:\n1. \n2. \n3. "
+        ],
+        "separator": "\n",
+        "prefix": "\n\n",
+        "suffix": ""
+    },
+    "custom_placement": "after",
+    "writing_lines": 3,
+    "header_suffix": ": "
+}
+```
 
 `writing_lines` is an integer for the number of lines to place between the format items and the next entry for writing.
 
