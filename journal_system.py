@@ -7,7 +7,6 @@ import typing
 from PIL import Image
 from pillow_heif import register_heif_opener
 
-from ConvertToHeaderLink.convert_to_header_link import convert_to_header_link
 import settings
 
 JOURNAL_ROOT: str = os.getcwd().rsplit("/", 1)[0] # gets the cwd, current working directory, and discards the last directory (giving the root)
