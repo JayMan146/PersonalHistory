@@ -1,5 +1,5 @@
 import tkinter as tk
-import journal_system as main
+import journal_system
 import settings
 
 primary_window: tk.Tk = tk.Tk()
@@ -23,8 +23,8 @@ def gui():
 	primary_window.title("Journal System")
 
 	tk.Label(primary_window, text="Welcome to the Journal System!", width=35).grid(column=0, row=0)
-	MainMenuButton(text="Move Photos", command=main.move_photos_from_photo_locations).grid(column=0, row=1)
-	MainMenuButton(text="Create New Entries", command=main.create_all_recent_missing_entries).grid(column=0, row=2)
+	MainMenuButton(text="Move Photos", command=journal_system.move_photos_from_photo_locations).grid(column=0, row=1)
+	MainMenuButton(text="Create New Entries", command=journal_system.create_all_recent_missing_entries).grid(column=0, row=2)
 	MainMenuButton(text="Edit Settings...", command=edit_settings).grid(column=0, row=3)
 	MainMenuButton(text="Quit", command=quit).grid(column=0, row=4)
 

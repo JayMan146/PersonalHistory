@@ -1,12 +1,12 @@
-import journal_system as main
+import journal_system
 import settings
 import traceback
 
 def easy_run() -> None:
 	try:
 		settings.load_current_settings_profile(use_defaults=True) # this must happen first
-		main.move_photos_from_photo_locations() # then get the photos moved before making the entries
-		main.create_all_recent_missing_entries() # actually make 'em
+		journal_system.move_photos_from_photo_locations() # then get the photos moved before making the entries
+		journal_system.create_all_recent_missing_entries() # actually make 'em
 	except FileNotFoundError as error:
 		print(f"A file is missing. Double check the paths in settings and settings_profile.txt file and make sure settings_profile.txt exists. The full error is:\n{error}") # output, not debugging
 		traceback.print_tb(error.__traceback__)

@@ -3,7 +3,7 @@ import dataclasses
 import datetime
 import calendar
 import os
-from journal_system import convert_to_month, convert_to_long_date
+import journal_system
 import settings
 
 USER_SETTINGS: dict
@@ -35,7 +35,7 @@ def main():
 		start_month: int = earliest_journal.month if year == earliest_journal.year else 1
 		end_month: int = today.month if year == today.year else 12
 		for month in range(start_month, end_month + 1):
-			month_file_path: str = f"{year_folder_path}/{convert_to_month(month)[1]} {str(year)}.md"
+			month_file_path: str = f"{year_folder_path}/{journal_system.convert_to_month(month)[1]} {str(year)}.md"
 			if not os.path.exists(month_file_path):
 				continue
 
@@ -47,7 +47,7 @@ def main():
 				end_day: int = today.day if month == today.month and year == today.year else calendar.monthrange(year, month)[1] # get days in month
 				for day in range(start_day, end_day):
 					entry_date = datetime.date(year, month, day)
-					long_date: str = convert_to_long_date(entry_date)
+					long_date: str = journal_system.convert_to_long_date(entry_date)
 
 					for line in journal_lines: 
 						title_prefix: str = f"# {long_date}: "
