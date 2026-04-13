@@ -2,6 +2,7 @@
 
 ## Necessary Features
 
+* Update README to say Python is required, and line about externally managed environment or whatever
 * More tests, and a way of testing non-helper functions
 * Barebones GUI for easy use
     * Settings editor
