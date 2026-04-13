@@ -60,14 +60,17 @@ def load_profile(profile: str, should_determine_console_output_level: bool=True)
 
 	# this has to be done after overwritting such that CURRENT_CONSOLE_OUTPUT_LEVEL is defined
 	if performed_profile_overwrite_failsafe:
-		journal_system.output_to_console_by_level([
-			ConsoleOutput(
-				[ConsoleOutputLevels.NONE, ConsoleOutputLevels.MINIMUM, ConsoleOutputLevels.MEDIUM, ConsoleOutputLevels.MAXIMUM],
-				"Error: Failed to load selected profile from `selected_profile.txt`, since it does not exist or cannot be found."
-			)
-		])
+		output_bad_profile()
 		
 	return USER_SETTINGS
+
+def output_bad_profile() -> None:
+	journal_system.output_to_console_by_level([
+		ConsoleOutput(
+			[ConsoleOutputLevels.NONE, ConsoleOutputLevels.MINIMUM, ConsoleOutputLevels.MEDIUM, ConsoleOutputLevels.MAXIMUM],
+			"Error: Failed to load selected profile from `selected_profile.txt`, since it does not exist or cannot be found."
+		)
+	])
 
 def create_default_selected_profile_txt() -> None:
 	# don't create if it exists
@@ -80,8 +83,15 @@ def get_selected_profile() -> str:
 	global is_first_time_run
 	"""Gets the currently selected profile in `selected_profile.txt`"""
 	
+	if not os.path.exists("./settings/selected_profile.txt"):
+		create_default_selected_profile_txt()
+	
 	with open("./settings/selected_profile.txt", "r", encoding="UTF-8") as selected_profile_file:
 		profile: str = selected_profile_file.readline().strip()
+
+	if profile not in get_all_profiles():
+		output_bad_profile()
+		return "default"
 
 	return profile
 
