@@ -1,6 +1,6 @@
-# Journal System
+# Personal History
 
-This Journal System, with the work-in-progress name of "Personal History" is a some-in-one solution for digital journaling. It can handle photos in journals, linking back to old ones from increments of one year ago, and has a ton of customizability. When run, the scripts will put outlines into files for you to write in, based on your settings. However, you will need a text editor to write your journals. This can be Windows Notepad, VSCode, or anything that can edit plain text files.
+Personal History is a some-in-one solution for digital journaling. It can handle photos in journals, linking back to old ones from increments of one year ago, and has a ton of customizability. When run, the scripts will put outlines into files for you to write in, based on your settings. However, you will need a text editor to write your journals. This can be Windows Notepad, VSCode, or anything that can edit plain text files.
 
 ## Installation
 
