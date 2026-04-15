@@ -8,11 +8,11 @@ Personal History is a some-in-one solution for digital journaling. It can handle
 1. Get the code in some manner, either through downloading it or `git clone`-ing it. Make sure the `PersonalHistory` folder is in there. (So the path to this README file would be `whatever/Journals/PersonalHistory/README.md`.) 
 1. If you're running code directly, and not a binary or executable, make sure you have python. Some systems have it already, check by using the command `python` in a terminal. If you see `>>>`, you're good to go. Type `exit()` and hit enter, or close the terminal. If you don't have it, visit the [Python Website](https://www.python.org/downloads/) to download it. On Linux, you can also use the commands `sudo apt update`, `sudo apt upgrade`, and then `sudo apt install python3` and `sudo apt install python3-pip` to get it.
 1. Once again, if you're running the code directly, you'll need to install the requirements. To do this, run `pip install -r REQUIREMENTS.txt`, with whichever instance of pip you'll be using. If you get a long paragraph starting with `error: externally-managed-environment`, then take a look at the [section below](#python-venv). 
-1. Finally, you'll want to run the [initialize.py](./initialize.py) script to set up the journals. After that, you're good to go, read the the [Usage](#usage) section below on how to use it. 
+1. Finally, you'll want to run the [initialize.py](./initialize.py) script to set up the journals. After that, you're good to go, read the the [Usage](#usage) section below on how to use it.
 
 ### Python VENV
 
-So, if you get the `externally-managed-environment` error, you'll need a Python VENV, or Virtual Environment. 
+So, if you get the `externally-managed-environment` error, you'll need a Python VENV, or Virtual Environment.
 
 1. Choose a folder to put this in. Could be on your desktop, or anywhere, really. I'd put it in your home or user directory. 
 1. Run the command `python -m venv path/to/your/folder` to create the venv.
@@ -129,7 +129,7 @@ This example could be achieved with the following `format` object:
 
 `writing_lines` is a positive integer for the number of lines to place between the format items and the next entry for writing.
 
-`custom_placement` is either `before` or `after` and determines if the [Custom](#custom) Format Items are before or after the [Requires Programming](#requires-programming) Format Items. 
+`custom_placement` is either `before` or `after` and determines if the [Custom](#custom) Format Items are before or after the [Requires Programming](#requires-programming) Format Items.
 
 `header_suffix` is a string to place after the header (date) for each journal entry.
 

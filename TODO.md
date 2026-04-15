@@ -8,6 +8,7 @@
     * Settings editor
     * Settings profiles
     * Import photos by opening/dragging whatever
+* Better error handling, especially for poorly written settings files
 * Allow extract from iCloud photos zips and others?
 * Allow keeping the .MOV from .zip files and further customization for zip extraction
 
