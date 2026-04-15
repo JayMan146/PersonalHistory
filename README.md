@@ -39,7 +39,7 @@ Something I would like to specifically highlight here is the naming scheme of th
 
 ## Settings
 
-Refer back to the default settings profile for reference and the style of things. This assumes you understand the basics of json. If not, do some googling. For quick reference:
+Refer back to the default settings profile for reference and the style of things. If you don't match the given set of options you can pick from in the settings, it will either cause errors or be defaulted to something usable. I should probably fix it if it is the former case. This assumes you understand the basics of json. If not, do some googling. For quick reference:
 
 * String - any amount of text
 * Integer - any number, negative or positive, with no decimal portion
@@ -127,7 +127,7 @@ This example could be achieved with the following `format` object:
 }
 ```
 
-`writing_lines` is an integer for the number of lines to place between the format items and the next entry for writing.
+`writing_lines` is a positive integer for the number of lines to place between the format items and the next entry for writing.
 
 `custom_placement` is either `before` or `after` and determines if the [Custom](#custom) Format Items are before or after the [Requires Programming](#requires-programming) Format Items. 
 
@@ -159,7 +159,7 @@ There are also `separator`, `prefix`, and `suffix` fields exactly the same as in
 
 `day_crossover` is an object to make it so that during some part of the day, it counts as a different day. Personally, I use it so that if I use this past midnight, it doesn't count the new day after midnight. It's not the next day until I sleep to me. It has two fields:
 
-`time` is an object with 3 integers: `hour` (0 to 23, using 24hr time), `minute`, and `second` for the time.
+`time` is an object with 3 positive integers: `hour` (0 to 23, using 24hr time), `minute`, and `second` for the time.
 
 `move_direction` is a string that can be either `disable`, `forward`, or `backward`. If set to `disable`, nothing happens. If set to `forward`, any point in a day **after** `time` will be considered as the next day. If set to `backward`, any point in a day **before** `time` will be considered as the previous day. Here are some examples, assuming that time is set to 13:00:00, and it is currently Wednesday:
 
@@ -197,7 +197,7 @@ There are also `separator`, `prefix`, and `suffix` fields exactly the same as in
 
 ### Earliest Entry
 
-`earliest_entry` is an object with the integers `day`, `month`, and `year`. This just specifies how far back the program should look for journals, and it won't go past this. Just set it to the first journal you have.
+`earliest_entry` is an object with the positive integers `day`, `month`, and `year`. This just specifies how far back the program should look for journals, and it won't go past this. Just set it to the first journal you have.
 
 ### Permissions
 
