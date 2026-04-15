@@ -33,13 +33,41 @@ Since this is an open-source software, it is meant to be very free. The journals
 
 ## File System
 
-Files are arranged into folders for each year, and then one markdown file for each month. Why is it like this, you may ask? Because I like it that way. And, it seems like a good balance between not everything being in one big file and a bunch of files (like one per entry). I think it adds novelty to the new month. In each year folder, there is a photos folder along with month folders for each month's photos. In general, don't mess with the names of any of these—the system will handle it all. Just write down your entry. But, you can do whatever you want with it. They're your files.
+Files are arranged into folders for each year, and then one markdown file for each month. Why is it like this, you may ask? Because I like it that way. And, it seems like a good balance between not everything being in one big file and a bunch of files (like one per entry). I think it adds novelty to the new month. In each year folder, there is a photos folder along with month folders for each month's photos. In general, don't mess with the names of any of these—the system will handle it all. Just write down your entry. But, you *can* do whatever you want with it. They're *your* files.
 
-Something I would like to specifically highlight here is the naming scheme of the photos. Using the [Photo Transfer Setting](#photos) requires a specific format, and moves them to the month folders in the photos directory. However, since the photos in the journals are just links to the photos, they can be anywhere and be named anything. The program just does this for the sake of uniformity.
+Something I would like to specifically highlight here is the naming scheme of the photos. Using the [Photo Transfer Setting](#photos) requires a specific format, and moves them to the month folders in the photos directory. However, since the photos in the journals are just links to the photos, they can be anywhere and be named anything. The program just does this for the sake of uniformity and simplicity.
 
 ## Settings
 
-Refer back to the default settings profile for reference and the style of things. This assumes you understand the basics of json.
+Refer back to the default settings profile for reference and the style of things. This assumes you understand the basics of json. If not, do some googling. For quick reference:
+
+* String - any amount of text
+* Integer - any number, negative or positive, with no decimal portion
+* Float - an integer that can have a decimal portion
+* List - a list of any of the other kinds
+* Object - a mapping of any of the other kinds.
+
+Here's an example:
+```json
+{
+    "string": "Hi! -146",
+    "integer": 2837,
+    "float": 22.31102,
+    "list": [
+        1,
+        2,
+        "d"
+    ],
+    "object": {
+        "string": "hi again.",
+        "list": [
+            "woah",
+            "another",
+            "list!"
+        ]
+    }
+}
+```
 
 ### Format
 
