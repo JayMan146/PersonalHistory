@@ -29,7 +29,7 @@ You can write anywhere in the journals, just don't mess with the dates in the he
 
 ## Integration Between the System and Your Journals
 
-Since this is an open-source software, it is meant to be very free. The journals are just plain text files, so you can stop or start using this system whenever you want. It tracks no information, and is entirely local. It's only interaction with what you have written is skipping over it to find certain entries, just based on the headers.
+Since this is an open-source software, it is meant to be very free. The journals are just plain text files, so you can stop or start using this system whenever you want. It tracks no information, and is entirely local. It's only interaction with what you have written is skipping over it to find certain entries, just based on the headers. That last line will no longer be true once I get the [Statistics](./statistics.py) up and running, but it will stil be entirely local with no data going to anyone.
 
 ## File System
 
