@@ -71,7 +71,26 @@ Here's an example:
 
 ### Format
 
-`format` is an object for items that go between the heading of the journal and the actual entry itself, which can include extra information you want. It also has a few other parameters for the format. Here's an example of a journal with various custom formatting:
+`format` is an object for items that go between the heading of the journal and the actual entry itself, which can include extra information you want. It also has a few other parameters for the format. Here's an example of a journal with various custom formatting. This first one is without any modifications after the system generates it, and the second  is with text written in it by a user.
+
+```md
+## Saturday 17 August 2013: 
+
+![](./photos/17%20august%202013/17%2000%20august%202013.png)
+
+![](./photos/17%20august%202013/17%2001%20august%202013.png)
+
+Previous Same-Date Journals: [2012](../2012/08%20august%202024.md#friday-17-august-2012-a-title-of-a-past-journal), [2011](../2012/08%20august%202024.md#wednesday-17-august-2011-another-title-of-a-past-journal)
+
+Today's Rating: 
+
+Three Things I'm Grateful for Today:
+1. 
+2. 
+3. 
+
+
+```
 
 ```md
 ## Saturday 17 August 2013: This is My Journal Title!
