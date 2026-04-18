@@ -39,7 +39,7 @@ class TestHelperFunctions(unittest.TestCase):
 		self.assertTrue(journal_system.valid_photo_name_format("18 17 march 2029"))
 		self.assertFalse(journal_system.valid_photo_name_format("FunnyMeme"))
 		self.assertFalse(journal_system.valid_photo_name_format("00 00 00 00"))
-		self.assertFalse(journal_system.valid_photo_name_format("03 00 february 3001"))
+		self.assertFalse(journal_system.valid_photo_name_format("03 00 febuary 3001"))
 		self.assertFalse(journal_system.valid_photo_name_format("18. 17 march 2029"))
 		self.assertFalse(journal_system.valid_photo_name_format("32 00 june 2020"))
 	

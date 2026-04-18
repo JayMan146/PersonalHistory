@@ -329,7 +329,7 @@ def valid_photo_name_format(photo_name: str) -> bool:
 	is_valid_day: bool = 1 <= day <= 31
 	is_valid_photo_number: bool = 0 <= photo_number <= 99
 	is_valid_month: bool = month in MONTHS
-	is_valid_year: bool = 0 <= year <= 3000
+	is_valid_year: bool = year >= 1
 
 	return (is_valid_day and is_valid_photo_number and is_valid_month and is_valid_year)
 
