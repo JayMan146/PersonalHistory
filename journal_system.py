@@ -192,7 +192,7 @@ def delete_unconverted_photo(file_path: str, original_extension: str) -> None:
 		os.remove(file_path)
 		output_to_console_by_level([
 			settings.ConsoleOutput([settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
-			f"\t⮡ Deleted unconverted photo of file type {original_extension}.")
+			f"    ⮡ Deleted unconverted photo of file type {original_extension}.")
 		])
 
 def handle_zip_photo(file_path: str, file_path_without_extension: str):
