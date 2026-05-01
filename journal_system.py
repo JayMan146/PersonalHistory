@@ -213,25 +213,40 @@ def convert_photo_file_type(file_path: str) -> None:
 	file_path_split_by_periods: list[str] = file_path.split(".")
 	file_path_without_extension = ".".join(file_path_split_by_periods[:-1])
 	extension: str = file_path_split_by_periods[-1].lower()
+	lowered_extension: str = extension
 
-	if extension == "zip":
+	if lowered_extension == "zip":
 		handle_zip_photo(file_path, file_path_without_extension)
 		return
 
-	output_type: str = settings.USER_SETTINGS["photos"]["type_conversion"]["conversions"].get(extension) # other wise, use settings mapping
-	if output_type is None: return # don't convert without mapping
+	conversion_dict: dict[str, str] = settings.USER_SETTINGS["photos"]["type_conversion"]["conversions"]
+	output_type: str | None = conversion_dict.get(extension)
+	output_type_from_lowered: str | None = conversion_dict.get(lowered_extension) # other wise, use settings mapping
+	if output_type_from_lowered is None and output_type is None: 
+		return # don't convert without mapping
+	
+	# use whichever one has one, with priority to output_type_from_lowered
+	final_output_type: str | None = None
+	if output_type_from_lowered is None and output_type is not None:
+		final_output_type = output_type
+	elif output_type_from_lowered is not None:
+		final_output_type = output_type_from_lowered
+
+	# if it fails to be set somehow, abort
+	if final_output_type is None:
+		return
 	
 	# we only register it as this point to make sure we only register once it's actually needed (and only once)
-	if not is_heif_registered and extension in ["heic", "heif"]:
+	if not is_heif_registered and lowered_extension in ["heic", "heif"]:
 		register_heif_opener() 
 		is_heif_registered = True
 
 	image = Image.open(file_path)
-	image.save(f"{file_path_without_extension}.{output_type}", format=output_type)
+	image.save(f"{file_path_without_extension}.{final_output_type}", format=final_output_type)
 
-	output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], f"  ⮡ Converted to file type {output_type}.")])
+	output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], f"  ⮡ Converted to file type {final_output_type}.")])
 
-	delete_unconverted_photo(file_path, extension)
+	delete_unconverted_photo(file_path, lowered_extension)
 
 def get_photo_directory(photo_name: str) -> str | None:
 	"""Returns the directory that a photo would go to based on it's name"""
