@@ -212,8 +212,8 @@ def convert_photo_file_type(file_path: str) -> None:
 
 	file_path_split_by_periods: list[str] = file_path.split(".")
 	file_path_without_extension = ".".join(file_path_split_by_periods[:-1])
-	extension: str = file_path_split_by_periods[-1].lower()
-	lowered_extension: str = extension
+	extension: str = file_path_split_by_periods[-1]
+	lowered_extension: str = extension.lower()
 
 	if lowered_extension == "zip":
 		handle_zip_photo(file_path, file_path_without_extension)
