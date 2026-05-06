@@ -29,7 +29,6 @@
 
 ## Bug Fixes
 
-* Extra lines are written on the last journal
 * Allow for "missing days" by implementing better search
 
 ## Tweaks (None)
