@@ -398,10 +398,8 @@ def determine_preliminary_new_lines(file_lines: list[str]) -> int:
 			preliminary_new_lines = 2
 	return preliminary_new_lines
 
-def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool=False) -> bool: # this function is large, maybe break it up TODO
-	"""Takes `entry` and writes it to the file corresponding to `entry_date`."""
-	year_folder, markdown_file_path = convert_date_to_journal_path(entry_date)
-	
+def validate_year_folder(year_folder: str) -> bool:
+	"""If the year folder doesn't exist, tries to create it and logs accordingly. If it was succesfully created, returns True."""
 	if not os.path.isdir(year_folder):
 		if not settings.USER_SETTINGS["permissions"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level([
@@ -414,7 +412,11 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 			settings.ConsoleOutput([settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 			f"Making new directory: {year_folder}\n")
 		])
+		
+	return True
 
+def validate_markdown_folder(entry_date: datetime.date, markdown_file_path: str) -> bool:
+	"""If the markdown file doesn't exist, tries to create it and logs accordingly. If it was succesfully created, returns True."""
 	if not os.path.exists(markdown_file_path):
 		if not settings.USER_SETTINGS["permissions"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level([
@@ -433,6 +435,18 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 					"Attempted to write header to file, but that behavior is disabled.")
 				])
 			new_journal_file.write(f"# {convert_to_month(entry_date.month)[0].title()} {entry_date.year}\n\n")
+
+	return True
+
+def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool=False) -> bool: # this function is large, maybe break it up TODO
+	"""Takes `entry` and writes it to the file corresponding to `entry_date`."""
+	year_folder, markdown_file_path = convert_date_to_journal_path(entry_date)
+	
+	year_folder_exists = validate_year_folder(year_folder)
+	markdown_file_exists = validate_markdown_folder(entry_date, markdown_file_path)
+
+	if not year_folder_exists or not markdown_file_exists:
+		return False
 		
 	number_of_preliminary_new_lines: int = 0
 	with open(markdown_file_path, "r+", encoding="UTF-8") as journal_file_to_read:
