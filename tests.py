@@ -44,13 +44,13 @@ class TestHelperFunctions(unittest.TestCase):
 		self.assertFalse(journal_system.valid_photo_name_format("32 00 june 2020"))
 	
 	def test_determine_preliminary_new_lines(self):
-		self.assertEqual(journal_system.determine_preliminary_new_lines([
+		self.assertEqual(journal_system.calculate_preliminary_new_lines([
 			"stuff\n", "written entry\n", "\n"    
 		]), 0)
-		self.assertEqual(journal_system.determine_preliminary_new_lines([
+		self.assertEqual(journal_system.calculate_preliminary_new_lines([
 			"stuff\n", "written entry\n"    
 		]), 1)
-		self.assertEqual(journal_system.determine_preliminary_new_lines([
+		self.assertEqual(journal_system.calculate_preliminary_new_lines([
 			"stuff\n", "written entry"    
 		]), 2)
 
