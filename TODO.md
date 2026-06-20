@@ -22,7 +22,6 @@
 ## Refactoring
 
 * Break up write_entry into smaller functions
-* Follow [ISO 8601](https://iso8601.com/), to a degree. This involves changing the photo format and folders. Journal headers should stay the same.
 * Convert checks of USER_SETTINGS to be arguments (in some cases) rather than just explicit checks to make easier to test etc. and more reusable
 * Further split up journal_system into separate files: settings, journal, photos, util (possibly better name)
 
