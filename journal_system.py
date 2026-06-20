@@ -438,16 +438,7 @@ def validate_markdown_folder(entry_date: datetime.date, markdown_file_path: str)
 
 	return True
 
-def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool=False) -> bool: # this function is large, maybe break it up TODO
-	"""Takes `entry` and writes it to the file corresponding to `entry_date`."""
-	year_folder, markdown_file_path = convert_date_to_journal_path(entry_date)
-	
-	year_folder_exists = validate_year_folder(year_folder)
-	markdown_file_exists = validate_markdown_folder(entry_date, markdown_file_path)
-
-	if not year_folder_exists or not markdown_file_exists:
-		return False
-		
+def create_preliminary_new_lines(markdown_file_path: str, entry: str) -> None:
 	number_of_preliminary_new_lines: int = 0
 	with open(markdown_file_path, "r+", encoding="UTF-8") as journal_file_to_read:
 		journal_lines = journal_file_to_read.readlines()
@@ -462,6 +453,18 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 			journal_file_to_append.write(entry)
 		else:
 			output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], "Attempted to write entry to file, but that behavior is disabled.")])
+
+def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool=False) -> bool: # this function is large, maybe break it up TODO
+	"""Takes `entry` and writes it to the file corresponding to `entry_date`."""
+	year_folder, markdown_file_path = convert_date_to_journal_path(entry_date)
+	
+	year_folder_exists = validate_year_folder(year_folder)
+	markdown_file_exists = validate_markdown_folder(entry_date, markdown_file_path)
+
+	if not year_folder_exists or not markdown_file_exists:
+		return False
+		
+	create_preliminary_new_lines(markdown_file_path, entry)
 
 	if not any_entries_written:
 		output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "Journal Text Written to File(s):\n")])

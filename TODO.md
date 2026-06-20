@@ -21,7 +21,6 @@
 
 ## Refactoring
 
-* Break up write_entry into smaller functions
 * Convert checks of USER_SETTINGS to be arguments (in some cases) rather than just explicit checks to make easier to test etc. and more reusable
 * Further split up journal_system into separate files: settings, journal, photos, util (possibly better name)
 
