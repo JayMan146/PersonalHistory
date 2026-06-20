@@ -521,10 +521,12 @@ def create_all_recent_missing_entries() -> None:
 	# iterate backwards since we want the first found missing one to be written first, then the most recent missing one to be written last
 	any_entries_written: bool = False
 	number_of_entries: int = len(recent_missing_entries)
+	any_entries_written: bool = False
 	for entry_index, entry_date in enumerate(recent_missing_entries[::-1], start=1): 
 		is_last_entry_to_write: bool = entry_index == number_of_entries
 		entry = generate_entry(entry_date, settings.USER_SETTINGS["format"]["header_suffix"], is_last_entry_to_write)
-		any_entries_written = write_entry(entry, entry_date, any_entries_written)
+		this_entry_written = write_entry(entry, entry_date, any_entries_written)
+		any_entries_written = this_entry_written or any_entries_written # or logic here works to ensure a True persists
 
 	if not any_entries_written:
 		output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "No Text Was Written to Any Files.")])
