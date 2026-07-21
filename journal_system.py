@@ -529,5 +529,5 @@ def create_all_recent_missing_entries() -> None:
 		any_entries_written = this_entry_written or any_entries_written # or logic here works to ensure a True persists
 
 	if not any_entries_written:
-		output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "No Text Was Written to Any Files.")])
+		output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "No text was written to any files.")])
 		
