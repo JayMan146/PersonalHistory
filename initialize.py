@@ -13,7 +13,7 @@ def intialize_journals() -> None:
 	
 	# create journal entry for today
 	today = datetime.date.today()
-	entry = journal_system.generate_entry(today, settings.USER_SETTINGS["format"]["header_suffix"])
+	entry = journal_system.generate_entry(today, settings.USER_SETTINGS["format"]["header_suffix"], True)
 	journal_system.write_entry(entry, today)
 	
 	# write start message
