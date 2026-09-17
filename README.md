@@ -41,11 +41,11 @@ Something I would like to specifically highlight here is the naming scheme of th
 
 Refer back to the default settings profile for reference and the style of things. If you don't match the given set of options you can pick from in the settings, it will either cause errors or be defaulted to something usable. I should probably fix it if it is the former case. This assumes you understand the basics of json. If not, do some googling. For quick reference:
 
-* String - any amount of text
+* String - any sequence of text
 * Integer - any number, negative or positive, with no decimal portion
 * Float - an integer that can have a decimal portion
 * List - a list of any of the other kinds
-* Object - a mapping of any of the other kinds.
+* Object - a mapping of any the kinds to another
 
 Here's an example:
 ```json
@@ -178,15 +178,15 @@ There are also `separator`, `prefix`, and `suffix` fields exactly the same as in
 
 `day_crossover` is an object to make it so that during some part of the day, it counts as a different day. Personally, I use it so that if I use this past midnight, it doesn't count the new day after midnight. It's not the next day until I sleep to me. It has two fields:
 
-`time` is an object with 3 positive integers: `hour` (0 to 23, using 24hr time), `minute`, and `second` for the time.
+`time` is an object with 3 positive integers: `hour` (0 to 23, using 24 hour time), `minute`, and `second` for the time.
 
 `move_direction` is a string that can be either `disable`, `forward`, or `backward`. If set to `disable`, nothing happens. If set to `forward`, any point in a day **after** `time` will be considered as the next day. If set to `backward`, any point in a day **before** `time` will be considered as the previous day. Here are some examples, assuming that time is set to 13:00:00, and it is currently Wednesday:
 
-* `move_direction` is `forward`, and is currently 14:00, it will be considered Thursday.
-* `move_direction` is `forward`, and is currently 9:00, it will be considered Wednesday
-* `move_direction` is `backward`, and is currently 14:00, it will be considered Wednesday.
-* `move_direction` is `backward`, and is currently 9:00, it will be considered Thursday
-* `move_direction` is `disabled` and it is anytime, it will be considered Wednesday.
+* If `move_direction` is `forward`, and it is currently 14:00, it will be considered Thursday.
+* If `move_direction` is `forward`, and it is currently 09:00, it will be considered Wednesday
+* If `move_direction` is `backward`, and it is currently 14:00, it will be considered Wednesday.
+* If `move_direction` is `backward`, and it is currently 09:00, it will be considered Thursday
+* If `move_direction` is `disabled`, and it is anytime, it will be considered Wednesday.
 
 ### Photos
 
