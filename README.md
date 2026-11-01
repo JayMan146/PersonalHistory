@@ -23,6 +23,8 @@ So, if you get the `externally-managed-environment` error, you'll need a Python 
 
 The easiest way to use this is to run the script [easy_run.py](./easy_run.py). This will transfer any specified photos (if enabled) and puts in any entries that are needed. Currently, the format of these photos is `<day> <index> <month> <year>.<extension>`. Day is the day of the month, index is the number of the photo for that day, between `00` and `99`. Month is the month of the photo, written out. Year and extension are self-explanatory. Both day and index require leading zeros (for example, `05`, not `5`). Here is an example of a photo name: `12 02 january 2026` Finally, the program will place the specified outline of any journals that don't exist in the past 100 days (planned to be changed at some point, see [TODO](./TODO.md)).
 
+You can specify some options using the command line with this file. If you run it with "--ignore-today" it will not generate a journal entry for today.
+
 Alternatively, once I actually make it functional, use [gui.py](./gui.py) to use an interface to handle your journals. See [TODO](./TODO.md)
 
 You can write anywhere in the journals, just don't mess with the dates in the headers of the journals (e.g. `## Wednesday 04 March 2026`)
