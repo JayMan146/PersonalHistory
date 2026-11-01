@@ -302,7 +302,7 @@ def handle_photo_in_location(photo_origin_directory: str, photo_name: str, found
 	if glob.glob(wildcard_extension_photo_path):
 		output_to_console_by_level([
 			settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "  ⮡ Warning: unable to move this photo, as a photo with this name already exists."),
-			settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM], f"Warning: unable to move {photo_name}, as a photo with this name already exists.")
+			settings.ConsoleOutput([settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM], f"Warning: unable to move {photo_name}, as a photo with this name already exists.")
 		])
 		return None
 	
@@ -403,7 +403,7 @@ def validate_year_folder(year_folder: str) -> bool:
 	if not os.path.isdir(year_folder):
 		if not settings.USER_SETTINGS["permissions"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level([
-				settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
+				settings.ConsoleOutput([settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 				"Warning: unable to write entry, as directory creation is disabled.")
 			])
 			return False
@@ -420,7 +420,7 @@ def validate_markdown_folder(entry_date: datetime.date, markdown_file_path: str)
 	if not os.path.exists(markdown_file_path):
 		if not settings.USER_SETTINGS["permissions"]["enable_new_directory_and_file_creation"]:
 			output_to_console_by_level([
-				settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
+				settings.ConsoleOutput([settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 				"Warning: unable to write entry, as file creation is disabled.")
 			])
 			return False
@@ -431,7 +431,7 @@ def validate_markdown_folder(entry_date: datetime.date, markdown_file_path: str)
 			])
 			if not settings.USER_SETTINGS["permissions"]["enable_writing_to_file"]:
 				output_to_console_by_level([
-					settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
+					settings.ConsoleOutput([settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], 
 					"Attempted to write header to file, but that behavior is disabled.")
 				])
 			new_journal_file.write(f"# {convert_to_month(entry_date.month)[0].title()} {entry_date.year}\n\n")
@@ -452,7 +452,7 @@ def create_preliminary_new_lines(markdown_file_path: str, entry: str) -> None:
 			journal_file_to_append.write(preliminary_new_lines)
 			journal_file_to_append.write(entry)
 		else:
-			output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], "Attempted to write entry to file, but that behavior is disabled.")])
+			output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], "Attempted to write entry to file, but that behavior is disabled.")])
 
 def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool=False) -> bool: # this function is large, maybe break it up TODO
 	"""Takes `entry` and writes it to the file corresponding to `entry_date`."""

@@ -38,7 +38,7 @@ def intialize_journals() -> None:
 		
 	journal_system.output_to_console_by_level([
 		settings.ConsoleOutput(
-			[settings.ConsoleOutputLevels.NONE, settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], f"The journal system has been successfully initialized! Go check out your first file at \"{first_journal_path}\"!"
+			[settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], f"The journal system has been successfully initialized! Go check out your first file at \"{first_journal_path}\"!"
 		)
 	])
 	
