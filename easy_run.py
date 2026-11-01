@@ -4,13 +4,31 @@ import traceback
 import sys
 
 def easy_run() -> None:
+	settings.load_current_selected_profile(use_defaults=True) # this must happen first	
+
 	ignore_today: bool = False
 	if "--ignore-today" in sys.argv:
 		ignore_today = True
 
-	settings.load_current_selected_profile(use_defaults=True) # this must happen first
-	journal_system.move_photos_from_photo_locations() # then get the photos moved before making the entries
-	journal_system.create_all_recent_missing_entries(ignore_today) # actually make 'em
+	entries_only = False
+	if "-e" in sys.argv or "--entries-only" in sys.argv:
+		entries_only = True
+
+	photos_only = False
+	if ("-p" in sys.argv or "--photos-only" in sys.argv): # give entries only priority over photos only
+		if entries_only:
+			journal_system.output_to_console_by_level([
+				settings.ConsoleOutput([settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM, settings.ConsoleOutputLevels.MAXIMUM], "Cannot use --photos-only (-p) and --entries-only (-e) together. Quitting.")
+			])
+			return
+		photos_only = True
+
+	no_only_flags = not entries_only and not photos_only
+	if photos_only or no_only_flags:
+		journal_system.move_photos_from_photo_locations() # then get the photos moved before making the entries
+
+	if entries_only or no_only_flags:
+		journal_system.create_all_recent_missing_entries(ignore_today) # actually make 'em
 
 def handled_easy_run() -> None:
 	try:
