@@ -488,9 +488,11 @@ def modify_date_by_crossover(time_to_modify: datetime.datetime, crossover_time: 
 		
 	return datetime.timedelta()
 
-def find_all_recent_missing_entries() -> list[datetime.date]:
+def find_all_recent_missing_entries(ignore_today: bool=False) -> list[datetime.date]:
 	"""Finds missing entries in the last 100 days, working backwards from today and stopping once it has found a valid entry."""
 	starting_date: datetime.datetime = datetime.datetime.today()
+	# push to yesterday to ignore today
+	if ignore_today: starting_date -= datetime.timedelta(days=1)
 
 	crossover_time_setting: dict[str, int] = settings.USER_SETTINGS["day_crossover"]["time"]
 	crossover_time = datetime.time(crossover_time_setting["hour"], crossover_time_setting["minute"], crossover_time_setting["second"])
@@ -513,10 +515,10 @@ def find_all_recent_missing_entries() -> list[datetime.date]:
 
 	return recent_missing_entries
 
-def create_all_recent_missing_entries() -> None:
+def create_all_recent_missing_entries(ignore_today: bool=False) -> None:
 	"""Gets all recent missing entries and then writes them."""
 
-	recent_missing_entries: list[datetime.date] = find_all_recent_missing_entries()
+	recent_missing_entries: list[datetime.date] = find_all_recent_missing_entries(ignore_today)
 
 	# iterate backwards since we want the first found missing one to be written first, then the most recent missing one to be written last
 	any_entries_written: bool = False

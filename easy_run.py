@@ -1,11 +1,16 @@
 import journal_system
 import settings
 import traceback
+import sys
 
 def easy_run() -> None:
+	ignore_today: bool = False
+	if "--ignore-today" in sys.argv:
+		ignore_today = True
+
 	settings.load_current_selected_profile(use_defaults=True) # this must happen first
 	journal_system.move_photos_from_photo_locations() # then get the photos moved before making the entries
-	journal_system.create_all_recent_missing_entries() # actually make 'em
+	journal_system.create_all_recent_missing_entries(ignore_today) # actually make 'em
 
 def handled_easy_run() -> None:
 	try:
