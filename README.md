@@ -6,9 +6,13 @@ Personal History is a some-in-one solution for digital journaling. It can handle
 
 1. Make a directory, anywhere, for your journals to live. For example, I have a folder named `Journals`. 
 1. Get the code in some manner, either through downloading it or `git clone`-ing it. Make sure the `PersonalHistory` folder is in there. (So the path to this README file would be `whatever/Journals/PersonalHistory/README.md`.) 
-1. If you're running code directly, and not a binary or executable, make sure you have python. Some systems have it already, check by using the command `python` in a terminal. If you see `>>>`, you're good to go. Type `exit()` and hit enter, or close the terminal. If you don't have it, visit the [Python Website](https://www.python.org/downloads/) to download it. On Linux, you can also use the commands `sudo apt update`, `sudo apt upgrade`, and then `sudo apt install python3` and `sudo apt install python3-pip` to get it.
-1. Once again, if you're running the code directly, you'll need to install the requirements. To do this, run `pip install -r REQUIREMENTS.txt`, with whichever instance of pip you'll be using. If you get a long paragraph starting with `error: externally-managed-environment`, then take a look at the [section below](#python-venv). 
-1. Finally, you'll want to run the [initialize.py](./initialize.py) script to set up the journals. If you're running this in a command line, you can use "-a" or "--at" and specify a date in [ISO 8601](https://www.iso8601.com/) format (eg. 2026-10-20 for October 20th, 2026) to specify a date to initalize at. After that, you're good to go, read the the [Usage](#usage) section below on how to use it.
+1. If you're running code directly, and not a binary or executable, make sure you have python. Some systems have it already, check by using the command `python` in a terminal. If you see `>>>`, you're good to go. Type `exit()` and hit enter, or close the terminal. If you don't have it, visit the [Python Website](https://www.python.org/downloads/) to download it. 
+    * On Linux, you can also use the commands `sudo apt update`, `sudo apt upgrade`, and then `sudo apt install python3` and `sudo apt install python3-pip` to get it.
+1. Once again, if you're running the code directly, you'll need to install the requirements. To do this, run `pip install -r REQUIREMENTS.txt`, with whichever instance of pip you'll be using. 
+    * If you get a long paragraph starting with `error: externally-managed-environment`, then take a look at the [section below](#python-venv). 
+1. Finally, you'll want to run the [initialize.py](./initialize.py) script to set up the journals. 
+    * If you're running this in a command line, you can use "-a" or "--at" and specify a date in [ISO 8601](https://www.iso8601.com/) format (eg. 2026-10-20 for October 20th, 2026) to specify a date to initalize at. 
+1. You're good to go! Read the the [Usage](#usage) section below on how to use it.
 
 ### Python VENV
 
@@ -37,7 +41,7 @@ You can write anywhere in the journals, just don't mess with the dates in the he
 
 ## Integration Between the System and Your Journals
 
-Since this is an open-source software, it is meant to be very free. The journals are just plain text files, so you can stop or start using this system whenever you want. It tracks no information, and is entirely local. It's only interaction with what you have written is skipping over it to find certain entries, just based on the headers. That last line will no longer be true once I get the [Statistics](./statistics.py) up and running, but it will stil be entirely local with no data going to anyone.
+Since this is an open-source software, it is meant to be very unrestricted. The journals are just plain text files, so you can stop or start using this system whenever you want. It tracks no information, and is entirely local. It's only interaction with what you have written is skipping over it to find certain entries, just based on the headers. That last line will no longer be true once I get the [Statistics](./statistics.py) up and running, but it will still be entirely local with no data going to anyone.
 
 ## File System
 
@@ -53,7 +57,7 @@ Refer back to the default settings profile for reference and the style of things
 * Integer - any number, negative or positive, with no decimal portion
 * Float - an integer that can have a decimal portion
 * List - a list of any of the other kinds
-* Object - a mapping of any the kinds to another
+* Object - a mapping of any of the kinds to another
 
 Here's an example:
 ```json
@@ -188,7 +192,7 @@ There are also `separator`, `prefix`, and `suffix` fields exactly the same as in
 
 `time` is an object with 3 positive integers: `hour` (0 to 23, using 24 hour time), `minute`, and `second` for the time.
 
-`move_direction` is a string that can be either `disable`, `forward`, or `backward`. If set to `disable`, nothing happens. If set to `forward`, any point in a day **after** `time` will be considered as the next day. If set to `backward`, any point in a day **before** `time` will be considered as the previous day. Here are some examples, assuming that time is set to 13:00:00, and it is currently Wednesday:
+`move_direction` is a string that can be either `disable`, `forward`, or `backward`. If set to `disable`, nothing happens. If set to `forward`, any point in a day **after** `time` will be considered as the next day. If set to `backward`, any point in a day **before** `time` will be considered as the previous day. Here are some examples, assuming that `time` is set to 13:00:00, and it is currently Wednesday:
 
 * If `move_direction` is `forward`, and it is currently 14:00, it will be considered Thursday.
 * If `move_direction` is `forward`, and it is currently 09:00, it will be considered Wednesday
