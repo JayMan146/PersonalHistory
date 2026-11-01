@@ -3,10 +3,13 @@ import settings
 import traceback
 
 def easy_run() -> None:
+	settings.load_current_selected_profile(use_defaults=True) # this must happen first
+	journal_system.move_photos_from_photo_locations() # then get the photos moved before making the entries
+	journal_system.create_all_recent_missing_entries() # actually make 'em
+
+def handled_easy_run() -> None:
 	try:
-		settings.load_current_selected_profile(use_defaults=True) # this must happen first
-		journal_system.move_photos_from_photo_locations() # then get the photos moved before making the entries
-		journal_system.create_all_recent_missing_entries() # actually make 'em
+		easy_run()
 	except FileNotFoundError as error:
 		print(f"A file is missing. Double check the paths in settings and selected_profile.txt file and make sure selected_profile.txt exists. The full error is:\n{error}") # output, not debugging
 		traceback.print_tb(error.__traceback__)
@@ -18,4 +21,4 @@ def easy_run() -> None:
 		traceback.print_tb(error.__traceback__)
 
 if __name__ == "__main__":
-	easy_run()
+	handled_easy_run()
