@@ -39,13 +39,13 @@ Alternatively, once I actually make it functional, use [gui.py](./gui.py) to use
 
 You can write anywhere in the journals, just don't mess with the dates in the headers of the journals (e.g. `## Wednesday 04 March 2026`)
 
-## Integration Between the System and Your Journals
+## Integration Between Personal History and Your Journals
 
 Since this is an open-source software, it is meant to be very unrestricted. The journals are just plain text files, so you can stop or start using this system whenever you want. It tracks no information, and is entirely local. It's only interaction with what you have written is skipping over it to find certain entries, just based on the headers. That last line will no longer be true once I get the [Statistics](./statistics.py) up and running, but it will still be entirely local with no data going to anyone.
 
 ## File System
 
-Files are arranged into folders for each year, and then one markdown file for each month. Why is it like this, you may ask? Because I like it that way. And, it seems like a good balance between not everything being in one big file and a bunch of files (like one per entry). I think it adds novelty to the new month. In each year folder, there is a photos folder along with month folders for each month's photos. In general, don't mess with the names of any of these—the system will handle it all. Just write down your entry. But, you *can* do whatever you want with it. They're *your* files.
+Files are arranged into folders for each year, and then one markdown file for each month. Why is it like this, you may ask? Because I like it that way. And, it seems like a good balance between not everything being in one big file and a bunch of files (like one per entry). I think it adds novelty to the new month. In each year folder, there is a photos folder along with month folders for each month's photos. In general, don't mess with the names of any of these—Personal History handles it all. Just write down your entry. But, you *can* do whatever you want with it. They're *your* files.
 
 Something I would like to specifically highlight here is the naming scheme of the photos. Using the [Photo Transfer Setting](#photos) requires a specific format, and moves them to the month folders in the photos directory. However, since the photos in the journals are just links to the photos, they can be anywhere and be named anything. The program just does this for the sake of uniformity and simplicity.
 
@@ -83,7 +83,7 @@ Here's an example:
 
 ### Format
 
-`format` is an object for items that go between the heading of the journal and the actual entry itself, which can include extra information you want. It also has a few other parameters for the format. Here's an example of a journal with various custom formatting. This first one is without any modifications after the system generates it, and the second  is with text written in it by a user.
+`format` is an object for items that go between the heading of the journal and the actual entry itself, which can include extra information you want. It also has a few other parameters for the format. Here's an example of a journal with various custom formatting. This first one is without any modifications after Personal History generates it, and the second is with example text written in it by a user.
 
 ```md
 ## Saturday 17 August 2013: 
@@ -206,7 +206,7 @@ There are also `separator`, `prefix`, and `suffix` fields exactly the same as in
 
 `enable_zip_extraction` is a boolean to control extraction of photos from zip files. If a zip file is named to the correct format, it will take the photo in the zip file and keep the photo file. Then, it is handled like other photos.
 
-`photo_locations` is a list of file paths (strings) that the system will look to transfer photos from.
+`photo_locations` is a list of file paths (strings) that Personal History will look in transfer photos from.
 
 #### Type Conversion
 
