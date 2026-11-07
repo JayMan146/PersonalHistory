@@ -467,7 +467,10 @@ def write_entry(entry: str, entry_date: datetime.date, any_entries_written: bool
 	create_preliminary_new_lines(markdown_file_path, entry)
 
 	if not any_entries_written:
-		output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "Journal Text Written to File(s):\n")])
+		output_to_console_by_level([
+			settings.ConsoleOutput([settings.ConsoleOutputLevels.MINIMUM, settings.ConsoleOutputLevels.MEDIUM], "Writing journal entries."),
+			settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], "Journal Text Written to File(s):\n")
+        ])
 		any_entries_written = True
 
 	output_to_console_by_level([settings.ConsoleOutput([settings.ConsoleOutputLevels.MAXIMUM], entry, {"end": ""})]) # show what was written to file
